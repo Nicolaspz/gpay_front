@@ -21,22 +21,29 @@ export default function AdminStripeDashboard() {
    const { user } = useContext(AuthContext);
 
    useEffect(() => {
-     if (user === null) return;
-     fetchSummaries();
-   }, [user]);
+      if (user === null) return;
+      fetchSummaries();
+    }, [user]);
 
-   async function fetchSummaries() {
-     try {
-       setLoading(true);
-       const token = 'Bearer GPayment_Secret_Default_2024';
-       const res = await axios.get(`https://stripe-server-ztck.onrender.com/api/v1/transactions/admin/clients`, { headers: { Authorization: token } });
-       setSummaries(res.data);
-     } catch (error) {
-       console.error("Erro ao buscar dados da Stripe:", error);
-     } finally {
-       setLoading(false);
-     }
-   }
+    async function fetchSummaries() {
+      try {
+        setLoading(true);
+        const token = 'Bearer GPayment_Secret_Default_2024';
+        
+        let url = `https://stripe-server-ztck.onrender.com/api/v1/transactions/admin/clients`;
+        if (user?.user_type !== 'admin' && user?.id) {
+          url = `https://stripe-server-ztck.onrender.com/api/v1/transactions/user/${user.id}/summary`;
+        }
+
+        const res = await axios.get(url, { headers: { Authorization: token } });
+        const data = Array.isArray(res.data) ? res.data : [res.data];
+        setSummaries(data);
+      } catch (error) {
+        console.error("Erro ao buscar dados da Stripe:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
    async function viewClientTransactions(userId: string) {
      setSelectedUser(userId);
@@ -89,43 +96,56 @@ export default function AdminStripeDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-            Administração Stripe (GPayment)
+            {user?.user_type === 'admin' ? "Administração Stripe (GPayment)" : "Meus Recebimentos Stripe"}
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-sm">
-            Gere todas as contas, transações e liquidações dos clientes processados via Stripe.
+            {user?.user_type === 'admin' 
+              ? "Gere todas as contas, transações e liquidações dos clientes processados via Stripe."
+              : "Acompanhe o saldo das suas vendas processadas via Stripe e o estado dos seus recebimentos."}
           </p>
       </div>
 
       {/* Lista de Clientes Agrupada por Moeda */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-8 overflow-hidden border border-gray-100 dark:border-gray-700">
         <div className="p-5 border-b border-gray-100 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Saldos dos Clientes (Por Moeda)</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+               {user?.user_type === 'admin' ? "Saldos dos Clientes (Por Moeda)" : "Meu Resumo Financeiro"}
+            </h2>
         </div>
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
             <thead>
                 <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">ID do Cliente</th>
+                {user?.user_type === 'admin' && <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">Cliente</th>}
                 <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">Moeda</th>
                 <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">Bruto Processado</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">Líquido a Pagar (Pendente)</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">Já Pago (Liquidado)</th>
+                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">
+                   {user?.user_type === 'admin' ? "Líquido a Pagar (Pendente)" : "Líquido a Receber (Pendente)"}
+                </th>
+                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">
+                   {user?.user_type === 'admin' ? "Já Pago (Liquidado)" : "Já Recebido (Liquidado)"}
+                </th>
                 <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-sm">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {summaries.map((s: any, idx) => (
                 <tr key={`${s.userId}-${s.currency}-${idx}`} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    <td className="p-4 text-sm font-mono text-gray-800 dark:text-gray-300">{s.userId}</td>
+                    {user?.user_type === 'admin' && (
+                      <td className="p-4 text-sm font-semibold text-gray-800 dark:text-gray-300">
+                        {s.fullname || s.userId}
+                        <div className="text-[10px] text-gray-400 font-mono mt-0.5">{s.userId}</div>
+                      </td>
+                    )}
                     <td className="p-4 text-sm font-bold text-gray-700 dark:text-gray-300">{s.currency}</td>
                     <td className="p-4 text-sm text-gray-600 dark:text-gray-400">{(s.totalGrossAmount || 0).toLocaleString("pt-PT", { style: "currency", currency: s.currency })}</td>
                     <td className="p-4 text-sm font-bold text-orange-500">{(s.totalPendingPayoutAmount || 0).toLocaleString("pt-PT", { style: "currency", currency: s.currency })}</td>
                     <td className="p-4 text-sm font-semibold text-green-600">{(s.totalPaidOutAmount || 0).toLocaleString("pt-PT", { style: "currency", currency: s.currency })}</td>
                     <td className="p-4 flex gap-2">
                        <button onClick={() => viewClientTransactions(s.userId)} className="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50">
-                         Ver Transações
+                         Ver Detalhes
                        </button>
-                       {s.totalPendingPayoutAmount > 0 && (
+                       {user?.user_type === 'admin' && s.totalPendingPayoutAmount > 0 && (
                          <button onClick={() => setLiquidationModal({ userId: s.userId, currency: s.currency })} className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 flex items-center gap-1">
                            <FiDollarSign /> Liquidar
                          </button>
@@ -134,7 +154,7 @@ export default function AdminStripeDashboard() {
                 </tr>
                 ))}
                 {summaries.length === 0 && (
-                <tr><td colSpan={6} className="p-6 text-center text-gray-500 dark:text-gray-400">Nenhum cliente encontrado com transações na Stripe.</td></tr>
+                <tr><td colSpan={user?.user_type === 'admin' ? 6 : 5} className="p-6 text-center text-gray-500 dark:text-gray-400">Nenhum dado encontrado com transações na Stripe.</td></tr>
                 )}
             </tbody>
             </table>
@@ -175,7 +195,11 @@ export default function AdminStripeDashboard() {
               <tbody>
                   {transactions.map((tx: any) => (
                   <tr key={tx.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                      <td className="p-4 text-xs text-gray-800 dark:text-gray-300 font-mono" title={tx.stripeSessionId}>{tx.stripeSessionId?.substring(0,14)}...</td>
+                      <td className="p-4 text-xs text-gray-800 dark:text-gray-300 font-mono" title={tx.stripeSessionId}>
+                        <span className="cursor-pointer hover:text-blue-500" onClick={() => { navigator.clipboard.writeText(tx.stripeSessionId); toast.info("ID Copiado"); }}>
+                          {user?.user_type === 'admin' ? tx.stripeSessionId : `${tx.stripeSessionId?.substring(0,14)}...`}
+                        </span>
+                      </td>
                       <td className="p-4 text-xs text-gray-600 dark:text-gray-400">{new Date(tx.createdAt).toLocaleString()}</td>
                       <td className="p-4 text-xs font-medium text-gray-900 dark:text-white">{(tx.grossAmount || 0).toLocaleString("pt-PT", { style: "currency", currency: tx.currency || "USD" })}</td>
                       <td className="p-4 text-xs text-red-500">-{(tx.feeAmount || 0).toLocaleString("pt-PT", { style: "currency", currency: tx.currency || "USD" })}</td>
@@ -188,7 +212,9 @@ export default function AdminStripeDashboard() {
                       <td className="p-4">
                       {tx.status === 'COMPLETED' ? (
                         <span className={`px-2 py-1 text-xs rounded-full ${tx.isPaidOut ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300'}`}>
-                            {tx.isPaidOut ? `Pago em ${new Date(tx.paidOutAt).toLocaleDateString()}` : "Pendente Payout"}
+                            {tx.isPaidOut 
+                              ? (user?.user_type === 'admin' ? `Pago em ${new Date(tx.paidOutAt).toLocaleDateString()}` : `Recebido em ${new Date(tx.paidOutAt).toLocaleDateString()}`)
+                              : (user?.user_type === 'admin' ? "Pendente Payout" : "Pendente Recebimento")}
                         </span>
                       ) : (
                         <span className="text-xs text-gray-400">-</span>
