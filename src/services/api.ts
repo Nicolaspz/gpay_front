@@ -25,16 +25,12 @@ export function setupAPIClient(ctx = undefined) {
     return response;
   }, (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // qualquer erro 401 (não autorizado) devemos deslogar o usuário
-      if (typeof window === 'undefined') {
-        // Estamos no lado do servidor, então você não deve chamar singOut() aqui
-        return Promise.reject(new AuthTokenError());
-      } else {
-        // Estamos no lado do cliente, então é seguro chamar singOut()
-        signOut()
+      // anymore signout global
+      if (typeof window !== 'undefined') {
+         // console.warn("401 detectado, mas logoff automático removido da api.ts");
       }
     }
-  return Promise.reject(error);
+    return Promise.reject(error);
   })
 
   return api;

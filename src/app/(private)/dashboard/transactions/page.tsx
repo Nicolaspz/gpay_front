@@ -124,7 +124,7 @@ export default function TransactionsDashboard() {
       setLoading(true);
       const response = await api.get(`/transactions/tenant/${tenantId}`, {
         headers: {
-          'gpay-x-api': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         }
       });
       setTransactions(response.data);
@@ -160,9 +160,8 @@ export default function TransactionsDashboard() {
     try {
       setGeneratingReference(true);
       const response = await axios.post(`${API_URL}/api/pay`, {
-        t_id: user.tenant_id,
         amount: newReferenceData.amount,
-        redirect_url: "gpay-dashboard",
+        redirect_url: "my-app",
         customer: {
           name: newReferenceData.customer_name,
           phone: newReferenceData.customer_phone || "000000000",
@@ -174,7 +173,7 @@ export default function TransactionsDashboard() {
         transaction_id: txId
       }, {
         headers: {
-          'Authorization': `${token}`
+          'gpay-x-api': `Bearer ${token}`
         },
         timeout: 10000,
       });
@@ -182,7 +181,7 @@ export default function TransactionsDashboard() {
 
       if (response.data) {
         console.log("API Response Body:", response.data);
-        
+
         // A estrutura real baseada no seu log:
         // response.data (corpo do axios) -> data (objeto da API) -> responseStatus -> reference
         const apiData = response.data.data;
@@ -203,14 +202,14 @@ export default function TransactionsDashboard() {
 
         console.log("Referência gerada com sucesso!");
         // setShowNewReferenceModal(false);
-        setNewReferenceData({ 
-          amount: 0, 
-          customer_name: "", 
-          customer_phone: "", 
-          customer_email: "", 
-          description: "", 
-          payment_method: "multicaixa", 
-          transaction_id: "" 
+        setNewReferenceData({
+          amount: 0,
+          customer_name: "",
+          customer_phone: "",
+          customer_email: "",
+          description: "",
+          payment_method: "multicaixa",
+          transaction_id: ""
         });
         fetchTransactions();
       }
