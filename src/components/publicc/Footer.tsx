@@ -56,7 +56,9 @@ export function Footer() {
                     <div className="footer-widget">
                         <h4 className="text-[20px] font-bold text-white mb-6">Links Úteis</h4>
                         <ul className="space-y-2">
-                            <li><a href="/docoment" className="text-white text-[15px] hover:text-white/80">Documentação</a></li>
+                            <li><Link href="/document" className="text-white text-[15px] hover:text-white/80">Documentação</Link></li>
+                            <li><Link href="/terms" className="text-white text-[15px] hover:text-white/80">Termos e Condições</Link></li>
+                            <li><Link href="/refund" className="text-white text-[15px] hover:text-white/80">Política de Reembolso</Link></li>
                             <li><a href="#" className="text-white text-[15px] hover:text-white/80">Suporte - suporte@gpayment.ao</a></li>
                             <li><a href="#" className="text-white text-[15px] hover:text-white/80">vendas - vendas@gpayment.ao, +244 222 123 457  </a></li>
                         </ul>
@@ -64,11 +66,11 @@ export function Footer() {
                     <div className="footer-widget">
                         <h4 className="text-[20px] font-bold text-white mb-6">Sobre a Empresa</h4>
                         <span className="text-2xl font-bold text-[#5b68eb]">
-                           <Link href="/" className="flex items-center">
+                            <Link href="/" className="flex items-center">
                                 <img
-                                src="/assets/images/Gpay2.1.png" 
-                                alt=""
-                                className="w-full h-full object-cover object-bottom"
+                                    src="/assets/images/Gpay2.1.png"
+                                    alt=""
+                                    className="w-full h-full object-cover object-bottom"
                                 />
                             </Link>
                         </span>

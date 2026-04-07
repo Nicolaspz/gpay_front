@@ -60,7 +60,7 @@ export default function RegisterPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value })
-    
+
     // Mark password as touched when user starts typing
     if (e.target.id === "password" && !passwordTouched) {
       setPasswordTouched(true)
@@ -70,7 +70,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
+
     // Validate password before submitting
     const errors = validatePassword(form.password)
     if (errors.length > 0) {
@@ -87,7 +87,12 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await api.post("/users", form)
+      const response = await api.post("/users", {
+        fullname: form.fullname,
+        email: form.email,
+        password: form.password,
+        confirmpassword: form.confirmpassword
+      })
       toast.success("Conta criada com sucesso! Faça login.")
       router.push("/login")
     } catch (error: any) {
@@ -169,7 +174,7 @@ export default function RegisterPage() {
                   )}
                 </button>
               </div>
-              
+
               {passwordTouched && (
                 <div className="text-sm space-y-1 mt-2">
                   {passwordErrors.map((error, index) => (
@@ -213,14 +218,14 @@ export default function RegisterPage() {
                   )}
                 </button>
               </div>
-              
+
               {form.confirmpassword.length > 0 && !passwordsMatch && (
                 <div className="flex items-center text-red-500 text-sm mt-2">
                   <XCircle className="h-3 w-3 mr-1" />
                   As senhas não coincidem
                 </div>
               )}
-              
+
               {passwordsMatch && (
                 <div className="flex items-center text-green-500 text-sm mt-2">
                   <CheckCircle className="h-3 w-3 mr-1" />

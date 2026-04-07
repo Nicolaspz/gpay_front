@@ -90,6 +90,8 @@ export const metadata: Metadata = {
   },
 };
 
+import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -126,11 +128,12 @@ export default function RootLayout({
           defaultTheme="light"
 
         >
-          <AuthProvider>{children}</AuthProvider>
+          <ReactQueryProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ReactQueryProvider>
           <ToastContainer position="top-right" autoClose={3000} />
         </ThemeProvider>
       </body>
     </html>
   )
 }
-

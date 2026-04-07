@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, CreditCard, MoreVertical, Edit, Trash2 } from "lucide-react";
@@ -62,12 +62,12 @@ interface DeleteConfirmationModalProps {
   isDeleting: boolean;
 }
 
-function DeleteConfirmationModal({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
+function DeleteConfirmationModal({
+  isOpen,
+  onClose,
+  onConfirm,
   methodName,
-  isDeleting 
+  isDeleting
 }: DeleteConfirmationModalProps) {
   if (!isOpen) return null;
 
@@ -78,13 +78,13 @@ function DeleteConfirmationModal({
           <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 dark:bg-red-900/20 rounded-full">
             <Trash2 className="h-6 w-6 text-red-600" />
           </div>
-          
+
           <h3 className="text-lg font-semibold text-center mb-2">
             Eliminar Método de Pagamento
           </h3>
-          
+
           <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-            Tem a certeza que deseja eliminar o método <strong>"{methodName}"</strong>? 
+            Tem a certeza que deseja eliminar o método <strong>"{methodName}"</strong>?
             Esta ação não pode ser desfeita.
           </p>
 
@@ -113,161 +113,113 @@ function DeleteConfirmationModal({
   );
 }
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 export function PaymentMethodsSection() {
-  
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editingMethod, setEditingMethod] = useState<PaymentMethodData | null>(null);
-  const [methodToDelete, setMethodToDelete] = useState<{id: string, name: string} | null>(null);
-  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [methodToDelete, setMethodToDelete] = useState<{ id: string, name: string } | null>(null);
   const { user } = useContext(AuthContext);
 
-  // Buscar métodos de pagamento da API
-  useEffect(() => {
-    const { '@gCorporate.token': token } = parseCookies();
-    
-    async function fetchPaymentMethods() {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await api.get(`/payments`, {
-          headers: {
-            'Authorization': `Bearer ${token || user?.token}`
-          }
-        });
-        
-        //console.log("Métodos de pagamento:", response.data);
-        //toast.success("Configurações atualizadas com sucesso!")
-        
-        // Converter dados da API para o formato do componente
-        if (response.data && Array.isArray(response.data)) {
-          const mappedMethods = response.data.map(mapApiToComponent);
-          setPaymentMethods(mappedMethods);
+  const { data: paymentMethods = [], isLoading: loading, error: fetchError } = useQuery({
+    queryKey: ['payment-methods'],
+    queryFn: async () => {
+      const { '@gCorporate.token': token } = parseCookies();
+      const response = await api.get(`/payments`, {
+        headers: {
+          'Authorization': `Bearer ${token || user?.token}`
         }
-
-      } catch (error) {
-        console.error("Erro ao buscar métodos de pagamento:", error);
-        setError("Erro ao carregar métodos de pagamento");
-        setPaymentMethods([]);
-      } finally {
-        setLoading(false);
+      });
+      if (response.data && Array.isArray(response.data)) {
+        return response.data.map(mapApiToComponent);
       }
+      return [];
+    },
+    enabled: !!(user?.token || parseCookies()['@gCorporate.token']),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { '@gCorporate.token': token } = parseCookies();
+      await api.delete(`/payments/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token || user?.token}`
+        }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-methods'] });
+      setIsDeleteModalOpen(false);
+      setMethodToDelete(null);
+      toast.success("Método de pagamento removido com sucesso!");
+    },
+    onError: () => {
+      toast.error("Erro ao remover método de pagamento");
     }
+  });
 
-    if (user?.token || parseCookies()['@gCorporate.token']) {
-      fetchPaymentMethods();
-    }
-  }, [user?.token]);
-
-  const handleAddMethod = () => {
-    setModalMode('add');
-    setEditingMethod(null);
-    setError(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEditMethod = (method: PaymentMethodData) => {
-    setModalMode('edit');
-    setEditingMethod(method);
-    setError(null);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingMethod(null);
-    setError(null);
-  };
-
-  
-
-const handleSubmit = async (data: PaymentMethodData) => {
-    const { '@gCorporate.token': token } = parseCookies();
-    
-    try {
-      setError(null);
-      
-      // Validar dados antes de enviar
-      if (!data.rsa_key || !data.redirect_url || !data.merchant_id || 
-          !data.merchant_member_id || !data.sale_product_code || 
-          !data.async_url || !data.rsa_key_priv || !data.rsa_key_pub) {
-        throw new Error('Todos os campos são obrigatórios');
-      }
-
+  const submitMutation = useMutation({
+    mutationFn: async (data: PaymentMethodData) => {
+      const { '@gCorporate.token': token } = parseCookies();
       if (modalMode === 'add') {
-        // Criar novo método via API
         const response = await api.post('/payments', data, {
           headers: {
             'Authorization': `Bearer ${token || user?.token}`,
             'Content-Type': 'application/json'
           }
         });
-        
-        // Adicionar novo método à lista
-        const newMethod = mapApiToComponent(response.data);
-        setPaymentMethods(prev => [...prev, newMethod]);
-        
-        toast.success("Método de pagamento adicionado com sucesso!");
+        return response.data;
       } else {
-        // Para UPDATE: ID vai no body, não na URL
-        const updateData = {
-          ...data,
-          id: editingMethod?.id // Inclui o ID no body
-        };
-
+        const updateData = { ...data, id: editingMethod?.id };
         const response = await api.put(`/payments`, updateData, {
           headers: {
             'Authorization': `Bearer ${token || user?.token}`,
             'Content-Type': 'application/json'
           }
         });
-        
-        // Atualizar método na lista
-        setPaymentMethods(prev => 
-          prev.map(method => 
-            method.id === editingMethod?.id 
-              ? mapApiToComponent(response.data)
-              : method
-          )
-        );
-        
-        toast.success("Método de pagamento atualizado com sucesso!");
+        return response.data;
       }
-      
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-methods'] });
       handleCloseModal();
-      
-    } catch (error: any) {
+      toast.success(`Método de pagamento ${modalMode === 'add' ? 'adicionado' : 'atualizado'} com sucesso!`);
+    },
+    onError: (error: any) => {
       console.error(`Erro ao ${modalMode === 'add' ? 'adicionar' : 'editar'} método:`, error);
-      
-      let errorMessage = "";
-      
-      // Tratamento de erros HTTP
-      if (error.response?.status === 500) {
-        errorMessage = 'Erro interno do servidor. Verifique os dados e tente novamente.';
-      } else if (error.response?.status === 401) {
-        errorMessage = 'Sessão expirada. Faça login novamente.';
-      } else if (error.response?.status === 403) {
-        errorMessage = 'Você não tem permissão para realizar esta ação.';
-      } else if (error.response?.status === 404) {
-        errorMessage = 'Recurso não encontrado.';
-      } else if (error.response?.status === 400) {
-        errorMessage = 'Dados inválidos enviados. Verifique os campos.';
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = `Erro ao ${modalMode === 'add' ? 'adicionar' : 'editar'} método de pagamento`;
-      }
-      
+      const errorMessage = error.response?.data?.message || error.message || `Erro ao ${modalMode === 'add' ? 'adicionar' : 'editar'} método de pagamento`;
       toast.error(errorMessage);
-      setError(errorMessage);
-      throw error;
     }
+  });
+
+  const handleAddMethod = () => {
+    setModalMode('add');
+    setEditingMethod(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditMethod = (method: PaymentMethodData) => {
+    setModalMode('edit');
+    setEditingMethod(method);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingMethod(null);
+  };
+
+  const handleSubmit = async (data: PaymentMethodData) => {
+    if (!data.rsa_key || !data.redirect_url || !data.merchant_id ||
+      !data.merchant_member_id || !data.sale_product_code ||
+      !data.async_url || !data.rsa_key_priv || !data.rsa_key_pub) {
+      toast.error('Todos os campos são obrigatórios');
+      return;
+    }
+    submitMutation.mutate(data);
   };
 
   const handleDeleteClick = (methodId: string, methodName: string) => {
@@ -277,33 +229,11 @@ const handleSubmit = async (data: PaymentMethodData) => {
 
   const handleDeleteConfirm = async () => {
     if (!methodToDelete) return;
-
-    const { '@gCorporate.token': token } = parseCookies();
-    
-    try {
-      setIsDeleting(true);
-      setError(null);
-      
-      await api.delete(`/payments/${methodToDelete.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token || user?.token}`
-        }
-      });
-      
-      // Remover método da lista
-      setPaymentMethods(prev => prev.filter(method => method.id !== methodToDelete.id));
-      console.log('Método removido:', methodToDelete.id);
-      
-      // Fechar modal de confirmação
-      setIsDeleteModalOpen(false);
-      setMethodToDelete(null);
-    } catch (error) {
-      console.error('Erro ao remover método:', error);
-      setError('Erro ao remover método de pagamento');
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteMutation.mutate(methodToDelete.id);
   };
+
+  const isDeleting = deleteMutation.isPending;
+  const error = fetchError ? (fetchError as any).message : null;
 
   const handleDeleteCancel = () => {
     setIsDeleteModalOpen(false);
@@ -331,11 +261,11 @@ const handleSubmit = async (data: PaymentMethodData) => {
       <Card className="p-6 space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Métodos de Pagamento</h2>
-          <Button 
+          <Button
             onClick={handleAddMethod}
             className='cursor-pointer'
           >
-            <Plus className="mr-2"  /> Adicionar
+            <Plus className="mr-2" /> Adicionar
           </Button>
         </div>
 
@@ -372,7 +302,7 @@ const handleSubmit = async (data: PaymentMethodData) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
                           handleEditMethod(method.data);
@@ -382,7 +312,7 @@ const handleSubmit = async (data: PaymentMethodData) => {
                         <Edit className="h-4 w-4 mr-2" />
                         Editar
                       </DropdownMenuItem>
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteClick(method.data.id, method.data.rsa_key);
@@ -397,7 +327,7 @@ const handleSubmit = async (data: PaymentMethodData) => {
                 </div>
 
                 {/* Conteúdo do card */}
-                <div 
+                <div
                   className="flex items-center space-x-3 pt-2"
                   onClick={() => handleEditMethod(method.data)}
                 >
@@ -414,7 +344,7 @@ const handleSubmit = async (data: PaymentMethodData) => {
       </Card>
 
       {/* Modal para Adicionar/Editar */}
-      <AddPaymentMethodModal 
+      <AddPaymentMethodModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSubmit={handleSubmit}

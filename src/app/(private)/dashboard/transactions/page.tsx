@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { CardStat } from "@/components/dashboard/CardStat";
 import { Card } from "@/components/ui/card";
 import { FiCreditCard, FiDollarSign, FiEye, FiPlus } from 'react-icons/fi';
@@ -11,7 +11,7 @@ import { parseCookies } from "nookies";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const API_URL = process.env.BASE_APIPAY_URL;
+const API_URL = process.env.NEXT_PUBLIC_BASE_APIPAY_URL;
 // Componente de Botão (se você não tiver um componente Button próprio)
 const Button = ({
   children,
@@ -82,18 +82,19 @@ type NewReferenceData = {
   transaction_id: string;
 };
 
-export default function TransactionsDashboard() {
-  const { user } = useContext(AuthContext);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-  // Estados para os modais
+export default function TransactionsDashboard() {
+  const queryClient = useQueryClient();
+  const { user } = useContext(AuthContext);
+  const { '@gCorporate.token': token } = parseCookies();
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
+
+  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [showNewReferenceModal, setShowNewReferenceModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [referenceResult, setReferenceResult] = useState<ReferenceResult>(null);
-  // Estados para nova referência
   const [newReferenceData, setNewReferenceData] = useState<NewReferenceData>({
     amount: 0,
     customer_name: "",
@@ -104,37 +105,60 @@ export default function TransactionsDashboard() {
     transaction_id: ""
   });
 
-  const [generatingReference, setGeneratingReference] = useState(false);
-
-  useEffect(() => {
-    if (user === null) return;
-    fetchTransactions();
-  }, [user]);
-
-  const fetchTransactions = async () => {
-    const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
-    if (!tenantId) {
-      setLoading(false);
-      return;
-    }
-
-    const { '@gCorporate.token': token } = parseCookies();
-
-    try {
-      setLoading(true);
+  const { data: transactions = [], isLoading: loading } = useQuery({
+    queryKey: ['transactions', tenantId],
+    queryFn: async () => {
+      if (!tenantId) return [];
       const response = await api.get(`/transactions/tenant/${tenantId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'gpay-x-api': `Bearer ${token}`
         }
       });
-      setTransactions(response.data);
-      console.log("transactions", response.data)
-    } catch (error) {
-      console.error("Erro ao buscar transações:", error);
-    } finally {
-      setLoading(false);
+      return response.data as Transaction[];
+    },
+    enabled: !!tenantId,
+  });
+
+  const generateReferenceMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await axios.post(`${API_URL}/api/pay`, data, {
+        headers: {
+          'gpay-x-api': `Bearer ${token}`
+        },
+        timeout: 10000,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const apiData = data.data;
+      const responseStatus = apiData?.responseStatus;
+      const reference = responseStatus?.reference;
+
+      if (reference) {
+        setReferenceResult({
+          entity: reference.entity || "Entidade indisponível",
+          referenceNumber: reference.referenceNumber || "Referência indisponível"
+        });
+      } else {
+        toast.error("Erro: Dados de referência não encontrados na resposta");
+      }
+
+      setNewReferenceData({
+        amount: 0,
+        customer_name: "",
+        customer_phone: "",
+        customer_email: "",
+        description: "",
+        payment_method: "multicaixa",
+        transaction_id: ""
+      });
+      queryClient.invalidateQueries({ queryKey: ['transactions', tenantId] });
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || "Erro ao gerar referência";
+      toast.error(errorMessage);
     }
-  };
+  });
 
   const handleGenerateReference = async () => {
     if (!user?.tenant_id) {
@@ -152,77 +176,24 @@ export default function TransactionsDashboard() {
       return;
     }
 
-    const { '@gCorporate.token': token } = parseCookies();
-
-    // Generate a unique transaction_id if not provided
     const txId = newReferenceData.transaction_id || `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-    try {
-      setGeneratingReference(true);
-      const response = await axios.post(`${API_URL}/api/pay`, {
-        amount: newReferenceData.amount,
-        redirect_url: "my-app",
-        customer: {
-          name: newReferenceData.customer_name,
-          phone: newReferenceData.customer_phone || "000000000",
-          email: newReferenceData.customer_email || "cliente@exemplo.com"
-        },
-        description: newReferenceData.description || `Referência gerada via Dashboard - ${new Date().toLocaleDateString()}`,
-        payment_method: newReferenceData.payment_method,
-        transaction_type: "payment",
-        transaction_id: txId
-      }, {
-        headers: {
-          'gpay-x-api': `Bearer ${token}`
-        },
-        timeout: 10000,
-      });
-
-
-      if (response.data) {
-        console.log("API Response Body:", response.data);
-
-        // A estrutura real baseada no seu log:
-        // response.data (corpo do axios) -> data (objeto da API) -> responseStatus -> reference
-        const apiData = response.data.data;
-        const responseStatus = apiData?.responseStatus;
-        const reference = responseStatus?.reference;
-
-        console.log("Reference Object found:", reference);
-
-        if (reference) {
-          setReferenceResult({
-            entity: reference.entity || "Entidade indisponível",
-            referenceNumber: reference.referenceNumber || "Referência indisponível"
-          });
-        } else {
-          console.error("Referência não encontrada no caminho: response.data.data.responseStatus.reference");
-          toast.error("Erro: Dados de referência não encontrados na resposta");
-        }
-
-        console.log("Referência gerada com sucesso!");
-        // setShowNewReferenceModal(false);
-        setNewReferenceData({
-          amount: 0,
-          customer_name: "",
-          customer_phone: "",
-          customer_email: "",
-          description: "",
-          payment_method: "multicaixa",
-          transaction_id: ""
-        });
-        fetchTransactions();
-      }
-    } catch (error: any) {
-      console.log("Tenant id", user.tenant_id)
-      console.error("Erro ao gerar referência:", error);
-      const errorMessage = error.response?.data?.message || "Erro ao gerar referência";
-      console.log(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setGeneratingReference(false);
-    }
+    generateReferenceMutation.mutate({
+      amount: newReferenceData.amount,
+      redirect_url: "gpay-dashboard",
+      customer: {
+        name: newReferenceData.customer_name,
+        phone: newReferenceData.customer_phone || "000000000",
+        email: newReferenceData.customer_email || "cliente@exemplo.com"
+      },
+      description: newReferenceData.description || `Referência gerada via Dashboard - ${new Date().toLocaleDateString()}`,
+      payment_method: newReferenceData.payment_method,
+      transaction_type: "payment",
+      transaction_id: txId
+    });
   };
+
+  const generatingReference = generateReferenceMutation.isPending;
 
   const handleViewDetails = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -567,49 +538,6 @@ export default function TransactionsDashboard() {
                     </div>
                   </div>
 
-                  {/*
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
-                Como pagar:
-              </h4>
-              <ol className="text-xs text-blue-700 dark:text-blue-400 space-y-1 pl-4">
-                <li>1. Vá a uma ATM ou agência bancária</li>
-                <li>2. Selecione "Pagamento de Serviços"</li>
-                <li>3. Digite a entidade: <span className="font-bold">{referenceResult.entity}</span></li>
-                <li>4. Digite a referência: <span className="font-bold">{referenceResult.reference}</span></li>
-                <li>5. Confirme o valor: <span className="font-bold">{newReferenceData.amount.toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}</span></li>
-              </ol>
-            </div> 
-            
-            <div className="flex flex-col gap-2 pt-2">
-              <button
-                onClick={() => {
-                  // Copiar referência para área de transferência
-                  const textToCopy = `Entidade: ${referenceResult.entity}\nReferência: ${referenceResult.reference}\nValor: ${newReferenceData.amount.toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}`;
-                  navigator.clipboard.writeText(textToCopy);
-                  alert("Referência copiada para a área de transferência!");
-                }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                Copiar Referência
-              </button>
-              
-              <button
-                onClick={() => {
-                  // Gerar PDF ou imagem da referência
-                  alert("Funcionalidade de impressão/PDF em desenvolvimento");
-                }}
-                className="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Imprimir/PDF
-              </button>
-            </div>*/}
                 </div>
 
                 <div className="flex justify-end pt-4">

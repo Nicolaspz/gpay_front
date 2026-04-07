@@ -1,45 +1,32 @@
 "use client"
 
-import { useContext, useEffect, useMemo, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { ApiKeysHeader } from "@/components/webhooks/webhookHeader"
 import { AddApiKeyButton } from "@/components/api-keys/AddApiKeyButton"
-import { getWebhooks} from "@/lib/webhook"
+import { getWebhooks } from "@/lib/webhook"
 import { WebhookModal } from "@/components/webhooks/webhookModal"
 import { WebhooksTable } from "@/components/webhooks/webhookTable"
 import { AuthContext } from "@/contexts/AuthContext"
 
+import { useQuery } from "@tanstack/react-query"
 
 export default function WebhooksPage() {
-  const [loading, setLoading] = useState(true)
-  const [apiKeys, setApiKeys] = useState<any[]>([])
+  const { user } = useContext(AuthContext);
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
+
+  const { data: apiKeys = [], isLoading: loading, refetch: fetchData } = useQuery<any[]>({
+    queryKey: ['webhooks', tenantId],
+    queryFn: async () => {
+      if (!tenantId) return [];
+      return await getWebhooks(tenantId);
+    },
+    enabled: !!tenantId,
+  });
+
   const [isOpen, setIsOpen] = useState(false)
   const [sortKey, setSortKey] = useState<"name" | "created_at">("created_at")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-  const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const fetchData = async () => {
-    try {
-      const tenantId = user?.tenant_id || user?.tenant?.tenant_id
-      if (!tenantId) {
-        setLoading(false)
-        return
-      }
-      //setLoading(true)
-      const data = await getWebhooks(tenantId)
-      setApiKeys(data)
-    } catch (error) {
-      console.error("Erro ao buscar webhooks:", error)
-      setApiKeys([]) // evita null
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (user === null) return
-    fetchData()
-  }, [user])
 
   const sortedKeys = useMemo(() => {
     return [...apiKeys].sort((a, b) => {
@@ -47,8 +34,8 @@ export default function WebhooksPage() {
       let valueB: string | number = b[sortKey]
 
       if (sortKey === "created_at") {
-        valueA = new Date(a.created_at).getTime()
-        valueB = new Date(b.created_at).getTime()
+        valueA = new Date(a.createdAt).getTime()
+        valueB = new Date(b.createdAt).getTime()
       }
 
       if (valueA < valueB) return sortOrder === "asc" ? -1 : 1
@@ -95,15 +82,15 @@ export default function WebhooksPage() {
           mode="create"
           onSuccess={() => {
             // Recarregar dados ou fazer algo após sucesso
-      }}
-    />
+          }}
+        />
       </div>
 
       <div className="space-y-4">
-  
-    <WebhooksTable data={apiKeys} onRefresh={fetchData} />
- 
-</div>
+
+        <WebhooksTable data={apiKeys} onRefresh={fetchData} />
+
+      </div>
     </div>
   )
 }

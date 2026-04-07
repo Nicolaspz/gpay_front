@@ -98,7 +98,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
 
         try {
             await signIn({ email: loginForm.email, password: loginForm.password })
-            //toast.success("Login realizado com sucesso!")
             // Fechar o modal após login bem-sucedido
             const dialog = document.querySelector('[data-state="open"]')
             if (dialog) {
@@ -117,7 +116,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
         e.preventDefault()
         setLoading(true)
 
-        // Validate password before submitting
         const errors = validatePassword(registerForm.password)
         if (errors.length > 0) {
             toast.error("Por favor, corrija os erros na senha antes de continuar")
@@ -125,7 +123,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
             return
         }
 
-        // Check if passwords match
         if (registerForm.password !== registerForm.confirmpassword) {
             toast.error("As senhas não coincidem")
             setLoading(false)
@@ -136,7 +133,8 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
             const response = await api.post("/users", {
                 fullname: registerForm.fullname,
                 email: registerForm.email,
-                password: registerForm.password
+                password: registerForm.password,
+                confirmpassword: registerForm.confirmpassword
             })
             toast.success("Conta criada com sucesso! Faça login.")
             setActiveTab("login")
@@ -148,25 +146,25 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
     }
 
     async function handleForgotPassword(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
+        e.preventDefault()
+        setLoading(true)
 
-    try {
-        await api.post("/auth/forgot-password", { email: forgotEmail }) // Use forgotEmail aqui
-        toast.success("Enviamos um link de recuperação para o seu email.")
-        setForgotMode(false)
-        setForgotEmail("") // Limpa o campo após sucesso
-    } catch (err) {
-        toast.error("Erro ao enviar email de recuperação, verifique se o email está correto")
-        console.error(err)
-    } finally {
-        setLoading(false)
+        try {
+            await api.post("/auth/forgot-password", { email: forgotEmail })
+            toast.success("Enviamos um link de recuperação para o seu email.")
+            setForgotMode(false)
+            setForgotEmail("")
+        } catch (err) {
+            toast.error("Erro ao enviar email de recuperação, verifique se o email está correto")
+            console.error(err)
+        } finally {
+            setLoading(false)
+        }
     }
-}
 
     const isPasswordValid = passwordErrors.length === 0 && registerForm.password.length > 0
-    const passwordsMatch = registerForm.password === registerForm.confirmpassword && 
-                          registerForm.confirmpassword.length > 0
+    const passwordsMatch = registerForm.password === registerForm.confirmpassword &&
+        registerForm.confirmpassword.length > 0
 
     const resetForms = () => {
         setLoginForm({ email: "", password: "" })
@@ -188,8 +186,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
         setLoginForm({ ...loginForm, [e.target.id.replace('login-', '')]: e.target.value })
     }
 
-
-// Função separada para handle do email de recuperação
     const handleForgotEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForgotEmail(e.target.value)
     }
@@ -197,8 +193,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
     const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const id = e.target.id.replace('register-', '')
         setRegisterForm({ ...registerForm, [id]: e.target.value })
-        
-        // Mark password as touched when user starts typing
+
         if (id === "password" && !passwordTouched) {
             setPasswordTouched(true)
         }
@@ -221,7 +216,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                 </DialogHeader>
 
                 {forgotMode ? (
-                    // Modo recuperação de senha
                     <form onSubmit={handleForgotPassword} className="space-y-4 py-4">
                         <div className="flex flex-col items-center space-y-2 mb-6">
                             <div className="p-3 rounded-full bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] bg-opacity-20">
@@ -244,7 +238,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                                     type="email"
                                     placeholder="seu@email.com"
                                     className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
-                                    value={forgotEmail} // Use forgotEmail aqui
+                                    value={forgotEmail}
                                     onChange={handleForgotEmailChange}
                                     required
                                 />
@@ -277,21 +271,20 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                         </div>
                     </form>
                 ) : (
-                    // Modo login/registro com tabs
-                    <Tabs 
-                        defaultValue="login" 
-                        value={activeTab} 
-                        onValueChange={setActiveTab} 
+                    <Tabs
+                        defaultValue="login"
+                        value={activeTab}
+                        onValueChange={setActiveTab}
                         className="w-full"
                     >
                         <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
-                            <TabsTrigger 
-                                value="login" 
+                            <TabsTrigger
+                                value="login"
                                 className="data-[state=active]:text-blue-900 data-[state=active]:font-semibold transition-all duration-200 cursor-pointer"
                             >
                                 Entrar
                             </TabsTrigger>
-                            <TabsTrigger 
+                            <TabsTrigger
                                 value="register"
                                 className="data-[state=active]:text-blue-900 data-[state=active]:font-semibold transition-all duration-200 cursor-pointer"
                             >
@@ -299,7 +292,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                             </TabsTrigger>
                         </TabsList>
 
-                        {/* Formulário de Login */}
                         <TabsContent value="login" className="space-y-4 py-4">
                             <form onSubmit={handleLogin} className="space-y-4">
                                 <div className="space-y-2">
@@ -368,7 +360,6 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                             </form>
                         </TabsContent>
 
-                        {/* Formulário de Registro */}
                         <TabsContent value="register" className="space-y-4 py-4">
                             <form onSubmit={handleRegister} className="space-y-4">
                                 <div className="space-y-2">
@@ -425,7 +416,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                                             )}
                                         </button>
                                     </div>
-                                    
+
                                     {passwordTouched && (
                                         <div className="text-sm space-y-1 mt-2">
                                             {passwordErrors.map((error, index) => (
@@ -469,14 +460,14 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                                             )}
                                         </button>
                                     </div>
-                                    
+
                                     {registerForm.confirmpassword.length > 0 && !passwordsMatch && (
                                         <div className="flex items-center text-red-500 text-sm mt-2">
                                             <XCircle className="h-3 w-3 mr-1" />
                                             As senhas não coincidem
                                         </div>
                                     )}
-                                    
+
                                     {passwordsMatch && (
                                         <div className="flex items-center text-green-500 text-sm mt-2">
                                             <CheckCircle className="h-3 w-3 mr-1" />
