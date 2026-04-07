@@ -15,7 +15,7 @@ export function setupAPIClient(ctx = undefined) {
   let cookies = parseCookies(ctx);
 
   const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL || process.env.BASE_API_URL,
   })
 
   if (cookies['@gCorporate.token']) {

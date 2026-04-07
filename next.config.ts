@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   env: {
     BASE_API_URL: process.env.BASE_API_URL,
     BASE_APIPAY_URL: process.env.BASE_APIPAY_URL,
+    NEXT_PUBLIC_BASE_API_URL: process.env.NEXT_PUBLIC_BASE_API_URL || process.env.BASE_API_URL,
+    NEXT_PUBLIC_BASE_APIPAY_URL: process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL,
   },
   async headers() {
     return [

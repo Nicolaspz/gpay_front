@@ -11,7 +11,7 @@ import { parseCookies } from "nookies";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_BASE_APIPAY_URL;
+const API_URL = process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL;
 // Componente de Botão (se você não tiver um componente Button próprio)
 const Button = ({
   children,
