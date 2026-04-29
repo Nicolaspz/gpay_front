@@ -144,14 +144,23 @@ export default function TransactionsDashboard() {
 
     mutationFn: async (data: any) => {
       const apiKey = getFirstKey();
-      
+      console.log("=== API Key do Zustand ===", apiKey);
+
       const payload = {
-        t_id: tenantId,
         amount: data.amount,
-        customer_name: data.customer.name
+        redirect_url: "gpay-dashboard",
+        customer: {
+          name: data.customer.name,
+          phone: data.customer.phone || "000000000",
+          email: data.customer.email || "cliente@exemplo.com"
+        },
+        description: data.description || "Pagamento",
+        payment_method: data.payment_method || "reference",
+        transaction_type: "payment",
+        transaction_id: data.transaction_id || `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
       };
-      
-      const response = await axios.post(`${API_URL}/api/pay`, payload, {
+
+      const response = await axios.post(`/api/proxy/pay`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'gpay-x-api': apiKey ? `Bearer ${apiKey}` : undefined
@@ -162,10 +171,11 @@ export default function TransactionsDashboard() {
     },
     onSuccess: (data) => {
       // O seu Fastify retorna { entity: "...", reference: "..." }
-      if (data.entity && data.reference) {
+      //console.log("resposta => ", data.data);
+      if (data.data.responseStatus.reference.entity && data.data.responseStatus.reference.referenceNumber) {
         setReferenceResult({
-          entity: data.entity,
-          referenceNumber: data.reference
+          entity: data.data.responseStatus.reference.entity,
+          referenceNumber: data.data.responseStatus.reference.referenceNumber
         });
       } else {
         toast.error("Erro: Dados de referência não encontrados na resposta");
