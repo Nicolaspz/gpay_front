@@ -8,6 +8,8 @@ import { getApiKeys } from "@/lib/api-keys"
 import { ApiKeyModal } from "@/components/api-keys/AddApiKeyModal"
 import { AuthContext } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
+import { useApiKeyStore } from "@/store/useApiKeyStore"
+import { useEffect } from "react"
 
 export default function ApiKeysPage() {
   const { user } = useContext(AuthContext);
@@ -21,6 +23,14 @@ export default function ApiKeysPage() {
     },
     enabled: !!tenantId,
   });
+
+  const { setApiKeys } = useApiKeyStore();
+
+  useEffect(() => {
+    if (apiKeys) {
+      setApiKeys(apiKeys);
+    }
+  }, [apiKeys, setApiKeys]);
 
   const [isOpen, setIsOpen] = useState(false)
   const [sortKey, setSortKey] = useState<"name" | "created_at">("created_at")

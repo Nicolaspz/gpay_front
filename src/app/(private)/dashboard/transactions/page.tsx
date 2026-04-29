@@ -10,6 +10,9 @@ import { ArrowUpDown } from "lucide-react";
 import { parseCookies } from "nookies";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useApiKeyStore } from "@/store/useApiKeyStore";
+import { getApiKeys } from "@/lib/api-keys";
+import { useEffect } from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL;
 // Componente de Botão (se você não tiver um componente Button próprio)
@@ -119,25 +122,50 @@ export default function TransactionsDashboard() {
     enabled: !!tenantId,
   });
 
+  const { apiKeys, setApiKeys, getFirstKey } = useApiKeyStore();
+
+  const { data: keys = [] } = useQuery({
+    queryKey: ['api-keys', tenantId],
+    queryFn: async () => {
+      if (!tenantId) return [];
+      const result = await getApiKeys(tenantId);
+      return result;
+    },
+    enabled: !!tenantId && apiKeys.length === 0,
+  });
+
+  useEffect(() => {
+    if (keys.length > 0 && apiKeys.length === 0) {
+      setApiKeys(keys);
+    }
+  }, [keys, apiKeys.length, setApiKeys]);
+
   const generateReferenceMutation = useMutation({
+
     mutationFn: async (data: any) => {
-      const response = await axios.post(`${API_URL}/api/pay`, data, {
+      const apiKey = getFirstKey();
+      
+      const payload = {
+        t_id: tenantId,
+        amount: data.amount,
+        customer_name: data.customer.name
+      };
+      
+      const response = await axios.post(`${API_URL}/api/pay`, payload, {
         headers: {
-          'gpay-x-api': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'gpay-x-api': apiKey ? `Bearer ${apiKey}` : undefined
         },
         timeout: 10000,
       });
       return response.data;
     },
     onSuccess: (data) => {
-      const apiData = data.data;
-      const responseStatus = apiData?.responseStatus;
-      const reference = responseStatus?.reference;
-
-      if (reference) {
+      // O seu Fastify retorna { entity: "...", reference: "..." }
+      if (data.entity && data.reference) {
         setReferenceResult({
-          entity: reference.entity || "Entidade indisponível",
-          referenceNumber: reference.referenceNumber || "Referência indisponível"
+          entity: data.entity,
+          referenceNumber: data.reference
         });
       } else {
         toast.error("Erro: Dados de referência não encontrados na resposta");
@@ -155,6 +183,7 @@ export default function TransactionsDashboard() {
       queryClient.invalidateQueries({ queryKey: ['transactions', tenantId] });
     },
     onError: (error: any) => {
+      console.log("Erro ao gerar referência => ", { token });
       const errorMessage = error.response?.data?.message || "Erro ao gerar referência";
       toast.error(errorMessage);
     }
