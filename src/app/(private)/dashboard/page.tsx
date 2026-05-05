@@ -19,20 +19,23 @@ export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const { '@gCorporate.token': token } = parseCookies();
 
+  const isAdmin = user?.user_type === "admin";
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
 
   const { data: transactions = [], isLoading: loading, error } = useQuery({
-    queryKey: ['transactions', tenantId],
+    queryKey: ['transactions', tenantId, isAdmin],
     queryFn: async () => {
-      if (!tenantId) return [];
-      const response = await api.get(`/transactions/tenant/${tenantId}`, {
+      const endpoint = isAdmin ? "/transactions" : `/transactions/tenant/${tenantId}`;
+      if (!isAdmin && !tenantId) return [];
+
+      const response = await api.get(endpoint, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       return response.data as Transaction[];
     },
-    enabled: !!tenantId,
+    enabled: isAdmin || !!tenantId,
   });
 
   const total = transactions.length;
@@ -46,7 +49,7 @@ export default function Dashboard() {
 
   const percentConcluidas = total > 0 ? (concluidas / total) * 100 : 0;
   const percentPendentes = total > 0 ? (pendentes / total) * 100 : 0;
-  const percentFalha = total > 0 ? ((falha / total) * 100).toFixed(2) : 0;
+  const percentFalha = total > 0 ? (falha / total) * 100 : 0;
 
   const maiorValorConcluido = transactions
     .filter(t => t.status === "success")
@@ -86,7 +89,16 @@ export default function Dashboard() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Dashboard {isAdmin ? "Administrativo" : "Geral"}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {isAdmin ? "Visão consolidada de todas as operações do sistema" : "Resumo da sua conta e operações"}
+        </p>
+      </div>
+      
       {!loading && transactions.length === 0 && (
         <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-300">
           Nenhum evento encontrado
@@ -115,13 +127,13 @@ export default function Dashboard() {
         <CardStat
           title="Total Falhadas"
           amount={falha.toString()}
-          change={percentFalha.toString()}
+          change={`${percentFalha.toFixed(1)}%`}
           icon={<FiXCircle className="text-purple-400 text-xl" />}
         />
         <CardStat
           title="Total Pedentes"
           amount={pendentes.toString()}
-          change={percentPendentes.toString()}
+          change={`${percentPendentes.toFixed(1)}%`}
           icon={<FiAlertTriangle className="text-purple-400 text-xl" />}
         />
         <CardStat

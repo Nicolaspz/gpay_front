@@ -15,7 +15,11 @@ interface ApiKeyStore {
 
 export const useApiKeyStore = create<ApiKeyStore>((set, get) => ({
   apiKeys: [],
-  setApiKeys: (keys) => set({ apiKeys: keys }),
+  setApiKeys: (keys) => {
+    if (JSON.stringify(get().apiKeys) !== JSON.stringify(keys)) {
+      set({ apiKeys: keys });
+    }
+  },
   getFirstKey: () => {
     const keys = get().apiKeys;
     return keys.length > 0 ? keys[0].key : null;

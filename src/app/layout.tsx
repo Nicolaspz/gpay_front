@@ -24,6 +24,7 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://gpayment.ao"),
   title: {
     default: "Gpayment - Gateway de Pagamento em Angola",
     template: "%s | Gpayment - Soluções de Pagamento Seguro"

@@ -24,7 +24,7 @@ export default function ApiKeysPage() {
     enabled: !!tenantId,
   });
 
-  const { setApiKeys } = useApiKeyStore();
+  const setApiKeys = useApiKeyStore(state => state.setApiKeys);
 
   useEffect(() => {
     if (apiKeys) {

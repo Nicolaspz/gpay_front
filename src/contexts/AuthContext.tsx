@@ -90,12 +90,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const response = await api.get('/me');
 
         // Garante que o token também fica no estado
-        setUser({
-          ...response.data, // se /me já devolve user direto
+        const userData = {
+          ...response.data,
           token,
-        });
+        };
+        setUser(userData);
 
-        console.log("user refres", user);
+        console.log("Usuário recuperado:", userData.fullname);
       }
     } catch (error: any) {
       if (error?.response?.status === 401) {
@@ -133,14 +134,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // salva token no cookie
       setCookie(undefined, '@gCorporate.token', response.data.token, {
         maxAge: 60 * 60 * 24 * 30,
-        path: "/"
+        path: "/",
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
       });
 
       // já atualiza estado com user + token
-      setUser(
-        response.data.user,
-      );
-      console.log("logado", response.data.user)
+      setUser({
+        ...response.data.user,
+        token: response.data.token
+      });
+      console.log("logado", response.data.user.fullname)
       router.push("/dashboard");
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || "Erro inesperado, tente novamente.";
