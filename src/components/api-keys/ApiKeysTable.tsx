@@ -27,9 +27,14 @@ interface ApiKeysTableProps {
 }
 
 export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
+  const [mounted, setMounted] = useState(false)
   const [editing, setEditing] = useState<ApiKey | null>(null)
   const [sortConfig, setSortConfig] = useState<{ key: keyof ApiKey; direction: "asc" | "desc" } | null>(null)
   const {user}=useContext(AuthContext)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.success("Chave copiada para a área de transferência!")
@@ -155,14 +160,14 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
               </TableCell>
               <TableCell>{getStatusBadge(apiKey.status)}</TableCell>
               <TableCell>
-                {new Date(apiKey.createdAt).toLocaleString("pt-BR", {
+                {mounted ? new Date(apiKey.createdAt).toLocaleString("pt-BR", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
                   hour: "2-digit",
                   minute: "2-digit",
                   hour12: false,
-                })}
+                }) : "---"}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">

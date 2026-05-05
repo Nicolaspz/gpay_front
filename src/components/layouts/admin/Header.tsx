@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell, CalendarDays, ChevronDown, LogOut, Menu } from "lucide-react"
-import ThemeSwitcher from "@/components/theme-swicther"
+import ThemeSwitcher from "@/components/theme-switcher"
 import { useContext } from "react"
 import { AuthContext } from "@/contexts/AuthContext"
 

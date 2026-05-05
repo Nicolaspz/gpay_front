@@ -33,33 +33,6 @@ export default function ApiKeysPage() {
   }, [apiKeys, setApiKeys]);
 
   const [isOpen, setIsOpen] = useState(false)
-  const [sortKey, setSortKey] = useState<"name" | "created_at">("created_at")
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-
-  const sortedKeys = useMemo(() => {
-    return [...apiKeys].sort((a, b) => {
-      let valueA: string | number = a[sortKey]
-      let valueB: string | number = b[sortKey]
-
-      if (sortKey === "created_at") {
-        valueA = new Date(a.createdAt).getTime()
-        valueB = new Date(b.createdAt).getTime()
-      }
-
-      if (valueA < valueB) return sortOrder === "asc" ? -1 : 1
-      if (valueA > valueB) return sortOrder === "asc" ? 1 : -1
-      return 0
-    })
-  }, [apiKeys, sortKey, sortOrder])
-
-  const handleSort = (key: "name" | "created_at") => {
-    if (sortKey === key) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-    } else {
-      setSortKey(key)
-      setSortOrder("asc")
-    }
-  }
 
   if (loading) {
     return (

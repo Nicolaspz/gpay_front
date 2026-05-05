@@ -9,8 +9,8 @@ export interface ApiKey {
   createdAt: string
   expiresAt: string | null
 }
-const { '@gCorporate.token': token } = parseCookies();
 export async function getApiKeys(tenant_id: string): Promise<ApiKey[]> {
+  const { '@gCorporate.token': token } = parseCookies();
   
   const res = await api.get(`/api-keys/tenant/${tenant_id}`, {
     headers: {
@@ -37,6 +37,7 @@ export async function getApiKeys(tenant_id: string): Promise<ApiKey[]> {
 }
 
 export async function createApiKey(params: { name: string; tenant_id?: string }): Promise<ApiKey> {
+  const { '@gCorporate.token': token } = parseCookies();
   const res = await api.post("/api-keys", {
      name: params.name,
      tenant_id: params.tenant_id, // vem do user context
@@ -63,6 +64,7 @@ export async function createApiKey(params: { name: string; tenant_id?: string })
  }
  
  export async function updateApiKey(id: string, body: object) {
+   const { '@gCorporate.token': token } = parseCookies();
    try {
      const res = await api.put(`/api-keys/${id}`, body, {
        headers: { 'Authorization': `Bearer ${token}` },
@@ -85,6 +87,7 @@ export async function createApiKey(params: { name: string; tenant_id?: string })
  
  // Deletar chave
  export async function deleteApiKey(id: string,tenant_id: string) {
+   const { '@gCorporate.token': token } = parseCookies();
    try {
      const res = await api.delete(`/api-keys/${id}/tenant/${tenant_id}`,{
       headers: { 'Authorization': `Bearer ${token}` },
