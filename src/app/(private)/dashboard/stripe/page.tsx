@@ -91,7 +91,7 @@ export default function AdminStripeDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-          Administração Stripe (GPayment)
+          Administração Pagamentos Internacionais
         </h1>
         <p className="text-gray-600 dark:text-gray-300 text-sm">
           Gere todas as contas, transações e liquidações dos clientes processados via Stripe.

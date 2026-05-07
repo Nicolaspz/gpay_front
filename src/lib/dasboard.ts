@@ -11,9 +11,9 @@ export default function prepareChartData(transactions: Transaction[]) {
       grouped[date] = { pending: 0, success: 0, failed: 0 };
     }
 
-    if (t.status === "pending") grouped[date].pending += 1;
-    if (t.status === "success") grouped[date].success += 1;
-    if (t.status === "failed") grouped[date].failed += 1;
+    if (t.status?.toLowerCase() === "pending") grouped[date].pending += 1;
+    if (t.status?.toLowerCase() === "success") grouped[date].success += 1;
+    if (t.status?.toLowerCase() === "failed") grouped[date].failed += 1;
   });
 
   // Converte em array

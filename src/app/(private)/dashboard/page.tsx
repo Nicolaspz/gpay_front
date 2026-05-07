@@ -39,21 +39,21 @@ export default function Dashboard() {
   });
 
   const total = transactions.length;
-  const pendentes = transactions.filter(t => t.status === "pending").length;
-  const concluidas = transactions.filter(t => t.status === "success").length;
-  const falha = transactions.filter(t => t.status === "failed").length;
+  const pendentes = transactions.filter(t => t.status?.toLowerCase() === "pending").length;
+  const concluidas = transactions.filter(t => t.status?.toLowerCase() === "success").length;
+  const falha = transactions.filter(t => t.status?.toLowerCase() === "failed").length;
 
   const totalRecebido = transactions
-    .filter(t => t.status === "success")
-    .reduce((acc, t) => acc + t.amount, 0);
+    .filter(t => t.status?.toLowerCase() === "success")
+    .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
   const percentConcluidas = total > 0 ? (concluidas / total) * 100 : 0;
   const percentPendentes = total > 0 ? (pendentes / total) * 100 : 0;
   const percentFalha = total > 0 ? (falha / total) * 100 : 0;
 
   const maiorValorConcluido = transactions
-    .filter(t => t.status === "success")
-    .reduce((max, t) => Math.max(max, t.amount), 0);
+    .filter(t => t.status?.toLowerCase() === "success")
+    .reduce((max, t) => Math.max(max, Number(t.amount || 0)), 0);
 
   // Se o percentual de concluídas for maior que 50% → considera positivo (+), senão negativo (-)
   const changeConcluidas = percentConcluidas >= 50

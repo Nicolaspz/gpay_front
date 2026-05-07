@@ -251,10 +251,10 @@ export default function TransactionsDashboard() {
 
   // Estatísticas
   const total = filteredTransactions.length;
-  const pendentes = filteredTransactions.filter(t => t.status === "pending").length;
-  const concluidas = filteredTransactions.filter(t => t.status === "success").length;
-  const falha = filteredTransactions.filter(t => t.status === "failed").length;
-  const totalRecebido = filteredTransactions.filter(t => t.status === "success").reduce((acc, t) => acc + t.amount, 0);
+  const pendentes = filteredTransactions.filter(t => t.status?.toLowerCase() === "pending").length;
+  const concluidas = filteredTransactions.filter(t => t.status?.toLowerCase() === "success").length;
+  const falha = filteredTransactions.filter(t => t.status?.toLowerCase() === "failed").length;
+  const totalRecebido = filteredTransactions.filter(t => t.status?.toLowerCase() === "success").reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
   if (loading) {
     return (
