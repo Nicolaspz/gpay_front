@@ -28,8 +28,10 @@ export function CardStat({
       </div>
       
       <div className="mt-4">
-        <p className="text-3xl font-bold text-gray-900 dark:text-white">{amount}</p>
-        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
+        <p className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white break-words leading-tight">
+          {amount}
+        </p>
+        <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">{title}</p>
       </div>
     </Card>
   );

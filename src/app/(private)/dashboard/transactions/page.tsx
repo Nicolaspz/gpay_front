@@ -163,13 +163,13 @@ export default function TransactionsDashboard() {
         description: data.description || "Pagamento",
         payment_method: data.payment_method || "reference",
         transaction_type: "payment",
-        transaction_id: data.transaction_id || `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        transaction_id: data.transaction_id || Math.random().toString(36).substr(2, 12).toUpperCase()
       };
 
-      const response = await axios.post(`/api/proxy/pay`, payload, {
+      const response = await axios.post(`/api/pay`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'gpay-x-api': apiKey ? `Bearer ${apiKey}` : undefined
+          'gpay-x-api': apiKey ? (apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`) : undefined
         },
         timeout: 10000,
       });
@@ -275,7 +275,7 @@ export default function TransactionsDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <CardStat title="Total" amount={total.toString()} change="" icon={<FiCreditCard />} />
         <CardStat title="Pendentes" amount={pendentes.toString()} change="" icon="Kz" />
         <CardStat title="Falhas" amount={falha.toString()} change="" icon="Kz" />
@@ -419,11 +419,44 @@ export default function TransactionsDashboard() {
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div><p className="text-xs text-gray-500 uppercase">Cliente</p><p className="font-bold">{selectedTransaction.customer_name}</p></div>
-                <div><p className="text-xs text-gray-500 uppercase">Email</p><p>{selectedTransaction.customer_email}</p></div>
+                <div><p className="text-xs text-gray-500 uppercase">Email</p><p>{selectedTransaction.customer_email || "N/A"}</p></div>
+                {(() => {
+                  try {
+                    const meta = typeof selectedTransaction.metadata === 'string' ? JSON.parse(selectedTransaction.metadata || '{}') : (selectedTransaction.metadata || {});
+                    const entity = meta.entity || meta.Entity || meta?.reference?.entity;
+                    const reference = meta.referenceNumber || meta.reference_number || meta.referencia || meta.Reference || meta?.reference?.referenceNumber;
+                    
+                    if (selectedTransaction.payment_method === 'reference' && (entity || reference)) {
+                      return (
+                        <>
+                          {entity && <div><p className="text-xs text-gray-500 uppercase">Entidade</p><p className="font-bold font-mono">{entity}</p></div>}
+                          {reference && <div><p className="text-xs text-gray-500 uppercase">Referência</p><p className="font-bold font-mono tracking-wider">{reference}</p></div>}
+                        </>
+                      );
+                    }
+                  } catch (e) {}
+                  return null;
+                })()}
               </div>
               <div className="space-y-4">
                 <div><p className="text-xs text-gray-500 uppercase">Valor</p><p className="text-xl font-bold text-green-600">{selectedTransaction.amount.toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}</p></div>
                 <div><p className="text-xs text-gray-500 uppercase">Status</p><p className="font-bold">{selectedTransaction.status.toUpperCase()}</p></div>
+                <div><p className="text-xs text-gray-500 uppercase">Método</p><p className="font-bold capitalize">{selectedTransaction.payment_method}</p></div>
+                
+                {selectedTransaction.status === 'failed' && (() => {
+                  try {
+                    const meta = typeof selectedTransaction.metadata === 'string' ? JSON.parse(selectedTransaction.metadata || '{}') : (selectedTransaction.metadata || {});
+                    const errorMessage = meta.message || meta.error || meta.motivo || meta.reason || meta.descricao || "Falha na transação (motivo não especificado na metadata)";
+                    return (
+                      <div className="col-span-2 pt-2 border-t border-red-100 dark:border-red-900/30">
+                        <p className="text-xs text-red-500 uppercase font-bold flex items-center gap-1">Motivo da Falha</p>
+                        <p className="text-sm text-red-600 dark:text-red-400 font-medium">{errorMessage}</p>
+                      </div>
+                    );
+                  } catch (e) {
+                    return null;
+                  }
+                })()}
               </div>
             </div>
             <div className="mt-8 flex justify-end">
@@ -439,11 +472,28 @@ export default function TransactionsDashboard() {
             <h3 className="text-xl font-bold mb-4">{referenceResult ? "Referência Criada" : "Nova Referência"}</h3>
             {!referenceResult ? (
               <div className="space-y-4">
-                <input type="text" placeholder="Nome do Cliente" value={newReferenceData.customer_name} onChange={e => setNewReferenceData({...newReferenceData, customer_name: e.target.value})} className="w-full p-2 border rounded bg-transparent" />
-                <input type="number" placeholder="Montante (AOA)" value={newReferenceData.amount || ""} onChange={e => setNewReferenceData({...newReferenceData, amount: parseFloat(e.target.value) || 0})} className="w-full p-2 border rounded bg-transparent" />
-                <div className="flex justify-end gap-2">
-                  <Button onClick={() => setShowNewReferenceModal(false)} className="bg-gray-200">Cancelar</Button>
-                  <Button onClick={handleGenerateReference} className="bg-blue-600 text-white">Gerar</Button>
+                <input type="text" placeholder="Nome do Cliente" value={newReferenceData.customer_name} onChange={e => setNewReferenceData({...newReferenceData, customer_name: e.target.value})} className="w-full p-2 border rounded bg-transparent dark:border-gray-700" />
+                <input type="email" placeholder="Email do Cliente (opcional)" value={newReferenceData.customer_email} onChange={e => setNewReferenceData({...newReferenceData, customer_email: e.target.value})} className="w-full p-2 border rounded bg-transparent dark:border-gray-700" />
+                <input type="text" placeholder="Telefone do Cliente (opcional)" value={newReferenceData.customer_phone} onChange={e => setNewReferenceData({...newReferenceData, customer_phone: e.target.value})} className="w-full p-2 border rounded bg-transparent dark:border-gray-700" />
+                <input type="text" placeholder="Descrição (opcional)" value={newReferenceData.description} onChange={e => setNewReferenceData({...newReferenceData, description: e.target.value})} className="w-full p-2 border rounded bg-transparent dark:border-gray-700" />
+                <input type="number" placeholder="Montante (AOA)" value={newReferenceData.amount || ""} onChange={e => setNewReferenceData({...newReferenceData, amount: parseFloat(e.target.value) || 0})} className="w-full p-2 border rounded bg-transparent dark:border-gray-700" />
+                
+                <select 
+                  value={newReferenceData.payment_method} 
+                  onChange={e => setNewReferenceData({...newReferenceData, payment_method: e.target.value})}
+                  className="w-full p-2 border rounded bg-transparent dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <option value="multicaixa">Multicaixa</option>
+                  <option value="reference">Referência</option>
+                </select>
+
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button onClick={() => setShowNewReferenceModal(false)} className="bg-gray-200 dark:bg-gray-700 dark:text-gray-300">Cancelar</Button>
+                  <Button onClick={handleGenerateReference} disabled={generateReferenceMutation.isPending} className="bg-blue-600 text-white flex items-center justify-center min-w-[100px]">
+                    {generateReferenceMutation.isPending ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : "Gerar"}
+                  </Button>
                 </div>
               </div>
             ) : (
