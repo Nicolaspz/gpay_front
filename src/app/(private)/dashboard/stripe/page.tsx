@@ -24,12 +24,14 @@ export default function AdminStripeDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const stripeUserId = isAdmin ? null : user?.id;
+
   // 1. Query para os resumos (Dashboard superior) - Apenas para Users (Admin agrega do allTransactions)
   const { data: summaries = [], isLoading: loadingSummaries } = useQuery({
-    queryKey: ['stripe-summaries', isAdmin, tenantId],
+    queryKey: ['stripe-summaries', isAdmin, stripeUserId],
     queryFn: async () => {
       if (!user || isAdmin) return [];
-      const endpoint = `/transactions/user/${tenantId}/summaries`;
+      const endpoint = `/transactions/user/${stripeUserId}/summaries`;
       const res = await axios.get(`${stripeBaseUrl}${endpoint}`, {
         headers: { Authorization: stripeToken }
       });
@@ -40,10 +42,10 @@ export default function AdminStripeDashboard() {
 
   // 2. Query para todas as transações (Tabela principal)
   const { data: allTransactions = [], isLoading: loadingTx } = useQuery({
-    queryKey: ['stripe-transactions', isAdmin, tenantId],
+    queryKey: ['stripe-transactions', isAdmin, stripeUserId],
     queryFn: async () => {
       if (!user) return [];
-      const endpoint = isAdmin ? "/transactions/admin/clients" : `/transactions/user/${tenantId}`;
+      const endpoint = isAdmin ? "/transactions/admin/clients" : `/transactions/user/${stripeUserId}`;
       const res = await axios.get(`${stripeBaseUrl}${endpoint}`, {
         headers: { Authorization: stripeToken }
       });
