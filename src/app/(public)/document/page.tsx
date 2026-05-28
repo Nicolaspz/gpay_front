@@ -73,7 +73,6 @@ export default function GPaymentDocumentation() {
   return (
     <div className="min-h-screen bg-white">
 
-      {/* ── Mobile top bar ── */}
       <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3 shadow-sm">
         <span className="text-sm font-semibold text-gray-700 truncate">{activeLabel}</span>
         <button
@@ -85,7 +84,6 @@ export default function GPaymentDocumentation() {
         </button>
       </div>
 
-      {/* ── Mobile sidebar overlay ── */}
       {mobileSidebarOpen && (
         <div
           className="lg:hidden fixed inset-0 z-50 flex"
@@ -109,7 +107,6 @@ export default function GPaymentDocumentation() {
               </button>
             </div>
 
-            {/* Nav items */}
             <nav className="flex-1 overflow-y-auto p-3 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon
@@ -130,7 +127,6 @@ export default function GPaymentDocumentation() {
               })}
             </nav>
 
-            {/* Drawer footer */}
             <div className="p-4 border-t border-gray-100">
               <p className="text-xs text-gray-400 text-center">API v1.0 — GPayment Angola</p>
             </div>
@@ -138,11 +134,9 @@ export default function GPaymentDocumentation() {
         </div>
       )}
 
-      {/* ── Page body ── */}
       <div className="container mx-auto py-6 px-4 lg:px-6">
         <div className="flex gap-8">
 
-          {/* ── Desktop sidebar (hidden on mobile) ── */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-6 space-y-6">
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
@@ -174,7 +168,6 @@ export default function GPaymentDocumentation() {
             </div>
           </aside>
 
-          {/* ── Main content ── */}
           <main className="flex-1 min-w-0">
             <div className={`max-w-4xl transition-all duration-300 ${
               isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
@@ -188,10 +181,6 @@ export default function GPaymentDocumentation() {
     </div>
   )
 }
-
-/* ─────────────────────────────────────────────
-   Sections (unchanged logic, added overflow fixes)
-───────────────────────────────────────────── */
 
 interface IntroducaoProps { onGetStarted: () => void }
 
