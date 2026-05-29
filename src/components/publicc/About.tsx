@@ -51,7 +51,7 @@ export function About() {
 
                 {/* Mission & Vision */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-                    <div className="bg-white shadow-[0px_0px_15px_rgba(0,0,0,0.1)] p-8 rounded-[20px] hover:shadow-[0px_0px_25px_rgba(0,0,0,0.15)] transition-shadow border-l-4 border-[#4b8ef1]">
+                    <div className="bg-white shadow-[0px_0px_15px_rgba(0,0,0,0.1)] p-8 rounded-[20px]">
                         <h4 className="text-xl font-bold text-[#2a2a2a] mb-4">A Nossa Missão</h4>
                         <p className="text-[#afafaf] text-[15px] leading-[26px]">
                             Na Gpayment, a nossa missão é simplificar e integrar os pagamentos digitais em Angola, oferecendo soluções seguras, escaláveis e acessíveis que permitem às empresas focarem-se no que realmente importa: vender mais, atender melhor e crescer com eficiência.
@@ -59,7 +59,7 @@ export function About() {
                             Acreditamos que pagamentos devem ser rápidos, confiáveis e integrados aos processos do negócio.
                         </p>
                     </div>
-                    <div className="bg-white shadow-[0px_0px_15px_rgba(0,0,0,0.1)] p-8 rounded-[20px] hover:shadow-[0px_0px_25px_rgba(0,0,0,0.15)] transition-shadow border-l-4 border-[#4b8ef1]">
+                    <div className="bg-white shadow-[0px_0px_15px_rgba(0,0,0,0.1)] p-8 rounded-[20px]">
                         <h4 className="text-xl font-bold text-[#2a2a2a] mb-4">A Nossa Visão</h4>
                         <p className="text-[#afafaf] text-[15px] leading-[26px]">
                             Ser o principal integrador de pagamentos em Angola, reconhecido pela robustez tecnológica, elevados padrões de segurança e pela capacidade de gerar valor real para os nossos parceiros e clientes.

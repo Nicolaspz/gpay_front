@@ -24,7 +24,7 @@ type UserAdmin = {
 };
 
 export default function ClientsDashboard() {
-  const { user } = useContext(AuthContext);
+  const { user, isLoadingUser } = useContext(AuthContext);
   const { '@gCorporate.token': token } = parseCookies();
   const isAdmin = user?.user_type === "admin";
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,6 +57,14 @@ export default function ClientsDashboard() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  if (isLoadingUser) {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
   if (!isAdmin) {
     return (

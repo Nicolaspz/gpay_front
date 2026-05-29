@@ -8,6 +8,7 @@ import { api } from '../services/apiClients';
 type AuthContextData = {
   user: UserProps | null;
   isAuthenticated: boolean;
+  isLoadingUser: boolean;
   signIn: (credentials: SignInProps) => Promise<void>;
   signOut: () => void;
   signUp: (credentials: SignUpProps) => Promise<void>;
@@ -56,6 +57,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter()
   const [user, setUser] = useState<UserProps | null>(null);
   const isAuthenticated = !!user?.token;
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   const inactivityTimeout = 15 * 60 * 1000;
   let inactivityTimer: NodeJS.Timeout;
@@ -82,31 +84,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const checkToken = useCallback(async () => {
-    try {
-      const { '@gCorporate.token': token } = parseCookies();
-
-      if (token) {
-        api.defaults.headers['Authorization'] = `Bearer ${token}`;
-        const response = await api.get('/me');
-
-        // Garante que o token também fica no estado
-        const userData = {
-          ...response.data,
-          token,
-        };
-        setUser(userData);
-
-        console.log("Usuário recuperado:", userData.fullname);
-      }
-    } catch (error: any) {
-      if (error?.response?.status === 401) {
-        console.warn("Token inválido ou expirado, deslogando...");
-      } else {
-        console.error("Erro ao verificar token:", error?.message || error);
-      }
-      signOut();
+  try {
+    const { '@gCorporate.token': token } = parseCookies();
+    if (token) {
+      api.defaults.headers['Authorization'] = `Bearer ${token}`;
+      const response = await api.get('/me');
+      setUser({ ...response.data, token });
     }
-  }, []);
+  } catch (error: any) {
+    signOut();
+  } finally {
+    setIsLoadingUser(false);
+  }
+}, []);
 
   useEffect(() => {
     checkToken();
@@ -171,7 +161,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <Suspense>
-      <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut, signUp }}>
+      <AuthContext.Provider value={{ user, isAuthenticated, isLoadingUser, signIn, signOut, signUp }}>
         {children}
       </AuthContext.Provider>
     </Suspense>
