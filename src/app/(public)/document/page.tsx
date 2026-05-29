@@ -90,7 +90,7 @@ export default function GPaymentDocumentation() {
           style={{ backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', background: 'rgba(15,15,30,0.4)' }}
           onClick={() => setMobileSidebarOpen(false)}
         >
-          {/* Drawer */}
+          {/* That is the Drawer */}
           <div
             className="relative w-72 max-w-[85vw] h-full bg-white shadow-2xl flex flex-col"
             onClick={e => e.stopPropagation()}
