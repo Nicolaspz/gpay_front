@@ -8,10 +8,14 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_BASE_APIPAY_URL: process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL,
   },
   async rewrites() {
+    const payUrl = process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL;
+    if (!payUrl) {
+      return [];
+    }
     return [
       {
         source: "/api/proxy/pay",
-        destination: `${process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL}/api/pay`,
+        destination: `${payUrl}/api/pay`,
       },
     ];
   },
