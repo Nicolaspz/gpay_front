@@ -25,7 +25,7 @@ export default function LoginPage() {
     try {
       await signIn({ email, password });
     } catch (err) {
-      console.error("Erro ao logar:", err);
+      console.error("Erro ao logarr:", err);
     } finally {
       setLoading(false);
     }
