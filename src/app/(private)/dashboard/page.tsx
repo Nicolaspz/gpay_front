@@ -3,77 +3,15 @@ import { CardStat } from "@/components/dashboard/CardStat";
 import { FiEye, FiAward, FiCheckCircle, FiAlertTriangle, FiXCircle } from "react-icons/fi";
 import TrendsChart from "@/components/dashboard/TrendsChart";
 import OptimizationDonut from "@/components/dashboard/OptimizationDonut";
-import { useContext } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
-import { api } from "@/services/apiClients";
-import prepareChartData from "@/lib/dasboard";
-import { Transaction } from "@/types/global";
-import { parseCookies } from "nookies";
-
-
-
-
-import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useTransactions } from "@/hooks/useTransactions";
+import { formatCurrency, getDashboardMetrics } from "@/utils/dashboard";
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext);
-  const { '@gCorporate.token': token } = parseCookies();
-
+  const { user } = useAuth();
   const isAdmin = user?.user_type === "admin";
-  const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
-
-  const { data: transactions = [], isLoading: loading, error } = useQuery({
-    queryKey: ['transactions', tenantId, isAdmin],
-    queryFn: async () => {
-      const endpoint = isAdmin ? "/transactions" : `/transactions/tenant/${tenantId}`;
-      if (!isAdmin && !tenantId) return [];
-
-      const response = await api.get(endpoint, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      return response.data as Transaction[];
-    },
-    enabled: isAdmin || !!tenantId,
-  });
-
-  const total = transactions.length;
-  const pendentes = transactions.filter(t => t.status?.toLowerCase() === "pending").length;
-  const concluidas = transactions.filter(t => t.status?.toLowerCase() === "success").length;
-  const falha = transactions.filter(t => t.status?.toLowerCase() === "failed").length;
-
-  const totalRecebido = transactions
-    .filter(t => t.status?.toLowerCase() === "success")
-    .reduce((acc, t) => acc + Number(t.amount || 0), 0);
-
-  const percentConcluidas = total > 0 ? (concluidas / total) * 100 : 0;
-  const percentPendentes = total > 0 ? (pendentes / total) * 100 : 0;
-  const percentFalha = total > 0 ? (falha / total) * 100 : 0;
-
-  const maiorValorConcluido = transactions
-    .filter(t => t.status?.toLowerCase() === "success")
-    .reduce((max, t) => Math.max(max, Number(t.amount || 0)), 0);
-
-  // Se o percentual de concluídas for maior que 50% → considera positivo (+), senão negativo (-)
-  const changeConcluidas = percentConcluidas >= 50
-    ? `+${percentConcluidas.toFixed(1)}%`
-    : `-${(100 - percentConcluidas).toFixed(1)}%`;
-
-
-  const chartData = prepareChartData(transactions);
-  //console.log("transaction chartData", chartData);
-
-  const paymentMethodData = Object.values(
-    transactions.reduce((acc, t) => {
-      if (!acc[t.payment_method]) {
-        acc[t.payment_method] = { name: t.payment_method, value: 0 };
-      }
-      acc[t.payment_method].value += 1;
-      return acc;
-    }, {} as Record<string, { name: string; value: number }>)
-  );
-
+  const { data: transactions = [], isLoading: loading } = useTransactions();
+  const metrics = getDashboardMetrics(transactions);
 
   if (loading) {
     return (
@@ -108,37 +46,37 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CardStat
           title="Todas transações"
-          amount={total.toString()}
+          amount={metrics.total.toString()}
           change="+85.5%"
           icon={<FiEye className="text-blue-400 text-xl" />}
         />
         <CardStat
           title="Transações Concluidas"
-          amount={concluidas.toString()}
-          change={changeConcluidas}
+          amount={metrics.success.toString()}
+          change={metrics.successChange}
           icon={<FiCheckCircle className="text-green-400 text-xl" />}
         />
         <CardStat
           title="Total Recebido"
-          amount={(totalRecebido).toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}
-          change={changeConcluidas}
+          amount={formatCurrency(metrics.totalReceived)}
+          change={metrics.successChange}
           icon={<FiCheckCircle className="text-orange-400 text-xl" />}
         />
         <CardStat
           title="Total Falhadas"
-          amount={falha.toString()}
-          change={`${percentFalha.toFixed(1)}%`}
+          amount={metrics.failed.toString()}
+          change={`${metrics.failedPercent.toFixed(1)}%`}
           icon={<FiXCircle className="text-purple-400 text-xl" />}
         />
         <CardStat
           title="Total Pedentes"
-          amount={pendentes.toString()}
-          change={`${percentPendentes.toFixed(1)}%`}
+          amount={metrics.pending.toString()}
+          change={`${metrics.pendingPercent.toFixed(1)}%`}
           icon={<FiAlertTriangle className="text-purple-400 text-xl" />}
         />
         <CardStat
           title="Maior Transação"
-          amount={(maiorValorConcluido).toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}
+          amount={formatCurrency(metrics.highestSuccessAmount)}
           change="+1"
           icon={<FiAward className="text-purple-400 text-xl" />}
         />
@@ -156,7 +94,7 @@ export default function Dashboard() {
               Categorização por data
             </p>
 
-            <TrendsChart data={chartData} />
+            <TrendsChart data={metrics.chartData} />
           </div>
         </div>
 
@@ -169,7 +107,7 @@ export default function Dashboard() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
               Categorização por tipo de transações
             </p>
-            <OptimizationDonut data={paymentMethodData} />
+            <OptimizationDonut data={metrics.paymentMethodData} />
           </div>
         </div>
       </div>

@@ -1,50 +1,20 @@
 'use client'
-import { createContext, ReactNode, useState, useEffect, useCallback, Suspense } from "react";
+import { createContext, ReactNode, useState, useEffect, useCallback, Suspense, useRef } from "react";
 import { destroyCookie, setCookie, parseCookies } from 'nookies'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { api } from '../services/apiClients';
+import { AuthService } from "@/services/auth.service";
+import type { SignInCredentials, SignUpCredentials, User } from "@/types/global";
+import { getErrorMessage } from "@/utils/api-error";
 
 type AuthContextData = {
-  user: UserProps | null;
+  user: User | null;
   isAuthenticated: boolean;
   isLoadingUser: boolean;
-  signIn: (credentials: SignInProps) => Promise<void>;
+  signIn: (credentials: SignInCredentials) => Promise<void>;
   signOut: () => void;
-  signUp: (credentials: SignUpProps) => Promise<void>;
-}
-
-type UserProps = {
-  id?: string;
-  fullname?: string;
-  email?: string;
-  token?: string;
-  status?: string;
-  user_type?: string;
-  team_id?: string;
-  tenant_id?: string;
-  tenant: {
-    tenant_id?: string;
-    legal_name?: string;
-    bank_iban?: string;
-    bank_owner_name?: string;
-    client_reference_count?: string;
-  }
-
-}
-
-type SignInProps = {
-  email: string;
-  password: string;
-}
-
-type SignUpProps = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  telefone: string;
-  user_name: string;
+  signUp: (credentials: SignUpCredentials) => Promise<void>;
 }
 
 type AuthProviderProps = {
@@ -55,48 +25,50 @@ export const AuthContext = createContext({} as AuthContextData)
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter()
-  const [user, setUser] = useState<UserProps | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const isAuthenticated = !!user?.token;
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inactivityTimeout = 15 * 60 * 1000;
-  let inactivityTimer: NodeJS.Timeout;
 
-  function signOut() {
+  const signOut = useCallback(() => {
     try {
       destroyCookie(undefined, '@gCorporate.token')
-      setUser(null) // limpa o estado também
+      delete api.defaults.headers.Authorization;
+      setUser(null)
       router.push('/')
     } catch {
-      console.error("Erro ao deslogar")
     }
-  }
+  }, [router])
 
-  const resetInactivityTimer = () => {
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(() => {
+  const resetInactivityTimer = useCallback(() => {
+    if (inactivityTimer.current) {
+      clearTimeout(inactivityTimer.current);
+    }
+
+    inactivityTimer.current = setTimeout(() => {
       signOut();
     }, inactivityTimeout);
-  };
+  }, [signOut, inactivityTimeout]);
 
-  const handleUserInteraction = () => {
+  const handleUserInteraction = useCallback(() => {
     resetInactivityTimer();
-  };
+  }, [resetInactivityTimer]);
 
   const checkToken = useCallback(async () => {
-  try {
-    const { '@gCorporate.token': token } = parseCookies();
-    if (token) {
-      api.defaults.headers['Authorization'] = `Bearer ${token}`;
-      const response = await api.get('/me');
-      setUser({ ...response.data, token });
+    try {
+      const { '@gCorporate.token': token } = parseCookies();
+      if (token) {
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+        const currentUser = await AuthService.me();
+        setUser({ ...currentUser, token });
+      }
+    } catch {
+      signOut();
+    } finally {
+      setIsLoadingUser(false);
     }
-  } catch (error: any) {
-    signOut();
-  } finally {
-    setIsLoadingUser(false);
-  }
-}, []);
+  }, [signOut]);
 
   useEffect(() => {
     checkToken();
@@ -111,51 +83,44 @@ export function AuthProvider({ children }: AuthProviderProps) {
       window.removeEventListener('mousemove', handleUserInteraction);
       window.removeEventListener('mousedown', handleUserInteraction);
       window.removeEventListener('keydown', handleUserInteraction);
-      clearTimeout(inactivityTimer);
+      if (inactivityTimer.current) {
+        clearTimeout(inactivityTimer.current);
+      }
     };
-  }, [checkToken]);
+  }, [checkToken, handleUserInteraction, resetInactivityTimer]);
 
-  async function signIn({ email, password }: SignInProps) {
+  async function signIn({ email, password }: SignInCredentials) {
     try {
-      const response = await api.post('/login', { email, password });
+      const response = await AuthService.signIn({ email, password });
 
       toast.success("Login feito com sucesso!");
 
-      // salva token no cookie
-      setCookie(undefined, '@gCorporate.token', response.data.token, {
+      setCookie(undefined, '@gCorporate.token', response.token, {
         maxAge: 60 * 60 * 24 * 30,
         path: "/",
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict'
       });
 
-      // já atualiza estado com user + token
+      api.defaults.headers.Authorization = `Bearer ${response.token}`;
       setUser({
-        ...response.data.user,
-        token: response.data.token
+        ...response.user,
+        token: response.token
       });
-      console.log("logado", response.data.user.fullname)
+
       router.push("/dashboard");
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "Erro inesperado, tente novamente.";
-      toast.error(errorMessage);
-      // console.error("erro aki", err);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro inesperado, tente novamente."));
     }
   }
 
-  async function signUp({ name, email, role, user_name }: SignUpProps) {
+  async function signUp(credentials: SignUpCredentials) {
     try {
-      await api.post('/users', {
-        name,
-        email,
-        role,
-        user_name
-      });
-
+      await AuthService.signUp(credentials);
       toast.success("Cadastrado com sucesso!");
       router.push('/');
-    } catch (err) {
-      toast.error("Erro ao se Cadastrar");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao se Cadastrar"));
     }
   }
 

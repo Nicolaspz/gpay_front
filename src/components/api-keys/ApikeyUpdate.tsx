@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { updateApiKey } from "@/lib/api-keys"
 import { toast } from "react-toastify"
-import { useState, useEffect } from "react"
+import { useContext, useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
+import { getErrorMessage } from "@/utils/api-error"
+import { AuthContext } from "@/contexts/AuthContext"
 
 interface EditApiKeyModalProps {
   isOpen: boolean
@@ -25,6 +27,8 @@ interface FormData {
 export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiKeyModalProps) {
   const { register, handleSubmit, reset } = useForm<FormData>()
   const [loading, setLoading] = useState(false)
+  const { user } = useContext(AuthContext)
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id || apiKey?.tenant_id
 
   useEffect(() => {
     if (apiKey) {
@@ -41,15 +45,14 @@ export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiK
       setLoading(true)
       await updateApiKey(apiKey.id, {
         name: data.name,
-        expire_at:"2024-12-21",
-        tenant_id:"8a248eda-fef2-4d1f-8980-7e277551761e",
+        expire_at: data.expire_at,
+        tenant_id: tenantId,
       })
       toast.success("Chave atualizada com sucesso!")
       onUpdated()
       onClose()
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao atualizar chave")
-      console.log(error.message)
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao atualizar chave"))
     } finally {
       setLoading(false)
     }

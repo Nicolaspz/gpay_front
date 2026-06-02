@@ -1,18 +1,20 @@
 'use client'
 
-import { useState, useContext, useEffect } from "react";
+import { useState } from "react";
 import { CardStat } from "@/components/dashboard/CardStat";
 import { Card } from "@/components/ui/card";
 import { FiCreditCard, FiEye, FiPlus, FiFilter } from 'react-icons/fi';
-import { AuthContext } from "@/contexts/AuthContext";
-import { api } from "@/services/apiClients";
 import { ArrowUpDown } from "lucide-react";
-import { parseCookies } from "nookies";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { useApiKeyStore } from "@/store/useApiKeyStore";
-import { getApiKeys } from "@/lib/api-keys";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useApiKeys } from "@/hooks/useApiKeys";
+import { useTransactions } from "@/hooks/useTransactions";
+import { TransactionsService } from "@/services/transactions.service";
+import type { Transaction } from "@/types/global";
+import { getErrorMessage } from "@/utils/api-error";
+import { formatCurrency } from "@/utils/dashboard";
 
 // Componente de Botão
 const Button = ({
@@ -50,23 +52,6 @@ const Button = ({
   );
 };
 
-type Transaction = {
-  id: string;
-  amount: number;
-  status: string;
-  payment_method: string;
-  tenant_id: string;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  shop_name: string;
-  created_at: string;
-  metadata: string;
-  tenant?: {
-    legal_name: string;
-  };
-};
-
 type ReferenceResult = {
   entity: string;
   referenceNumber: string;
@@ -89,8 +74,7 @@ type NewReferenceData = {
 
 export default function TransactionsDashboard() {
   const queryClient = useQueryClient();
-  const { user } = useContext(AuthContext);
-  const { '@gCorporate.token': token } = parseCookies();
+  const { user } = useAuth();
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
   const isAdmin = user?.user_type === "admin";
 
@@ -119,64 +103,32 @@ export default function TransactionsDashboard() {
     transaction_id: ""
   });
 
-  const { data: transactions = [], isLoading: loading } = useQuery({
-    queryKey: ['transactions', tenantId, isAdmin],
-    queryFn: async () => {
-      const endpoint = isAdmin ? "/transactions" : `/transactions/tenant/${tenantId}`;
-      if (!isAdmin && !tenantId) return [];
-      const response = await api.get(endpoint, {
-        headers: { 'gpay-x-api': `Bearer ${token}` }
-      });
-      return response.data as Transaction[];
-    },
-    enabled: isAdmin || !!tenantId,
-  });
+  const { data: transactions = [], isLoading: loading } = useTransactions();
+  const { getFirstKey } = useApiKeyStore();
 
-  const { apiKeys, setApiKeys, getFirstKey } = useApiKeyStore();
-
-  const { data: keys = [] } = useQuery({
-    queryKey: ['api-keys', tenantId],
-    queryFn: async () => {
-      if (!tenantId) return [];
-      return await getApiKeys(tenantId);
-    },
-    enabled: !!tenantId && apiKeys.length === 0,
-  });
-
-  useEffect(() => {
-    if (keys.length > 0 && apiKeys.length === 0) {
-      setApiKeys(keys);
-    }
-  }, [keys, apiKeys.length, setApiKeys]);
+  useApiKeys({ enabledWhenStoreEmpty: true, syncStore: true });
 
   const generateReferenceMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: NewReferenceData) => {
       const apiKey = getFirstKey();
       const payload = {
         amount: data.amount,
         redirect_url: "gpay-dashboard",
         customer: {
-          name: data.customer.name,
-          phone: data.customer.phone || "000000000",
-          email: data.customer.email || "cliente@exemplo.com"
+          name: data.customer_name,
+          phone: data.customer_phone || "000000000",
+          email: data.customer_email || "cliente@exemplo.com"
         },
         description: data.description || "Pagamento",
         payment_method: data.payment_method || "reference",
         transaction_type: "payment",
         transaction_id: data.transaction_id || Math.random().toString(36).substr(2, 12).toUpperCase()
-      };
+      } as const;
 
-      const response = await axios.post(`/api/pay`, payload, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'gpay-x-api': apiKey ? (apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`) : undefined
-        },
-        timeout: 10000,
-      });
-      return response.data;
+      return TransactionsService.generateReference(payload, apiKey, user?.token);
     },
     onSuccess: (data) => {
-      if (data.data.responseStatus.reference.entity && data.data.responseStatus.reference.referenceNumber) {
+      if (data.data?.responseStatus?.reference?.entity && data.data.responseStatus.reference.referenceNumber) {
         setReferenceResult({
           entity: data.data.responseStatus.reference.entity,
           referenceNumber: data.data.responseStatus.reference.referenceNumber
@@ -186,28 +138,17 @@ export default function TransactionsDashboard() {
       }
       queryClient.invalidateQueries({ queryKey: ['transactions', tenantId] });
     },
-    onError: (error: any) => {
-      const errorMessage = error.response?.data?.message || "Erro ao gerar referência";
-      toast.error(errorMessage);
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Erro ao gerar referência"));
     }
   });
 
   const handleGenerateReference = async () => {
-    if (!user?.tenant_id) return alert("Usuário não autenticado");
+    if (!tenantId) return alert("Usuário não autenticado");
     if (newReferenceData.amount <= 0) return alert("Insira um montante válido");
     if (!newReferenceData.customer_name.trim()) return alert("Insira o nome do cliente");
 
-    generateReferenceMutation.mutate({
-      amount: newReferenceData.amount,
-      customer: {
-        name: newReferenceData.customer_name,
-        phone: newReferenceData.customer_phone,
-        email: newReferenceData.customer_email
-      },
-      description: newReferenceData.description,
-      payment_method: newReferenceData.payment_method,
-      transaction_id: newReferenceData.transaction_id
-    });
+    generateReferenceMutation.mutate(newReferenceData);
   };
 
   // Filtragem e Ordenação
@@ -327,7 +268,7 @@ export default function TransactionsDashboard() {
                       <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                         <td className="py-3 px-4 w-1/4">{tx.customer_name}</td>
                         <td className="py-3 px-4 w-1/6">{tx.payment_method}</td>
-                        <td className="py-3 px-4 font-bold w-1/6">{tx.amount.toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}</td>
+                        <td className="py-3 px-4 font-bold w-1/6">{formatCurrency(tx.amount)}</td>
                         <td className="py-3 px-4 w-1/6">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] ${tx.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                             {tx.status}
@@ -362,7 +303,7 @@ export default function TransactionsDashboard() {
                     <td className="py-4 px-4 text-gray-900 dark:text-white font-medium">{tx.customer_name}</td>
                     {isAdmin && <td className="py-4 px-4 text-sm text-gray-500">{tx.tenant?.legal_name || "N/A"}</td>}
                     <td className="py-4 px-4 text-gray-600">{tx.payment_method}</td>
-                    <td className="py-4 px-4 font-bold">{tx.amount.toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}</td>
+                    <td className="py-4 px-4 font-bold">{formatCurrency(tx.amount)}</td>
                     <td className="py-4 px-4">
                       <span className={`px-2 py-1 rounded-full text-xs ${tx.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                         {tx.status}
@@ -439,7 +380,7 @@ export default function TransactionsDashboard() {
                 })()}
               </div>
               <div className="space-y-4">
-                <div><p className="text-xs text-gray-500 uppercase">Valor</p><p className="text-xl font-bold text-green-600">{selectedTransaction.amount.toLocaleString("pt-BR", { style: "currency", currency: "AOA" })}</p></div>
+                <div><p className="text-xs text-gray-500 uppercase">Valor</p><p className="text-xl font-bold text-green-600">{formatCurrency(selectedTransaction.amount)}</p></div>
                 <div><p className="text-xs text-gray-500 uppercase">Status</p><p className="font-bold">{selectedTransaction.status.toUpperCase()}</p></div>
                 <div><p className="text-xs text-gray-500 uppercase">Método</p><p className="font-bold capitalize">{selectedTransaction.payment_method}</p></div>
                 

@@ -1,50 +1,20 @@
 'use client'
 
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { FiUsers, FiSearch, FiBriefcase } from 'react-icons/fi';
-import { AuthContext } from "@/contexts/AuthContext";
-import { api } from "@/services/apiClients";
-import { parseCookies } from "nookies";
-import { useQuery } from "@tanstack/react-query";
-
-type UserAdmin = {
-  id: string;
-  fullname: string;
-  email: string;
-  status: string;
-  user_type: string;
-  tenant: {
-    id: string;
-    legal_name: string;
-    bank_iban: string;
-    bank_owner_name: string;
-    client_reference_count?: string;
-  };
-};
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminClients } from "@/hooks/useAdminClients";
 
 export default function ClientsDashboard() {
-  const { user, isLoadingUser } = useContext(AuthContext);
-  const { '@gCorporate.token': token } = parseCookies();
+  const { user, isLoadingUser } = useAuth();
   const isAdmin = user?.user_type === "admin";
   const [searchTerm, setSearchTerm] = useState("");
   
-  // Paginação
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const { data: clients = [], isLoading } = useQuery({
-    queryKey: ['admin-clients'],
-    queryFn: async () => {
-      const response = await api.get("/users", {
-        headers: {
-          'gpay-x-api': `Bearer ${token}`
-        }
-      });
-      return response.data as UserAdmin[];
-    },
-    enabled: isAdmin,
-  });
+  const { data: clients = [], isLoading } = useAdminClients();
 
   const filteredClients = clients.filter(client => 
     client.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||

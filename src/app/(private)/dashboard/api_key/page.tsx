@@ -1,37 +1,14 @@
 "use client"
 
-import { useContext, useMemo, useState } from "react"
+import { useState } from "react"
 import { ApiKeysHeader } from "@/components/api-keys/ApiKeysHeader"
 import { ApiKeysTable } from "@/components/api-keys/ApiKeysTable"
 import { AddApiKeyButton } from "@/components/api-keys/AddApiKeyButton"
-import { getApiKeys } from "@/lib/api-keys"
 import { ApiKeyModal } from "@/components/api-keys/AddApiKeyModal"
-import { AuthContext } from "@/contexts/AuthContext"
-import { useQuery } from "@tanstack/react-query"
-import { useApiKeyStore } from "@/store/useApiKeyStore"
-import { useEffect } from "react"
+import { useApiKeys } from "@/hooks/useApiKeys"
 
 export default function ApiKeysPage() {
-  const { user } = useContext(AuthContext);
-  const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
-
-  const { data: apiKeys = [], isLoading: loading, refetch: fetchData } = useQuery<any[]>({
-    queryKey: ['api-keys', tenantId],
-    queryFn: async () => {
-      if (!tenantId) return [];
-      return await getApiKeys(tenantId);
-    },
-    enabled: !!tenantId,
-  });
-
-  const setApiKeys = useApiKeyStore(state => state.setApiKeys);
-
-  useEffect(() => {
-    if (apiKeys) {
-      setApiKeys(apiKeys);
-    }
-  }, [apiKeys, setApiKeys]);
-
+  const { data: apiKeys = [], isLoading: loading, refetch: fetchData } = useApiKeys({ syncStore: true });
   const [isOpen, setIsOpen] = useState(false)
 
   if (loading) {
@@ -55,8 +32,6 @@ export default function ApiKeysPage() {
         />
 
         <AddApiKeyButton title="Nova Chave" onClick={() => setIsOpen(true)} />
-
-        {/* Modal controlada pela página */}
         <ApiKeyModal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
@@ -66,10 +41,7 @@ export default function ApiKeysPage() {
       </div>
 
       <div className="space-y-4">
-
         <ApiKeysTable data={apiKeys} onRefresh={fetchData} />
-
-
       </div>
     </div>
   )

@@ -5,33 +5,33 @@ import { AuthTokenError } from './errors/AuthTokenError'
 function signOut() {
   try {
     destroyCookie(undefined, '@gCorporate.token')
-
   } catch {
-    // erro ao deslogar
   }
 }
 
-export function setupAPIClient(ctx = undefined) {
-  let cookies = parseCookies(ctx);
-
+export function setupAPIClient(ctx?: Parameters<typeof parseCookies>[0]) {
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_API_URL || process.env.BASE_API_URL,
   })
 
-  if (cookies['@gCorporate.token']) {
-    api.defaults.headers['Authorization'] = `Bearer ${cookies['@gCorporate.token']}`;
-  }
+  api.interceptors.request.use((config) => {
+    const cookies = parseCookies(ctx);
+    const token = cookies['@gCorporate.token'];
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  });
 
   api.interceptors.response.use(response => {
     return response;
   }, (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // qualquer erro 401 (não autorizado) devemos deslogar o usuário
       if (typeof window === 'undefined') {
-        // Estamos no lado do servidor, então você não deve chamar singOut() aqui
         return Promise.reject(new AuthTokenError());
       } else {
-        // Estamos no lado do cliente, então é seguro chamar singOut()
         signOut()
       }
     }

@@ -10,14 +10,8 @@ import { DeleteAlert } from "../deteleteconfirm"
 import { WebhookModal } from "./webhookModal" 
 import { deleteWebhooks } from "@/lib/webhook"
 import { AuthContext } from "@/contexts/AuthContext"
-
-interface Webhook {
-  id: string
-  name: string
-  endpoint: string
-  tenant_id: string
-  secret_key: string
-}
+import type { Webhook } from "@/types/global"
+import { getErrorMessage } from "@/utils/api-error"
 
 interface WebhooksTableProps {
   data: Webhook[]
@@ -28,6 +22,7 @@ export function WebhooksTable({ data, onRefresh }: WebhooksTableProps) {
   const [editing, setEditing] = useState<Webhook | null>(null)
   const [sortConfig, setSortConfig] = useState<{ key: keyof Webhook; direction: "asc" | "desc" } | null>(null)
   const { user } = useContext(AuthContext)
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -36,16 +31,15 @@ export function WebhooksTable({ data, onRefresh }: WebhooksTableProps) {
 
   const handleDelete = async (id: string) => {
     try {
-      if (!user?.tenant_id) {
+      if (!tenantId) {
         return
       } 
 
-      await deleteWebhooks(id, user.tenant_id)
+      await deleteWebhooks(id, tenantId)
       toast.success("Webhook deletado com sucesso!")
       onRefresh()
-    } catch (error) {
-      console.error(error)
-      toast.error("Erro ao deletar webhook")
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao deletar webhook"))
     }
   }
 
@@ -157,7 +151,7 @@ export function WebhooksTable({ data, onRefresh }: WebhooksTableProps) {
       </Table>
 
       {editing && (
-        <WebhookModal // ← CORREÇÃO AQUI: Mude WeebhookModal para WebhookModal
+        <WebhookModal
           isOpen={!!editing}
           onClose={() => setEditing(null)}
           mode="edit"

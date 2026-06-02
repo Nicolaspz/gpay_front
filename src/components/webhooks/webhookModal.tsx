@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "@/contexts/AuthContext"
 import { Loader2, X } from "lucide-react"
 import { createWebhooks, updateWebhooks } from "@/lib/webhook"
+import { getErrorMessage } from "@/utils/api-error"
 
 interface WebhookModalProps {
   isOpen: boolean
@@ -33,6 +34,7 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
   const { register, handleSubmit, reset, setValue } = useForm<FormData>()
   const { user } = useContext(AuthContext)
   const [loading, setLoading] = useState(false)
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   // Se estiver no modo edit, preenche os valores
   useEffect(() => {
@@ -52,7 +54,7 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
       if (mode === "create") {
         await createWebhooks({
           name: data.name,
-          tenant_id: user?.tenant_id ?? "",
+          tenant_id: tenantId ?? "",
           endpoint: data.endpoint
         })
         toast.success("Webhook criado com sucesso!")
@@ -60,7 +62,7 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
         await updateWebhooks(initialData.id, {
           name: data.name,
           endpoint: data.endpoint,
-          tenant_id: user?.tenant_id,
+          tenant_id: tenantId,
         })
         toast.success("Webhook atualizado com sucesso!")
       }
@@ -68,31 +70,27 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
       onClose()
       reset()
       onSuccess?.()
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Erro ao salvar webhook")
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao salvar webhook"))
     } finally {
       setLoading(false)
     }
   }
 
-  // Se não estiver aberto, não renderiza nada
   if (!isOpen) return null
 
   return (
     <>
-      {/* Overlay escuro */}
       <div 
         className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div 
           className="relative w-full max-w-md rounded-lg shadow-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {mode === "create" ? "Criar Novo Webhook" : "Editar Webhook"}
@@ -107,7 +105,6 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
             </Button>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
             <div className="space-y-3">
               <Label 
@@ -158,7 +155,6 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
               </p>
             </div>
 
-            {/* Footer */}
             <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <Button 
                 type="button" 

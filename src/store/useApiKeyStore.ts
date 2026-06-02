@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-
-interface ApiKey {
-  id: string;
-  name: string;
-  key: string;
-  createdAt: string;
-}
+import type { ApiKey } from '@/types/global';
 
 interface ApiKeyStore {
   apiKeys: ApiKey[];

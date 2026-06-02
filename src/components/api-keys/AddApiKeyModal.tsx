@@ -10,6 +10,7 @@ import { toast } from "react-toastify"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "@/contexts/AuthContext"
 import { Loader2 } from "lucide-react"
+import { getErrorMessage } from "@/utils/api-error"
 
 interface ApiKeyModalProps {
   isOpen: boolean
@@ -32,6 +33,7 @@ export function ApiKeyModal({ isOpen, onClose, mode, initialData, onSuccess }: A
   const { register, handleSubmit, reset, setValue } = useForm<FormData>()
   const { user } = useContext(AuthContext)
   const [loading, setLoading] = useState(false)
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   // Se estiver no modo edit, preenche os valores
   useEffect(() => {
@@ -52,14 +54,14 @@ export function ApiKeyModal({ isOpen, onClose, mode, initialData, onSuccess }: A
       if (mode === "create") {
         await createApiKey({
           name: data.name,
-          tenant_id: user?.tenant_id,
+          tenant_id: tenantId,
         })
         toast.success("Chave criada com sucesso!")
       } else if (mode === "edit" && initialData) {
         await updateApiKey(initialData.id, {
           name: data.name,
-          expire_at: "2024-12-21",
-          tenant_id: user?.tenant_id,
+          expire_at: data.expire_at,
+          tenant_id: tenantId,
         })
         toast.success("Chave atualizada com sucesso!")
       }
@@ -67,8 +69,8 @@ export function ApiKeyModal({ isOpen, onClose, mode, initialData, onSuccess }: A
       onClose()
       reset()
       onSuccess?.()
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Erro ao salvar chave de API")
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao salvar chave de API"))
     } finally {
       setLoading(false)
     }

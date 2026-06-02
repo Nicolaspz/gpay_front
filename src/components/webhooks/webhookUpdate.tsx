@@ -5,32 +5,36 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
-import { updateApiKey } from "@/lib/api-keys"
+import { updateWebhooks } from "@/lib/webhook"
 import { toast } from "react-toastify"
-import { useState, useEffect } from "react"
+import { useContext, useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
+import { getErrorMessage } from "@/utils/api-error"
+import { AuthContext } from "@/contexts/AuthContext"
 
 interface EditApiKeyModalProps {
   isOpen: boolean
   onClose: () => void
-  apiKey?: { id: string; name: string; expire_at?: string; tenant_id?: string }
+  apiKey?: { id: string; name: string; endpoint?: string; tenant_id?: string }
   onUpdated: () => void
 }
 
 interface FormData {
   name: string
-  expire_at?: string
+  endpoint: string
 }
 
 export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiKeyModalProps) {
   const { register, handleSubmit, reset } = useForm<FormData>()
   const [loading, setLoading] = useState(false)
+  const { user } = useContext(AuthContext)
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id || apiKey?.tenant_id
 
   useEffect(() => {
     if (apiKey) {
       reset({
         name: apiKey.name,
-        expire_at: apiKey.expire_at ? apiKey.expire_at.substring(0, 10) : "",
+        endpoint: apiKey.endpoint ?? "",
       })
     }
   }, [apiKey, reset])
@@ -39,17 +43,16 @@ export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiK
     if (!apiKey) return
     try {
       setLoading(true)
-      await updateApiKey(apiKey.id, {
+      await updateWebhooks(apiKey.id, {
         name: data.name,
-        expire_at:"2024-12-21",
-        tenant_id:"8a248eda-fef2-4d1f-8980-7e277551761e",
+        endpoint: data.endpoint,
+        tenant_id: tenantId,
       })
-      toast.success("Chave atualizada com sucesso!")
+      toast.success("Webhook atualizado com sucesso!")
       onUpdated()
       onClose()
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao atualizar chave")
-      console.log(error.message)
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao atualizar webhook"))
     } finally {
       setLoading(false)
     }
@@ -68,6 +71,14 @@ export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiK
             <Input
               id="name"
               {...register("name", { required: true })}
+              disabled={loading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="endpoint">Endpoint *</Label>
+            <Input
+              id="endpoint"
+              {...register("endpoint", { required: true })}
               disabled={loading}
             />
           </div>

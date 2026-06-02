@@ -1,12 +1,9 @@
 "use client";
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, CreditCard, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { AddPaymentMethodModal, PaymentMethodData } from './add-payment-method-modal';
-import { parseCookies } from 'nookies';
-import { api } from "@/services/apiClients";
-import { AuthContext } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,27 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from 'react-toastify';
+import { PaymentMethodsService } from '@/services/payment-methods.service';
+import type { PaymentMethodApi } from '@/types/global';
+import { getErrorMessage } from '@/utils/api-error';
+import { useAuth } from '@/hooks/useAuth';
 
 
-// Tipo para o método de pagamento da API
-interface ApiPaymentMethod {
-  id: string;
-  name: string;
-  type: string;
-  rsa_key?: string;
-  redirect_url?: string;
-  merchant_id?: string;
-  merchant_member_id?: string;
-  sale_product_code?: string;
-  async_url?: string;
-  rsa_key_priv?: string;
-  rsa_key_pub?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-// Converter dados da API para o formato do componente
-const mapApiToComponent = (apiMethod: ApiPaymentMethod) => ({
+const mapApiToComponent = (apiMethod: PaymentMethodApi) => ({
   id: apiMethod.id,
   name: apiMethod.name || apiMethod.type,
   icon: <CreditCard className="w-5 h-5" />,
@@ -53,7 +36,6 @@ const mapApiToComponent = (apiMethod: ApiPaymentMethod) => ({
   }
 });
 
-// Modal de Confirmação para Eliminar
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -122,33 +104,20 @@ export function PaymentMethodsSection() {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editingMethod, setEditingMethod] = useState<PaymentMethodData | null>(null);
   const [methodToDelete, setMethodToDelete] = useState<{ id: string, name: string } | null>(null);
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   const { data: paymentMethods = [], isLoading: loading, error: fetchError } = useQuery({
     queryKey: ['payment-methods'],
     queryFn: async () => {
-      const { '@gCorporate.token': token } = parseCookies();
-      const response = await api.get(`/payments`, {
-        headers: {
-          'Authorization': `Bearer ${token || user?.token}`
-        }
-      });
-      if (response.data && Array.isArray(response.data)) {
-        return response.data.map(mapApiToComponent);
-      }
-      return [];
+      const response = await PaymentMethodsService.getAll();
+      return response.map(mapApiToComponent);
     },
-    enabled: !!(user?.token || parseCookies()['@gCorporate.token']),
+    enabled: !!user?.token,
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { '@gCorporate.token': token } = parseCookies();
-      await api.delete(`/payments/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token || user?.token}`
-        }
-      });
+      await PaymentMethodsService.delete(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-methods'] });
@@ -163,35 +132,20 @@ export function PaymentMethodsSection() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: PaymentMethodData) => {
-      const { '@gCorporate.token': token } = parseCookies();
       if (modalMode === 'add') {
-        const response = await api.post('/payments', data, {
-          headers: {
-            'Authorization': `Bearer ${token || user?.token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        return response.data;
-      } else {
-        const updateData = { ...data, id: editingMethod?.id };
-        const response = await api.put(`/payments`, updateData, {
-          headers: {
-            'Authorization': `Bearer ${token || user?.token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        return response.data;
+        return PaymentMethodsService.create(data);
       }
+
+      const updateData = { ...data, id: editingMethod?.id };
+      return PaymentMethodsService.update(updateData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-methods'] });
       handleCloseModal();
       toast.success(`Método de pagamento ${modalMode === 'add' ? 'adicionado' : 'atualizado'} com sucesso!`);
     },
-    onError: (error: any) => {
-      console.error(`Erro ao ${modalMode === 'add' ? 'adicionar' : 'editar'} método:`, error);
-      const errorMessage = error.response?.data?.message || error.message || `Erro ao ${modalMode === 'add' ? 'adicionar' : 'editar'} método de pagamento`;
-      toast.error(errorMessage);
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, `Erro ao ${modalMode === 'add' ? 'adicionar' : 'editar'} método de pagamento`));
     }
   });
 
@@ -233,7 +187,7 @@ export function PaymentMethodsSection() {
   };
 
   const isDeleting = deleteMutation.isPending;
-  const error = fetchError ? (fetchError as any).message : null;
+  const error = fetchError ? getErrorMessage(fetchError, "Erro ao carregar métodos de pagamento") : null;
 
   const handleDeleteCancel = () => {
     setIsDeleteModalOpen(false);
@@ -288,7 +242,6 @@ export function PaymentMethodsSection() {
                            hover:bg-gray-100 hover:shadow-md hover:-translate-y-1
                            dark:hover:bg-gray-800 dark:hover:shadow-gray-700/30"
               >
-                {/* Botão no canto superior direito */}
                 <div className="absolute top-2 right-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -326,7 +279,6 @@ export function PaymentMethodsSection() {
                   </DropdownMenu>
                 </div>
 
-                {/* Conteúdo do card */}
                 <div
                   className="flex items-center space-x-3 pt-2"
                   onClick={() => handleEditMethod(method.data)}
@@ -343,7 +295,6 @@ export function PaymentMethodsSection() {
         )}
       </Card>
 
-      {/* Modal para Adicionar/Editar */}
       <AddPaymentMethodModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -352,7 +303,6 @@ export function PaymentMethodsSection() {
         mode={modalMode}
       />
 
-      {/* Modal de Confirmação para Eliminar */}
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={handleDeleteCancel}

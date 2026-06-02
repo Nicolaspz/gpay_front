@@ -1,48 +1,33 @@
 "use client"
 
-import { useContext, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { ApiKeysHeader } from "@/components/webhooks/webhookHeader"
 import { AddApiKeyButton } from "@/components/api-keys/AddApiKeyButton"
-import { getWebhooks } from "@/lib/webhook"
 import { WebhookModal } from "@/components/webhooks/webhookModal"
 import { WebhooksTable } from "@/components/webhooks/webhookTable"
-import { AuthContext } from "@/contexts/AuthContext"
-
-import { useQuery } from "@tanstack/react-query"
+import { useWebhooks } from "@/hooks/useWebhooks"
 
 export default function WebhooksPage() {
-  const { user } = useContext(AuthContext);
-  const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
-
-  const { data: apiKeys = [], isLoading: loading, refetch: fetchData } = useQuery<any[]>({
-    queryKey: ['webhooks', tenantId],
-    queryFn: async () => {
-      if (!tenantId) return [];
-      return await getWebhooks(tenantId);
-    },
-    enabled: !!tenantId,
-  });
-
-  const [isOpen, setIsOpen] = useState(false)
+  const { data: webhooks = [], isLoading: loading, refetch: fetchData } = useWebhooks();
   const [sortKey, setSortKey] = useState<"name" | "created_at">("created_at")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const sortedKeys = useMemo(() => {
-    return [...apiKeys].sort((a, b) => {
-      let valueA: string | number = a[sortKey]
-      let valueB: string | number = b[sortKey]
+    return [...webhooks].sort((a, b) => {
+      let valueA: string | number = a[sortKey] ?? ""
+      let valueB: string | number = b[sortKey] ?? ""
 
       if (sortKey === "created_at") {
-        valueA = new Date(a.createdAt).getTime()
-        valueB = new Date(b.createdAt).getTime()
+        valueA = new Date(a.created_at ?? "").getTime()
+        valueB = new Date(b.created_at ?? "").getTime()
       }
 
       if (valueA < valueB) return sortOrder === "asc" ? -1 : 1
       if (valueA > valueB) return sortOrder === "asc" ? 1 : -1
       return 0
     })
-  }, [apiKeys, sortKey, sortOrder])
+  }, [webhooks, sortKey, sortOrder])
 
   const handleSort = (key: "name" | "created_at") => {
     if (sortKey === key) {
@@ -74,21 +59,18 @@ export default function WebhooksPage() {
         />
 
         <AddApiKeyButton onClick={() => setIsModalOpen(true)} title="Novo Hook" />
-
-        {/* Modal controlada pela página */}
         <WebhookModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           mode="create"
           onSuccess={() => {
-            // Recarregar dados ou fazer algo após sucesso
+            fetchData()
           }}
         />
       </div>
 
       <div className="space-y-4">
-
-        <WebhooksTable data={apiKeys} onRefresh={fetchData} />
+        <WebhooksTable data={sortedKeys} onRefresh={fetchData} />
 
       </div>
     </div>

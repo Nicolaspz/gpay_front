@@ -11,15 +11,8 @@ import { useContext, useEffect, useMemo, useState } from "react"
 import { ApiKeyModal } from "./AddApiKeyModal"
 import { DeleteAlert } from "../deteleteconfirm"
 import { AuthContext } from "@/contexts/AuthContext"
-
-interface ApiKey {
-  id: string
-  name: string
-  key: string
-  status: "active" | "inactive" | "expired"
-  createdAt: string
-  expiresAt?: string
-}
+import type { ApiKey } from "@/types/global"
+import { getErrorMessage } from "@/utils/api-error"
 
 interface ApiKeysTableProps {
   data: ApiKey[]
@@ -31,6 +24,7 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
   const [editing, setEditing] = useState<ApiKey | null>(null)
   const [sortConfig, setSortConfig] = useState<{ key: keyof ApiKey; direction: "asc" | "desc" } | null>(null)
   const {user}=useContext(AuthContext)
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   useEffect(() => {
     setMounted(true)
@@ -44,16 +38,15 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
    
     try {
       
-     if (!user?.tenant_id) {
+     if (!tenantId) {
         return
       } 
 
-      await deleteApiKey(id,user.tenant_id)
+      await deleteApiKey(id, tenantId)
       toast.success("Chave deletada com sucesso!")
       onRefresh()
-    } catch (error) {
-      console.log(error)
-      toast.error("Erro ao deletar chave")
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao deletar chave"))
     }
     
   }
@@ -187,7 +180,7 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
           isOpen={!!editing}
           onClose={() => setEditing(null)}
           mode="edit"
-          initialData={{ id: editing.id, name: editing.name, expire_at: editing.expiresAt }}
+          initialData={{ id: editing.id, name: editing.name, expire_at: editing.expiresAt ?? undefined }}
           onSuccess={onRefresh}
         />
       )}

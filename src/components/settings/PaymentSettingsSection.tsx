@@ -3,69 +3,67 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import { AuthContext } from "@/contexts/AuthContext"
-import { api } from "@/services/apiClients"
 import { Loader2 } from "lucide-react"
-import { parseCookies } from "nookies"
+import { useAuth } from "@/hooks/useAuth"
+import { TenantsService } from "@/services/tenants.service"
+import { getErrorMessage } from "@/utils/api-error"
 
 export function PaymentSettingsSection() {
   const [legal_name, setLegal_name] = useState("")
   const [bank_iban, setBank_iban] = useState("AO06")
   const [bank_owner_name, setBank_owner_name] = useState("")
-  const [client_reference_count, setClient_reference_count] = useState("") // começa vazio
+  const [client_reference_count, setClient_reference_count] = useState("")
   const [loading, setLoading] = useState(false)
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
+  const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClient_reference_count(e.target.value)
   }
 
-  // Carregar dados do usuário quando estiver montado
   useEffect(() => {
     if (user) {
-      setLegal_name(user.tenant.legal_name || "")
-      setBank_iban(user.tenant.bank_iban || "")
-      setBank_owner_name(user.tenant.bank_owner_name || "")
-      setClient_reference_count(user.tenant.client_reference_count || "") // garante "" se não existir
-      console.log("client user", user)
+      setLegal_name(user.tenant?.legal_name || "")
+      setBank_iban(user.tenant?.bank_iban || "")
+      setBank_owner_name(user.tenant?.bank_owner_name || "")
+      setClient_reference_count(user.tenant?.client_reference_count || "")
     }
   }, [user])
 
   const validateIban = (value: string) => {
-    // Verifica se contém apenas dígitos (0-9)
     return /^\d+$/.test(value)
   }
 
   const handleUpdate = async () => {
-    const { '@gCorporate.token': token } = parseCookies();
     if (!bank_iban || bank_iban.trim() === "") {
       toast.error("a entidade é obrigatório.")
       return
     }
 
+    if (!tenantId) {
+      toast.error("Tenant não encontrado.")
+      return
+    }
+
     setLoading(true)
     try {
-      const res = await api.put(`/tenants/${user?.tenant_id}`, {
+      const data = await TenantsService.updatePaymentSettings(tenantId, {
         legal_name,
         bank_iban,
         bank_owner_name,
         client_reference_count,
-      },{
-        headers: { 'Authorization': `Bearer ${token}` },
-      }
-    )
+      })
 
       toast.success("Configurações atualizadas com sucesso!")
-      setLegal_name(res.data.legal_name)
-      setBank_iban(res.data.bank_iban)
-      setBank_owner_name(res.data.bank_owner_name)
-      setClient_reference_count(res.data.client_reference_count || "") // atualiza corretamente
+      setLegal_name(data.legal_name)
+      setBank_iban(data.bank_iban)
+      setBank_owner_name(data.bank_owner_name)
+      setClient_reference_count(data.client_reference_count || "")
       
-    } catch (error: any) {
-      toast.error("Erro ao atualizar as configurações.")
-      console.error(error)
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Erro ao atualizar as configurações."))
     } finally {
       setLoading(false)
     }
