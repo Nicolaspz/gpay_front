@@ -9,7 +9,7 @@ import { useContext, useMemo, useState } from "react"
 import { DeleteAlert } from "../deteleteconfirm"
 import { WebhookModal } from "./webhookModal" 
 import { deleteWebhooks } from "@/lib/webhook"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useAuth } from "@/hooks/useAuth";
 import type { Webhook } from "@/types/global"
 import { getErrorMessage } from "@/utils/api-error"
 
@@ -21,7 +21,7 @@ interface WebhooksTableProps {
 export function WebhooksTable({ data, onRefresh }: WebhooksTableProps) {
   const [editing, setEditing] = useState<Webhook | null>(null)
   const [sortConfig, setSortConfig] = useState<{ key: keyof Webhook; direction: "asc" | "desc" } | null>(null)
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   const copyToClipboard = (text: string) => {

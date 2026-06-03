@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form"
 import { createApiKey, updateApiKey } from "@/lib/api-keys"
 import { toast } from "react-toastify"
 import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react"
 import { getErrorMessage } from "@/utils/api-error"
 
@@ -31,7 +31,7 @@ interface FormData {
 
 export function ApiKeyModal({ isOpen, onClose, mode, initialData, onSuccess }: ApiKeyModalProps) {
   const { register, handleSubmit, reset, setValue } = useForm<FormData>()
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 

@@ -10,3 +10,4 @@ export type {
   Transaction,
   TransactionStatus,
 } from "./transactions";
+export type { MenuItem } from "./navigation";

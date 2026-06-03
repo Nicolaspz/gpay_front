@@ -10,7 +10,7 @@ import { toast } from "react-toastify"
 import { useContext, useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { getErrorMessage } from "@/utils/api-error"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useAuth } from "@/hooks/useAuth";
 
 interface EditApiKeyModalProps {
   isOpen: boolean
@@ -27,7 +27,7 @@ interface FormData {
 export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiKeyModalProps) {
   const { register, handleSubmit, reset } = useForm<FormData>()
   const [loading, setLoading] = useState(false)
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id || apiKey?.tenant_id
 
   useEffect(() => {

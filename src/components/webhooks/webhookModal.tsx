@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2, X } from "lucide-react"
 import { createWebhooks, updateWebhooks } from "@/lib/webhook"
 import { getErrorMessage } from "@/utils/api-error"
@@ -32,7 +32,7 @@ interface FormData {
 
 export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: WebhookModalProps) {
   const { register, handleSubmit, reset, setValue } = useForm<FormData>()
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 

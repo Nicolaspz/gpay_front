@@ -1,7 +1,7 @@
 'use client'
 import { FiEye, FiCheckCircle, FiAlertTriangle, FiDollarSign, FiX, FiUploadCloud, FiFilter, FiCreditCard } from "react-icons/fi";
 import { useContext, useState, useMemo } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { CardStat } from "@/components/dashboard/CardStat";
@@ -11,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function AdminStripeDashboard() {
   const queryClient = useQueryClient();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const isAdmin = user?.user_type === "admin";
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id;
   

@@ -1,11 +1,8 @@
 import {
   Home,
   Book,
-  Folder,
   LineChart,
   FileSearch,
-  Smile,
-  Mail,
   Settings,
   Key,
   ActivityIcon,
@@ -17,10 +14,10 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useContext } from "react"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useAuth } from "@/hooks/useAuth"
+import type { MenuItem } from "@/types/global"
 
-const menuItems = [
+const menuItems: MenuItem[] = [
   { icon: Home, label: "Dashboard", href: "/dashboard", enabled: true },
   { icon: Book, label: "Transações Nacionais", href: "/dashboard/transactions", enabled: true },
   { icon: CreditCard, label: "Transações Internacionais", href: "/dashboard/stripe", enabled: true },
@@ -35,7 +32,7 @@ const footerIcons = [Settings]
 
 export default function Sidebar({ closeSidebar }: { closeSidebar?: () => void }) {
   const pathname = usePathname()
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const isAdmin = user?.user_type === "admin"
 
   return (
@@ -61,7 +58,7 @@ export default function Sidebar({ closeSidebar }: { closeSidebar?: () => void })
 
         {/* Menu */}
         <nav className="space-y-2 px-6">
-          {menuItems.map(({ icon: Icon, label, href, enabled, adminOnly }: any) => {
+          {menuItems.map(({ icon: Icon, label, href, enabled, adminOnly }) => {
             const isActive = pathname === href
 
             if (adminOnly && !isAdmin) return null

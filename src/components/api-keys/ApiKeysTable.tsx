@@ -10,7 +10,7 @@ import { deleteApiKey } from "@/lib/api-keys"
 import { useContext, useEffect, useMemo, useState } from "react"
 import { ApiKeyModal } from "./AddApiKeyModal"
 import { DeleteAlert } from "../deteleteconfirm"
-import { AuthContext } from "@/contexts/AuthContext"
+import { useAuth } from "@/hooks/useAuth";
 import type { ApiKey } from "@/types/global"
 import { getErrorMessage } from "@/utils/api-error"
 
@@ -23,7 +23,7 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
   const [mounted, setMounted] = useState(false)
   const [editing, setEditing] = useState<ApiKey | null>(null)
   const [sortConfig, setSortConfig] = useState<{ key: keyof ApiKey; direction: "asc" | "desc" } | null>(null)
-  const {user}=useContext(AuthContext)
+  const {user}=useAuth()
   const tenantId = user?.tenant_id || user?.tenant?.tenant_id
 
   useEffect(() => {
