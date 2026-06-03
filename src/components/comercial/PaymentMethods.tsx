@@ -285,7 +285,9 @@ export function PaymentMethodsSection() {
                 >
                   {method.icon}
                   <div>
-                    <span className="font-medium block">{method.data.rsa_key}</span>
+                    <span className="font-medium block">
+                      {method.data.rsa_key.slice(0, 30)}...
+                    </span>
                     <span className="text-sm text-gray-500">{method.data.merchant_id}</span>
                   </div>
                 </div>
