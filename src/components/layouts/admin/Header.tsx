@@ -57,19 +57,19 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="p-0 flex items-center gap-2 hover:bg-transparent">
-              <Avatar className="w-8 h-8 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd]">
-                <AvatarFallback className="text-white font-semibold">
+              <Avatar className="w-8 h-8 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] border-2 border-[var(--border)]">
+                <AvatarFallback className="text-white font-semibold text-[var(--popover-foreground)]">
                   {getInitials(user?.fullname)}
                 </AvatarFallback>
               </Avatar>
               <ChevronDown className="w-4 h-4 text-[var(--muted-foreground)]" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-[var(--popover)] text-[var(--popover-foreground)] border border-[var(--border)] w-48">
+          <DropdownMenuContent align="end" className="bg-[var(--popover)] text-[var(--popover-foreground)] border border-[var(--border)] w-58">
             {/* Informações do Usuário */}
             <div className="px-3 py-2 border-b border-[var(--border)]">
-              <p className="text-sm font-semibold">{user?.fullname || "Usuário"}</p>
-              <p className="text-xs text-[var(--muted-foreground)]">{user?.email || "email@example.com"}</p>
+              <p className="text-sm font-semibold text-[var(--popover-foreground)]">{user?.fullname || "Usuário"}</p>
+              <p className="text-xs text-[var(--muted-foreground)]">Email: {user?.email || "email@example.com"}</p>
               {user?.tenant_id && (
                 <p className="text-xs text-[var(--muted-foreground)] mt-1">
                   ID: {user.tenant_id}
