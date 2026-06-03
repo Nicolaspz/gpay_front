@@ -1,7 +1,7 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,20 +9,32 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Bell, CalendarDays, ChevronDown, LogOut, Menu } from "lucide-react"
+import { Bell, ChevronDown, LogOut, Menu } from "lucide-react"
 import ThemeSwitcher from "@/components/theme-switcher"
-import { useContext } from "react"
-import { AuthContext } from "@/contexts/AuthContext"
-
-
-
+import { useAuth } from "@/hooks/useAuth"
+import { toast } from "react-toastify"
 
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
-  const { signOut,user } = useContext(AuthContext);
-   const handleLogout = () => {
+  const router = useRouter()
+  const { signOut, user } = useAuth()
+
+  const handleLogout = () => {
     signOut()
-}
- 
+    toast.success("Logout realizado com sucesso")
+    router.push("/")
+  }
+
+  // Gera iniciais do nome do usuário
+  const getInitials = (name?: string) => {
+    if (!name) return "AD"
+    return name
+      .split(" ")
+      .slice(0, 2)
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+  }
+
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border-b border-[var(--sidebar-border)]">
       {/* Esquerda: Menu e Título */}
@@ -35,36 +47,43 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
           <p className="text-sm text-[var(--muted-foreground)]">Payment Updates</p>
         </div>
       </div>
-      {/* <span>{user?.tenant_id}</span> */}
-      
+
       {/* Direita: Ícones e Menu do Usuário */}
       <div className="flex items-center gap-4 min-w-[150px] justify-end">
         <ThemeSwitcher />
         <Bell className="w-5 h-5 cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--sidebar-foreground)]" />
-        
+
         {/* Avatar com Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="p-0 flex items-center gap-1">
-              <Avatar className="w-8 h-8">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="User"
-                  className="rounded-full object-cover"
-                />
-                <AvatarFallback>AD</AvatarFallback>
+            <Button variant="ghost" className="p-0 flex items-center gap-2 hover:bg-transparent">
+              <Avatar className="w-8 h-8 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd]">
+                <AvatarFallback className="text-white font-semibold">
+                  {getInitials(user?.fullname)}
+                </AvatarFallback>
               </Avatar>
               <ChevronDown className="w-4 h-4 text-[var(--muted-foreground)]" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-[var(--popover)] text-[var(--popover-foreground)] border border-[var(--border)]">
+          <DropdownMenuContent align="end" className="bg-[var(--popover)] text-[var(--popover-foreground)] border border-[var(--border)] w-48">
+            {/* Informações do Usuário */}
+            <div className="px-3 py-2 border-b border-[var(--border)]">
+              <p className="text-sm font-semibold">{user?.fullname || "Usuário"}</p>
+              <p className="text-xs text-[var(--muted-foreground)]">{user?.email || "email@example.com"}</p>
+              {user?.tenant_id && (
+                <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                  ID: {user.tenant_id}
+                </p>
+              )}
+            </div>
+
+            {/* Opções do Menu */}
             <DropdownMenuItem
               onClick={handleLogout}
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
             >
-              <span> {user?.fullname} </span> <br />
               <LogOut className="w-4 h-4" />
-              Logout
+              <span>Logout</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

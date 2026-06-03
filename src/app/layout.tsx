@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastContainer } from "react-toastify";
 

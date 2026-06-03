@@ -1,6 +1,5 @@
 import {
   Home,
-  FileText,
   Book,
   Folder,
   LineChart,
@@ -8,7 +7,6 @@ import {
   Smile,
   Mail,
   Settings,
-  PlusSquare,
   Key,
   ActivityIcon,
   CreditCard,

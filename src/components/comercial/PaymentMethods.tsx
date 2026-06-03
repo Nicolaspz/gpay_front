@@ -66,7 +66,7 @@ function DeleteConfirmationModal({
           </h3>
 
           <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-            Tem a certeza que deseja eliminar o método <strong>"{methodName}"</strong>?
+            Tem a certeza que deseja eliminar o método <strong>&quot;{methodName}&quot;</strong>?
             Esta ação não pode ser desfeita.
           </p>
 

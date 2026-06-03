@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
-import { AuthModal } from "./auth-modal"
-import { Menu, X, Home, Layers, Info, Tag, FileText, Mail, ChevronRight } from "lucide-react"
+import { Menu, X, Home, Layers, Info, Tag, FileText, Mail, ChevronRight, LogIn } from "lucide-react"
 
 export function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false)
@@ -41,10 +41,12 @@ export function Header() {
         >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <img
+          <Image
             src="/assets/images/logo.png"
             alt="Logo"
-            className="h-10 w-auto object-contain"
+            width={40}
+            height={40}
+            className="h-10 w-full"
           />
         </Link>
 
@@ -61,14 +63,13 @@ export function Header() {
               </li>
             ))}
           </ul>
-          <AuthModal
-            trigger={
-              <div className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-3xl bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] text-white font-medium text-[15px] hover:opacity-90 transition-opacity shadow-md">
-                <i className="fa fa-sign-in-alt" />
-                <span>Entrar</span>
-              </div>
-            }
-          />
+          <Link
+            href="/login"
+            className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-3xl bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] text-white font-medium text-[15px] hover:opacity-90 transition-opacity shadow-md"
+          >
+            <LogIn className="h-4 w-4" />
+            <span>Entrar</span>
+          </Link>
         </nav>
 
         <button
@@ -96,7 +97,13 @@ export function Header() {
 
             <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                <img src="/assets/images/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
+                <Image 
+                  src="/assets/images/logo.png" 
+                  alt="Logo" 
+                  width={32}
+                  height={32}
+                  className="h-8 w-auto object-contain" 
+                />
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(false)}
@@ -130,14 +137,14 @@ export function Header() {
             <div className="h-px bg-gray-100 mx-3" />
 
             <div className="px-4 py-4 pb-8">
-              <AuthModal
-                trigger={
-                  <button className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] text-white font-medium text-[15px] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-                    <i className="fa fa-sign-in-alt" />
-                    Entrar
-                  </button>
-                }
-              />
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] text-white font-medium text-[15px] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+              >
+                <LogIn className="h-4 w-4" />
+                Entrar
+              </Link>
             </div>
           </div>
         </div>
