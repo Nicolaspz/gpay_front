@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { api } from "@/services/apiClients"
 import { Loader2, CheckCircle, XCircle } from "lucide-react"
 
-export default function ActivatePage() {
+function ActivateContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading")
@@ -96,5 +96,25 @@ export default function ActivatePage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function ActivatePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <Card className="w-full max-w-md p-6 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-center">Ativação de Conta</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center space-y-4">
+            <Loader2 className="animate-spin h-10 w-10 text-blue-500" />
+            <p className="mt-2 text-center">Carregando...</p>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <ActivateContent />
+    </Suspense>
   )
 }
