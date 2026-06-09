@@ -2,15 +2,18 @@
 
 - 
 
-1. **Adicionar bloquei e ativação de clientes na tela de gestão de clientes na área do admin**
+1. **Criar tela para gestão de client_id, client_secret e client_entity de uma tenant na área do admin**
 
-   Ativação de conta do usuário:
-    PATCH /users/:id/activate
+   Endpoits para pegar as informações: 
+    Listagem de empresas GET /tenants
 
-    Bloquear a conta
-    PATCH /users/:id/block
-
-    *NOTA:* **Para bloquear ou ativar conta de usuário, só o admin pode fazer isso.**
+    Atualização de dados específicos da empresa PATCH /tenants/config
+    { 
+    "tenant_id":"string", 
+    "client_id":"string", 
+    "client_secret":"string", 
+    "client_entity":"string" 
+    }
 
 2. **upload de foto do usuário área do cliente**
 

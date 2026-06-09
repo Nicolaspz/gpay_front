@@ -9,7 +9,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ClientsService } from "@/services/clients.service";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "@/utils/api-error";
-import { Loader2 } from "lucide-react";
+import { MoreVertical, Loader2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function ClientsDashboard() {
   const { user, isLoadingUser } = useAuth();
@@ -158,33 +164,38 @@ export default function ClientsDashboard() {
                     </span>
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center gap-2">
-                      {client.status === 'blocked' ? (
-                        <button
-                          onClick={() => activateMutation.mutate(client.id)}
-                          disabled={activateMutation.isPending}
-                          className="px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 disabled:opacity-50 transition-colors"
-                        >
-                          {activateMutation.isPending ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            "Ativar"
-                          )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                          <MoreVertical className="h-4 w-4 text-gray-500" />
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => blockMutation.mutate(client.id)}
-                          disabled={blockMutation.isPending}
-                          className="px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
-                        >
-                          {blockMutation.isPending ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            "Bloquear"
-                          )}
-                        </button>
-                      )}
-                    </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 min-w-[120px]">
+                        {client.status === 'blocked' ? (
+                          <DropdownMenuItem
+                            onClick={() => activateMutation.mutate(client.id)}
+                            disabled={activateMutation.isPending}
+                            className="cursor-pointer text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 focus:text-green-700 focus:bg-green-50 dark:focus:bg-green-900/20"
+                          >
+                            {activateMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : null}
+                            Ativar
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            onClick={() => blockMutation.mutate(client.id)}
+                            disabled={blockMutation.isPending}
+                            className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 focus:text-red-700 focus:bg-red-50 dark:focus:bg-red-900/20"
+                          >
+                            {blockMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : null}
+                            Bloquear
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}
