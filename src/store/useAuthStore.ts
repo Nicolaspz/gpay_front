@@ -18,6 +18,7 @@ interface AuthState {
   signIn: (credentials: SignInCredentials) => Promise<LoginResponse>
   signOut: () => void
   signUp: (credentials: SignUpCredentials) => Promise<void>
+  setUser: (user: User) => void
   clearError: () => void
 }
 
@@ -100,6 +101,8 @@ export const useAuthStore = create<AuthState>()(
           throw error
         }
       },
+
+      setUser: (user: User) => set({ user }),
 
       clearError: () => set({ error: null })
     }),

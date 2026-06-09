@@ -12,7 +12,7 @@ export default function SettingsPage() {
       label: "Conta", 
       icon: "user", 
       content: <AccountSection />,
-      enabled: false // Desabilitado
+      enabled: true
     },
     { 
       id: "security", 
@@ -26,7 +26,7 @@ export default function SettingsPage() {
       label: "Notificações", 
       icon: "bell", 
       content: <NotificationsSection />,
-      enabled: false // Desabilitado
+      enabled: true
     },
     { 
       id: "payments", 

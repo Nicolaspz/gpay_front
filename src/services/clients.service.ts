@@ -6,4 +6,12 @@ export const ClientsService = {
     const { data } = await api.get<AdminClient[]>("/users");
     return Array.isArray(data) ? data : [];
   },
+
+  async activateUser(id: string): Promise<void> {
+    await api.patch(`/users/${id}/activate`);
+  },
+
+  async blockUser(id: string): Promise<void> {
+    await api.patch(`/users/${id}/block`);
+  },
 };

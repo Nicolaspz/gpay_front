@@ -5,6 +5,11 @@ import { Card } from "@/components/ui/card";
 import { FiUsers, FiSearch, FiBriefcase } from 'react-icons/fi';
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminClients } from "@/hooks/useAdminClients";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ClientsService } from "@/services/clients.service";
+import { toast } from "react-toastify";
+import { getErrorMessage } from "@/utils/api-error";
+import { Loader2 } from "lucide-react";
 
 export default function ClientsDashboard() {
   const { user, isLoadingUser } = useAuth();
@@ -15,6 +20,29 @@ export default function ClientsDashboard() {
   const itemsPerPage = 10;
 
   const { data: clients = [], isLoading } = useAdminClients();
+  const queryClient = useQueryClient();
+
+  const activateMutation = useMutation({
+    mutationFn: (id: string) => ClientsService.activateUser(id),
+    onSuccess: () => {
+      toast.success("Usuário ativado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Erro ao ativar usuário"));
+    },
+  });
+
+  const blockMutation = useMutation({
+    mutationFn: (id: string) => ClientsService.blockUser(id),
+    onSuccess: () => {
+      toast.success("Usuário bloqueado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Erro ao bloquear usuário"));
+    },
+  });
 
   const filteredClients = clients.filter(client => 
     client.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -92,6 +120,7 @@ export default function ClientsDashboard() {
                 <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Representante</th>
                 <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Contacto</th>
                 <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Status</th>
+                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -121,16 +150,47 @@ export default function ClientsDashboard() {
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       client.status === 'active' 
                       ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                      : client.status === 'blocked'
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                       : 'bg-gray-100 text-gray-600'
                     }`}>
                       {client.status.toUpperCase()}
                     </span>
                   </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      {client.status === 'blocked' ? (
+                        <button
+                          onClick={() => activateMutation.mutate(client.id)}
+                          disabled={activateMutation.isPending}
+                          className="px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 disabled:opacity-50 transition-colors"
+                        >
+                          {activateMutation.isPending ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            "Ativar"
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => blockMutation.mutate(client.id)}
+                          disabled={blockMutation.isPending}
+                          className="px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
+                        >
+                          {blockMutation.isPending ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            "Bloquear"
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
               {filteredClients.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-12 text-center text-gray-500">
+                  <td colSpan={5} className="p-12 text-center text-gray-500">
                     Nenhum cliente encontrado para sua busca.
                   </td>
                 </tr>

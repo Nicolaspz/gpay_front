@@ -11,3 +11,4 @@ export type {
   TransactionStatus,
 } from "./transactions";
 export type { MenuItem } from "./navigation";
+export type { Notification } from "./notifications";
