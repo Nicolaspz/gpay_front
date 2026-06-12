@@ -22,4 +22,24 @@ export const AuthService = {
 
     return data;
   },
+
+  async uploadPhoto(photo: File): Promise<void> {
+    const formData = new FormData();
+    formData.append("photo", photo);
+    await api.post("/users/photo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  async updatePhoto(photo: File): Promise<void> {
+    const formData = new FormData();
+    formData.append("photo", photo);
+    await api.put("/users/photo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  async deletePhoto(): Promise<void> {
+    await api.delete("/users/photo");
+  },
 };

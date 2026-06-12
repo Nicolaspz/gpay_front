@@ -16,6 +16,7 @@ export type User = {
   team_id?: string;
   tenant_id?: string;
   tenant?: Tenant;
+  photo_url?: string;
 };
 
 export type SignInCredentials = {

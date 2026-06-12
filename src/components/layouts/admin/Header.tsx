@@ -9,8 +9,9 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Bell, ChevronDown, LogOut, Menu } from "lucide-react"
+import { ChevronDown, LogOut, Menu } from "lucide-react"
 import ThemeSwitcher from "@/components/theme-switcher"
+import { NotificationDropdown } from "@/components/notifications/NotificationDropdown"
 import { useAuth } from "@/hooks/useAuth"
 import { toast } from "react-toastify"
 
@@ -24,7 +25,6 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
     router.push("/")
   }
 
-  // Gera iniciais do nome do usuário
   const getInitials = (name?: string) => {
     if (!name) return "AD"
     return name
@@ -37,7 +37,6 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
 
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border-b border-[var(--sidebar-border)]">
-      {/* Esquerda: Menu e Título */}
       <div className="flex items-center gap-4 min-w-[150px]">
         <button onClick={toggleSidebar} className="lg:hidden">
           <Menu className="w-6 h-6 text-[var(--sidebar-foreground)] cursor-pointer" />
@@ -48,16 +47,15 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         </div>
       </div>
 
-      {/* Direita: Ícones e Menu do Usuário */}
       <div className="flex items-center gap-4 min-w-[150px] justify-end">
         <ThemeSwitcher />
-        <Bell className="w-5 h-5 cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--sidebar-foreground)]" />
+        <NotificationDropdown />
 
-        {/* Avatar com Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="p-0 flex items-center gap-2 hover:bg-transparent">
               <Avatar className="w-8 h-8 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] border-2 border-[var(--border)]">
+                <AvatarImage src={user?.photo_url} alt={user?.fullname} />
                 <AvatarFallback className="text-white font-semibold text-[var(--popover-foreground)]">
                   {getInitials(user?.fullname)}
                 </AvatarFallback>
@@ -66,7 +64,6 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-[var(--popover)] text-[var(--popover-foreground)] border border-[var(--border)] w-58">
-            {/* Informações do Usuário */}
             <div className="px-3 py-2 border-b border-[var(--border)]">
               <p className="text-sm font-semibold text-[var(--popover-foreground)]">{user?.fullname || "Usuário"}</p>
               <p className="text-xs text-[var(--muted-foreground)]">Email: {user?.email || "email@example.com"}</p>
@@ -77,7 +74,6 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
               )}
             </div>
 
-            {/* Opções do Menu */}
             <DropdownMenuItem
               onClick={handleLogout}
               className="flex items-center gap-2 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"

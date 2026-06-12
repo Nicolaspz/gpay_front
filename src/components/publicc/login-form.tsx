@@ -1,17 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { toast } from "react-toastify"
-import { Mail, Lock, Loader2, Eye, EyeOff, User } from "lucide-react"
+import { Mail, Lock, Loader2, Eye, EyeOff, User, ShieldAlert } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api } from "@/services/apiClients"
 import type { SignInCredentials, SignUpCredentials } from "@/types/global"
+import { useRateLimit, useHoneypot, useBotBehavior } from "@/lib/antibot"
 
 export function LoginForm() {
   const router = useRouter()
@@ -38,6 +39,21 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [forgotMode, setForgotMode] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
+
+  // Antibot hooks
+  const {
+    isLocked,
+    lockoutSecondsLeft,
+    registerFailure,
+    registerSuccess,
+  } = useRateLimit({ maxAttempts: 5, lockoutMs: 30000 })
+
+  const { honeypotProps, isTriggered } = useHoneypot()
+
+  const loginFieldIds = useMemo(() => ["login-email", "login-password"], [])
+  const { registerField: registerBotField, isSuspicious } = useBotBehavior({ fieldIds: loginFieldIds })
+  const emailField = useMemo(() => registerBotField("login-email"), [registerBotField])
+  const passwordField = useMemo(() => registerBotField("login-password"), [registerBotField])
 
   // Regex patterns for password validation
   const passwordRegex = {
@@ -99,6 +115,15 @@ export function LoginForm() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
+
+    if (isTriggered) return
+    if (isSuspicious()) return
+
+    if (isLocked) {
+      toast.error(`Muitas tentativas. Aguarde ${lockoutSecondsLeft} segundos.`)
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -107,9 +132,11 @@ export function LoginForm() {
         password: loginForm.password
       }
       await signIn(credentials)
+      registerSuccess()
       toast.success("Login feito com sucesso!")
       router.push("/dashboard")
     } catch (err) {
+      registerFailure()
       console.error("Erro ao logar:", err)
       toast.error("Erro ao fazer login. Verifique suas credenciais.")
     } finally {
@@ -283,16 +310,22 @@ export function LoginForm() {
 
             <TabsContent value="login" className="space-y-4">
               <form onSubmit={handleLogin} className="space-y-4">
+                <input {...honeypotProps} />
+
                 <div className="space-y-2">
                   <Label htmlFor="login-email" className="text-gray-700">Email / Usuário</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="login-email"
+                      ref={emailField.ref}
                       placeholder="seu@email.com"
                       className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
                       value={loginForm.email}
                       onChange={handleLoginChange}
+                      onKeyDown={emailField.onKeyDown}
+                      onMouseDown={emailField.onMouseDown}
+                      onFocus={emailField.onFocus}
                       required
                     />
                   </div>
@@ -303,10 +336,14 @@ export function LoginForm() {
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="login-password"
+                      ref={passwordField.ref}
                       type={showPassword.login ? "text" : "password"}
                       className="pl-10 pr-10 h-11 bg-white border-gray-300 text-gray-900"
                       value={loginForm.password}
                       onChange={handleLoginChange}
+                      onKeyDown={passwordField.onKeyDown}
+                      onMouseDown={passwordField.onMouseDown}
+                      onFocus={passwordField.onFocus}
                       required
                     />
                     <button
@@ -332,9 +369,18 @@ export function LoginForm() {
                   </div>
                 </div>
 
+                {isLocked && (
+                  <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400 px-3 py-2 rounded-md">
+                    <ShieldAlert className="h-4 w-4 flex-shrink-0" />
+                    <span>
+                      Muitas tentativas falhadas. Aguarde <strong>{lockoutSecondsLeft}s</strong>
+                    </span>
+                  </div>
+                )}
+
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || isLocked}
                   className="w-full h-11 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] hover:opacity-90 text-white flex items-center justify-center gap-2"
                 >
                   {loading ? (
@@ -342,6 +388,8 @@ export function LoginForm() {
                       <Loader2 className="h-5 w-5 animate-spin" />
                       Processando...
                     </>
+                  ) : isLocked ? (
+                    `Aguarde ${lockoutSecondsLeft}s`
                   ) : (
                     "Entrar"
                   )}

@@ -42,11 +42,12 @@ export function Header() {
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/assets/images/logo.png"
+            src="/assets/images/gpa.png"
             alt="Logo"
-            width={40}
+            width={180}
             height={40}
-            className="h-10 w-full"
+            priority
+            className="h-10 w-auto object-contain"
           />
         </Link>
 
