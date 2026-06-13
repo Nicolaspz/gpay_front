@@ -25,15 +25,10 @@ export type SignInCredentials = {
 };
 
 export type SignUpCredentials = {
-  id: string;
-  name: string;
+  fullname: string;
   email: string;
   password: string;
   confirmpassword: string;
-  role: string;
-  telefone: string;
-  user_name: string;
-  
 };
 
 export type LoginResponse = {

@@ -14,10 +14,10 @@ export const AuthService = {
 
   async signUp(credentials: SignUpCredentials) {
     const { data } = await api.post("/users", {
-      name: credentials.name,
+      fullname: credentials.fullname,
       email: credentials.email,
-      role: credentials.role,
-      user_name: credentials.user_name,
+      password: credentials.password,
+      confirmpassword: credentials.confirmpassword,
     });
 
     return data;
