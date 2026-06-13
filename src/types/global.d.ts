@@ -12,3 +12,4 @@ export type {
 } from "./transactions";
 export type { MenuItem } from "./navigation";
 export type { Notification } from "./notifications";
+export type { Log } from "./logs";

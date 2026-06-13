@@ -7,7 +7,8 @@ import {
   Key,
   ActivityIcon,
   CreditCard,
-  Users
+  Users,
+  ScrollText
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -26,6 +27,7 @@ const menuItems: MenuItem[] = [
   { icon: Key, label: "Chaves de API", href: "/dashboard/api_key", enabled: true },
   { icon: ActivityIcon, label: "WebHooks", href: "/dashboard/webhooks", enabled: true },
   { icon: Users, label: "Clientes", href: "/dashboard/clients", enabled: true, adminOnly: true },
+  { icon: ScrollText, label: "Logs", href: "/dashboard/logs", enabled: true, adminOnly: true },
 ]
 
 const footerIcons = [Settings]

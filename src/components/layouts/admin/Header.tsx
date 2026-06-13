@@ -67,11 +67,11 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
             <div className="px-3 py-2 border-b border-[var(--border)]">
               <p className="text-sm font-semibold text-[var(--popover-foreground)]">{user?.fullname || "Usuário"}</p>
               <p className="text-xs text-[var(--muted-foreground)]">Email: {user?.email || "email@example.com"}</p>
-              {user?.tenant_id && (
+              {/* {user?.tenant_id && (
                 <p className="text-xs text-[var(--muted-foreground)] mt-1">
                   ID: {user.tenant_id}
                 </p>
-              )}
+              )} */}
             </div>
 
             <DropdownMenuItem

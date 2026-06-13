@@ -163,14 +163,10 @@ export function LoginForm() {
 
     try {
       const credentials: SignUpCredentials = {
-        id: "",
-        name: registerForm.fullname,
+        fullname: registerForm.fullname,
         email: registerForm.email,
         password: registerForm.password,
         confirmpassword: registerForm.confirmpassword,
-        role: "user",
-        telefone: "",
-        user_name: registerForm.email
       }
       await signUp(credentials)
       toast.success("Conta criada com sucesso! Faça login.")
