@@ -11,7 +11,7 @@ import type {
 export function useStripeData() {
   const { user } = useAuth();
   const isAdmin = user?.user_type === "admin";
-  const stripeUserId = isAdmin ? undefined : user?.id;
+  const stripeUserId = user?.id;
 
   const summariesQuery = useQuery<StripeSummary[]>({
     queryKey: ["stripe-summaries", isAdmin, stripeUserId],
@@ -23,11 +23,21 @@ export function useStripeData() {
     enabled: !!user && !isAdmin,
   });
 
-  const transactionsQuery = useQuery<StripeTransaction[]>({
-    queryKey: ["stripe-transactions", isAdmin, stripeUserId],
+  const oldTxQuery = useQuery<StripeTransaction[]>({
+    queryKey: ["stripe-old-transactions", isAdmin, stripeUserId],
     queryFn: async () => {
       if (!user) return [];
-      const res = await StripeService.getTransactions(isAdmin, stripeUserId);
+      const res = await StripeService.getOldTransactions(isAdmin, stripeUserId);
+      return res.data;
+    },
+    enabled: !!user,
+  });
+
+  const newTxQuery = useQuery<StripeTransaction[]>({
+    queryKey: ["stripe-new-transactions", isAdmin, stripeUserId],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await StripeService.getNewTransactions(isAdmin, stripeUserId);
       return res.data;
     },
     enabled: !!user,
@@ -38,9 +48,13 @@ export function useStripeData() {
     let totalNet = 0;
     let totalPending = 0;
     let totalPaid = 0;
+    let totalGrossUSD = 0;
+    let totalGrossAOA = 0;
+    let totalNetUSD = 0;
+    let totalNetAOA = 0;
 
     if (isAdmin) {
-      (transactionsQuery.data ?? []).forEach((tx) => {
+      (oldTxQuery.data ?? []).forEach((tx) => {
         if (tx.status === "COMPLETED") {
           totalGross += tx.grossAmount || 0;
           totalNet += tx.netAmount || 0;
@@ -50,6 +64,14 @@ export function useStripeData() {
             totalPending += tx.netAmount || 0;
           }
         }
+        const curr = (tx.currency || "").toUpperCase();
+        if (curr === "USD") {
+          totalGrossUSD += tx.grossAmount || 0;
+          totalNetUSD += tx.netAmount || 0;
+        } else if (curr === "AOA") {
+          totalGrossAOA += tx.grossAmount || 0;
+          totalNetAOA += tx.netAmount || 0;
+        }
       });
     } else {
       (summariesQuery.data ?? []).forEach((s) => {
@@ -58,6 +80,16 @@ export function useStripeData() {
         totalPending += s.totalPendingPayoutAmount || 0;
         totalPaid += s.totalPaidOutAmount || 0;
       });
+      (oldTxQuery.data ?? []).forEach((tx) => {
+        const curr = (tx.currency || "").toUpperCase();
+        if (curr === "USD") {
+          totalGrossUSD += tx.grossAmount || 0;
+          totalNetUSD += tx.netAmount || 0;
+        } else if (curr === "AOA") {
+          totalGrossAOA += tx.grossAmount || 0;
+          totalNetAOA += tx.netAmount || 0;
+        }
+      });
     }
 
     return {
@@ -65,18 +97,23 @@ export function useStripeData() {
       totalNet,
       totalPending,
       totalPaid,
-      count: (transactionsQuery.data ?? []).length,
+      count: (oldTxQuery.data ?? []).length,
+      totalGrossUSD,
+      totalGrossAOA,
+      totalNetUSD,
+      totalNetAOA,
     };
-  }, [summariesQuery.data, transactionsQuery.data, isAdmin]);
+  }, [summariesQuery.data, oldTxQuery.data, isAdmin]);
 
   return {
-    transactions: transactionsQuery.data ?? [],
+    oldTransactions: oldTxQuery.data ?? [],
+    newTransactions: newTxQuery.data ?? [],
     summaries: summariesQuery.data ?? [],
     stats,
     isAdmin,
     tenantId: user?.tenant_id || user?.tenant?.tenant_id,
     isLoading:
       (!isAdmin && summariesQuery.isLoading) ||
-      (transactionsQuery.isLoading && (transactionsQuery.data ?? []).length === 0),
+      (oldTxQuery.isLoading && (oldTxQuery.data ?? []).length === 0),
   };
 }
