@@ -4,13 +4,15 @@ import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { api } from "@/services/apiClients"
+import { AuthService } from "@/services/auth.service"
 import { Loader2, CheckCircle, XCircle } from "lucide-react"
+import { getErrorMessage } from "@/utils/api-error"
+import type { RequestStatus } from "@/types/status"
 
 function ActivateContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading")
+  const [status, setStatus] = useState<RequestStatus>("loading")
   const [message, setMessage] = useState("")
 
   useEffect(() => {
@@ -22,41 +24,16 @@ function ActivateContent() {
       return
     }
 
-    const activateUser = async () => {
-      try {
-        // Usando params do axios em vez de construir manualmente a URL
-        const response = await api.get("/activation", {
-          params: { token }
-        })
-    
-        if (response.status === 200) {
-          setStatus("success")
-          setMessage("Conta ativada com sucesso!")
-          setTimeout(() => router.push("/login"), 3000)
-        } else {
-          setStatus("error")
-          setMessage("Erro na ativação da conta")
-        }
-        
-      } catch(err: any) {
+    AuthService.activate(token)
+      .then(() => {
+        setStatus("success")
+        setMessage("Conta ativada com sucesso!")
+        setTimeout(() => router.push("/login"), 3000)
+      })
+      .catch((err: unknown) => {
         setStatus("error")
-        
-        // Tratamento específico por status code
-        if (err.response?.status === 400) {
-          setMessage("Token inválido ou expirado")
-        } else if (err.response?.status === 404) {
-          setMessage("Endpoint de ativação não encontrado")
-        } else if (err.code === "NETWORK_ERROR") {
-          setMessage("Erro de conexão com o servidor")
-        } else {
-          setMessage("Erro ao ativar a conta. Tente novamente.")
-        }
-        
-        console.log("Erro ao ativar usuário", err)
-      }
-    }
-
-    activateUser()
+        setMessage(getErrorMessage(err, "Erro ao ativar a conta. Tente novamente."))
+      })
   }, [searchParams, router])
 
   return (
@@ -84,7 +61,7 @@ function ActivateContent() {
               <XCircle className="h-10 w-10 text-red-500" />
               <p className="mt-2 text-center text-red-600 font-medium">{message}</p>
               <div className="flex gap-2 mt-4">
-                <Button onClick={() => router.push("/signup")} variant="outline">
+                <Button onClick={() => router.push("/register")} variant="outline">
                   Criar nova conta
                 </Button>
                 <Button onClick={() => router.push("/login")}>

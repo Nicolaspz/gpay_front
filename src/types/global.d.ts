@@ -1,4 +1,5 @@
-export type { LoginResponse, SignInCredentials, SignUpCredentials, Tenant, User } from "./auth";
+export type { LoginResponse, SignInCredentials, SignUpCredentials, ResetPasswordPayload, ActivateAccountPayload, Tenant, User } from "./auth";
+export type { RequestStatus } from "./status";
 export type { ApiKey, ApiKeyPayload, ApiKeyResponse } from "./api-keys";
 export type { PaymentMethodApi, PaymentMethodForm, PaymentMethodView } from "./payments";
 export type { Webhook, WebhookPayload } from "./webhooks";

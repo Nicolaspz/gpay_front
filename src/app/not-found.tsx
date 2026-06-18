@@ -1,9 +1,12 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle } from "lucide-react"
 
 export default function NotFoundPage() {
+  const router = useRouter()
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white text-center">
       <AlertTriangle className="w-20 h-20 text-red-500 mb-6" />
@@ -13,7 +16,7 @@ export default function NotFoundPage() {
         O conteúdo que procura não existe ou foi movido.  
         Verifique o endereço e tente novamente.
       </p>
-      <Button onClick={() => (window.location.href = "/")} className="cursor-pointer">
+      <Button onClick={() => router.push("/")} className="cursor-pointer">
         Ir para Home
       </Button>
     </div>

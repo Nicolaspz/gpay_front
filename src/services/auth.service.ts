@@ -1,5 +1,5 @@
 import { api } from "@/services/apiClients";
-import type { LoginResponse, SignInCredentials, SignUpCredentials, User } from "@/types/global";
+import type { LoginResponse, SignInCredentials, SignUpCredentials, User, ResetPasswordPayload } from "@/types/global";
 
 export const AuthService = {
   async me(): Promise<User> {
@@ -41,5 +41,15 @@ export const AuthService = {
 
   async deletePhoto(): Promise<void> {
     await api.delete("/users/photo");
+  },
+
+  async activate(token: string) {
+    const { data } = await api.get("/activation", { params: { token } });
+    return data;
+  },
+
+  async resetPassword(token: string, payload: ResetPasswordPayload) {
+    const { data } = await api.post(`/auth/reset-password?token=${token}`, payload);
+    return data;
   },
 };
