@@ -2,7 +2,7 @@ import { Header } from "@/components/publicc/Header"
 import { Hero } from "@/components/publicc/Hero" 
 import { Services } from "@/components/publicc/Services" 
 import { About } from "@/components/publicc/About" 
-import { Pricing } from "@/components/publicc/Princing" 
+import { Pricing } from "@/components/publicc/Pricing" 
 import { Footer } from "@/components/publicc/Footer" 
 
 export default function Home() {

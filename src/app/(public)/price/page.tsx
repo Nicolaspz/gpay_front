@@ -1,26 +1,7 @@
-"use client"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
-const plans = [
-  {
-    name: "Básico",
-    price: "5.000 Kz/mês",
-    features: ["1 Usuário", "Relatórios Simples", "Suporte por Email"],
-  },
-  {
-    name: "Profissional",
-    price: "12.000 Kz/mês",
-    features: ["5 Usuários", "Dashboard Completo", "Suporte Prioritário"],
-    highlight: true,
-  },
-  {
-    name: "Empresarial",
-    price: "25.000 Kz/mês",
-    features: ["Usuários Ilimitados", "Integrações Avançadas", "Suporte 24/7"],
-  },
-]
+import { CheckCircle } from "lucide-react"
+import { plans } from "@/data/plans"
 
 export default function PricingPage() {
   return (
@@ -56,7 +37,8 @@ export default function PricingPage() {
                 <ul className="space-y-2 text-left text-gray-600 dark:text-gray-300">
                   {plan.features.map((f, idx) => (
                     <li key={idx} className="flex items-center gap-2">
-                      ✅ {f}
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      {f}
                     </li>
                   ))}
                 </ul>

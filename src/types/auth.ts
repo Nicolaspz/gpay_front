@@ -35,3 +35,12 @@ export type LoginResponse = {
   token: string;
   user: User;
 };
+
+export type ResetPasswordPayload = {
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
+export type ActivateAccountPayload = {
+  token: string;
+};

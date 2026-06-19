@@ -4,7 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastContainer } from "react-toastify";
-
+import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -90,8 +90,6 @@ export const metadata: Metadata = {
     telephone: false,
   },
 };
-
-import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 
 export default function RootLayout({
   children,

@@ -41,6 +41,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 }
 
 :root {
@@ -119,27 +122,6 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-roboto), sans-serif;
-    font-weight: 400;
-  }
-
-  /* Template Typography */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-bold text-[#2a2a2a];
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-
-  p {
-    font-size: 15px;
-    line-height: 30px;
-    font-weight: 300;
-    color: #afafaf;
   }
 
   a {
@@ -151,29 +133,6 @@
     outline: none;
   }
 
-  /* Animação suave para a página */
-  .auth-page {
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-  }
-
-  /* Estilização da scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
