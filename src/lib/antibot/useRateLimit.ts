@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react"
 import type { RateLimitConfig } from "./types"
 
 const DEFAULT_CONFIG: RateLimitConfig = {
-  maxAttempts: 3,
+  maxAttempts: 5,
   lockoutMs: 30000,
 }
 
