@@ -8,7 +8,8 @@ import {
   ActivityIcon,
   CreditCard,
   Users,
-  ScrollText
+  ScrollText,
+  User
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -20,6 +21,7 @@ import type { MenuItem } from "@/types/global"
 
 const menuItems: MenuItem[] = [
   { icon: Home, label: "Dashboard", href: "/dashboard", enabled: true },
+  { icon: User, label: "Minha Conta", href: "/dashboard/account", enabled: true, clientOnly: true },
   { icon: Book, label: "Transações Nacionais", href: "/dashboard/transactions", enabled: true },
   { icon: CreditCard, label: "Transações Internacionais", href: "/dashboard/stripe", enabled: true },
   { icon: FileSearch, label: "Comercial", href: "/dashboard/comercial", enabled: true },
@@ -60,10 +62,11 @@ export default function Sidebar({ closeSidebar }: { closeSidebar?: () => void })
 
         {/* Menu */}
         <nav className="space-y-2 px-6">
-          {menuItems.map(({ icon: Icon, label, href, enabled, adminOnly }) => {
+          {menuItems.map(({ icon: Icon, label, href, enabled, adminOnly, clientOnly }) => {
             const isActive = pathname === href
 
             if (adminOnly && !isAdmin) return null
+            if (clientOnly && isAdmin) return null
 
             if (enabled) {
               // Item habilitado - clicável
