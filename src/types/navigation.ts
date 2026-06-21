@@ -6,4 +6,5 @@ export type MenuItem = {
   href: string;
   enabled: boolean;
   adminOnly?: boolean;
+  clientOnly?: boolean;
 };

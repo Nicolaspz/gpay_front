@@ -18,4 +18,10 @@ export const StripeService = {
       headers: { Authorization: TOKEN },
     });
   },
+
+  getClientBalances(userId: string) {
+    return axios.get(`${BASE_URL}/client-balances/user/${userId}`, {
+      headers: { Authorization: TOKEN },
+    });
+  },
 };

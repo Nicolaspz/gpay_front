@@ -6,6 +6,7 @@ import type {
   StripeTransaction,
   StripeSummary,
   StripeStats,
+  ClientBalance,
 } from "@/types/stripe";
 
 export function useStripeData() {
@@ -31,6 +32,16 @@ export function useStripeData() {
       return res.data;
     },
     enabled: !!user,
+  });
+
+  const clientBalanceQuery = useQuery<ClientBalance[]>({
+    queryKey: ["stripe-client-balance", stripeUserId],
+    queryFn: async () => {
+      if (!stripeUserId) return [];
+      const res = await StripeService.getClientBalances(stripeUserId);
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    enabled: !!stripeUserId && !isAdmin,
   });
 
   const stats: StripeStats = useMemo(() => {
@@ -79,6 +90,8 @@ export function useStripeData() {
   return {
     newTransactions: newTxQuery.data ?? [],
     summaries: summariesQuery.data ?? [],
+    clientBalances: clientBalanceQuery.data ?? [],
+    isLoadingBalance: clientBalanceQuery.isLoading,
     stats,
     isAdmin,
     tenantId: user?.tenant_id || user?.tenant?.tenant_id,

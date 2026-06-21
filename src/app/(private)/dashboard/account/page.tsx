@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { CardStat } from "@/components/dashboard/CardStat"
 import { Card } from "@/components/ui/card"
 import { FiDollarSign, FiArrowUp, FiCheckCircle, FiFilter } from "react-icons/fi"
-import { Wallet, Plus } from "lucide-react"
+import { Wallet, Plus, Loader2 } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
+import { useStripeData } from "@/hooks/useStripeData"
 
 type ActivityType = "saque" | "deposito" | "recebimento" | "taxa"
 
@@ -54,13 +57,24 @@ const statusLabels: Record<string, string> = {
 }
 
 export default function AccountPage() {
+  const router = useRouter()
+  const { user, isAuthenticated, isLoadingUser } = useAuth()
+  const isAdmin = user?.user_type === "admin"
+  const { clientBalances: balances, isLoadingBalance: loadingBalance } = useStripeData()
+
+  useEffect(() => {
+    if (!isLoadingUser && isAuthenticated && isAdmin) {
+      router.replace("/dashboard")
+    }
+  }, [isLoadingUser, isAuthenticated, isAdmin, router])
+
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
   const [typeFilter, setTypeFilter] = useState<ActivityType | "todas">("todas")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 8
 
-  const saldo = 485000
+  const saldo = balances.length > 0 ? balances[0].balance : 0
   const totalSaque = 205000
   const totalRecebido = 420000
 
@@ -84,6 +98,14 @@ export default function AccountPage() {
   const formatKz = (v: number) =>
     v.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })
 
+  if (isLoadingUser || isAdmin) {
+    return null
+  }
+
+  const balanceCurrency = balances.length > 0 ? balances[0].currency : "AOA"
+  const formatBalance = (v: number) =>
+    v.toLocaleString("pt-AO", { style: "currency", currency: balanceCurrency })
+
   return (
     <div className="p-6 space-y-6 bg-white dark:bg-[#111827] min-h-screen">
       <div className="flex flex-col gap-1">
@@ -96,9 +118,9 @@ export default function AccountPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <CardStat
           title="Meu Saldo"
-          amount={formatKz(saldo)}
+          amount={loadingBalance ? "0,00 Kz" : formatBalance(saldo)}
           change=""
-          icon={<Wallet className="w-5 h-5 text-blue-500" />}
+          icon={loadingBalance ? <Loader2 className="w-5 h-5 text-blue-500 animate-spin" /> : <Wallet className="w-5 h-5 text-blue-500" />}
         />
         <CardStat
           title="Total de Saques"

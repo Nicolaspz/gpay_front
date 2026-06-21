@@ -32,6 +32,14 @@ export type StripeSummary = {
   currency: string;
 };
 
+export type ClientBalance = {
+  id?: string;
+  userId?: string;
+  balance: number;
+  currency: string;
+  updatedAt?: string;
+};
+
 export type StripeStats = {
   totalGross: number;
   totalNet: number;
