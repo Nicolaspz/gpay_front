@@ -10,20 +10,17 @@ export const StripeService = {
     });
   },
 
-  getOldTransactions(isAdmin: boolean, userId: string | undefined) {
+  getNewTransactions(isAdmin: boolean, userId: string | undefined) {
     const endpoint = isAdmin
-      ? "/transactions/admin/clients"
+      ? "/transactions/admin/all"
       : `/transactions/user/${userId}`;
     return axios.get(`${BASE_URL}${endpoint}`, {
       headers: { Authorization: TOKEN },
     });
   },
 
-  getNewTransactions(isAdmin: boolean, userId: string | undefined) {
-    const endpoint = isAdmin
-      ? "/transactions/admin/all"
-      : `/transactions/user/${userId}`;
-    return axios.get(`${BASE_URL}${endpoint}`, {
+  getClientBalances(userId: string) {
+    return axios.get(`${BASE_URL}/client-balances/user/${userId}`, {
       headers: { Authorization: TOKEN },
     });
   },

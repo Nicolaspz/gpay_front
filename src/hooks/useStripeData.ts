@@ -6,6 +6,7 @@ import type {
   StripeTransaction,
   StripeSummary,
   StripeStats,
+  ClientBalance,
 } from "@/types/stripe";
 
 export function useStripeData() {
@@ -23,16 +24,6 @@ export function useStripeData() {
     enabled: !!user && !isAdmin,
   });
 
-  const oldTxQuery = useQuery<StripeTransaction[]>({
-    queryKey: ["stripe-old-transactions", isAdmin, stripeUserId],
-    queryFn: async () => {
-      if (!user) return [];
-      const res = await StripeService.getOldTransactions(isAdmin, stripeUserId);
-      return res.data;
-    },
-    enabled: !!user,
-  });
-
   const newTxQuery = useQuery<StripeTransaction[]>({
     queryKey: ["stripe-new-transactions", isAdmin, stripeUserId],
     queryFn: async () => {
@@ -41,6 +32,16 @@ export function useStripeData() {
       return res.data;
     },
     enabled: !!user,
+  });
+
+  const clientBalanceQuery = useQuery<ClientBalance[]>({
+    queryKey: ["stripe-client-balance", stripeUserId],
+    queryFn: async () => {
+      if (!stripeUserId) return [];
+      const res = await StripeService.getClientBalances(stripeUserId);
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    enabled: !!stripeUserId && !isAdmin,
   });
 
   const stats: StripeStats = useMemo(() => {
@@ -53,67 +54,49 @@ export function useStripeData() {
     let totalNetUSD = 0;
     let totalNetAOA = 0;
 
-    if (isAdmin) {
-      (oldTxQuery.data ?? []).forEach((tx) => {
-        if (tx.status === "COMPLETED") {
-          totalGross += tx.grossAmount || 0;
-          totalNet += tx.netAmount || 0;
-          if (tx.isPaidOut) {
-            totalPaid += tx.netAmount || 0;
-          } else {
-            totalPending += tx.netAmount || 0;
-          }
+    (newTxQuery.data ?? []).forEach((tx) => {
+      if (tx.status === "COMPLETED") {
+        totalGross += tx.grossAmount || 0;
+        totalNet += tx.netAmount || 0;
+        if (tx.isPaidOut) {
+          totalPaid += tx.netAmount || 0;
+        } else {
+          totalPending += tx.netAmount || 0;
         }
-        const curr = (tx.currency || "").toUpperCase();
-        if (curr === "USD") {
-          totalGrossUSD += tx.grossAmount || 0;
-          totalNetUSD += tx.netAmount || 0;
-        } else if (curr === "AOA") {
-          totalGrossAOA += tx.grossAmount || 0;
-          totalNetAOA += tx.netAmount || 0;
-        }
-      });
-    } else {
-      (summariesQuery.data ?? []).forEach((s) => {
-        totalGross += s.totalGrossAmount || 0;
-        totalNet += s.totalNetAmount || 0;
-        totalPending += s.totalPendingPayoutAmount || 0;
-        totalPaid += s.totalPaidOutAmount || 0;
-      });
-      (oldTxQuery.data ?? []).forEach((tx) => {
-        const curr = (tx.currency || "").toUpperCase();
-        if (curr === "USD") {
-          totalGrossUSD += tx.grossAmount || 0;
-          totalNetUSD += tx.netAmount || 0;
-        } else if (curr === "AOA") {
-          totalGrossAOA += tx.grossAmount || 0;
-          totalNetAOA += tx.netAmount || 0;
-        }
-      });
-    }
+      }
+      const curr = (tx.currency || "").toUpperCase();
+      if (curr === "USD") {
+        totalGrossUSD += tx.grossAmount || 0;
+        totalNetUSD += tx.netAmount || 0;
+      } else if (curr === "AOA") {
+        totalGrossAOA += tx.grossAmount || 0;
+        totalNetAOA += tx.netAmount || 0;
+      }
+    });
 
     return {
       totalGross,
       totalNet,
       totalPending,
       totalPaid,
-      count: (oldTxQuery.data ?? []).length,
+      count: (newTxQuery.data ?? []).length,
       totalGrossUSD,
       totalGrossAOA,
       totalNetUSD,
       totalNetAOA,
     };
-  }, [summariesQuery.data, oldTxQuery.data, isAdmin]);
+  }, [newTxQuery.data, isAdmin]);
 
   return {
-    oldTransactions: oldTxQuery.data ?? [],
     newTransactions: newTxQuery.data ?? [],
     summaries: summariesQuery.data ?? [],
+    clientBalances: clientBalanceQuery.data ?? [],
+    isLoadingBalance: clientBalanceQuery.isLoading,
     stats,
     isAdmin,
     tenantId: user?.tenant_id || user?.tenant?.tenant_id,
     isLoading:
       (!isAdmin && summariesQuery.isLoading) ||
-      (oldTxQuery.isLoading && (oldTxQuery.data ?? []).length === 0),
+      (newTxQuery.isLoading && (newTxQuery.data ?? []).length === 0),
   };
 }
