@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const BASE_URL = "https://stripe-server-ztck.onrender.com/api/v1";
-const TOKEN = "Bearer GPayment_Secret_Default_2024";
+// const TOKEN = "Bearer GPayment_Secret_Default_2024";
+const TOKEN = "Bearer esThMBm0WHxXZiNK6ptlkuRAoPn7IwVv1CSLjzJDdcGbYFya5Oqg39fE8Qr42U"
 
 export const StripeService = {
   getSummaries(userId: string | undefined) {
