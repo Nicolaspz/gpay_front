@@ -103,9 +103,13 @@ export default function AccountPage() {
   }
 
   const balanceCurrency = balances.length > 0 ? balances[0].currency : "AOA"
-  const formatBalance = (v: number) =>
-    v.toLocaleString("pt-AO", { style: "currency", currency: balanceCurrency })
-
+  const formatBalance = (v: number) => {
+    // Verifica se v é undefined, null ou não é um número
+    if (v === undefined || v === null || isNaN(v)) {
+      return `0,00 ${balanceCurrency === 'AOA' ? 'Kz' : balanceCurrency}`
+    }
+    return v.toLocaleString("pt-AO", { style: "currency", currency: balanceCurrency })
+  }
   return (
     <div className="p-6 space-y-6 bg-white dark:bg-[#111827] min-h-screen">
       <div className="flex flex-col gap-1">
