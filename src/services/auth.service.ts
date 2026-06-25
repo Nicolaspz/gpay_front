@@ -16,6 +16,7 @@ export const AuthService = {
     const { data } = await api.post("/users", {
       fullname: credentials.fullname,
       email: credentials.email,
+      phone_number: credentials.phone_number,
       password: credentials.password,
       confirmpassword: credentials.confirmpassword,
     });

@@ -2,10 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
-    BASE_API_URL: process.env.BASE_API_URL,
-    BASE_APIPAY_URL: process.env.BASE_APIPAY_URL,
-    NEXT_PUBLIC_BASE_API_URL: process.env.NEXT_PUBLIC_BASE_API_URL || process.env.BASE_API_URL,
-    NEXT_PUBLIC_BASE_APIPAY_URL: process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL,
+    BASE_API_URL: process.env.NEXT_PUBLIC_BASE_API_URL,
+    BASE_APIPAY_URL: process.env.NEXT_PUBLIC_BASE_APIPAY_URL,
   },
   async rewrites() {
     const payUrl = process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL;

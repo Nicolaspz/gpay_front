@@ -27,6 +27,7 @@ export type SignInCredentials = {
 export type SignUpCredentials = {
   fullname: string;
   email: string;
+  phone_number: string;
   password: string;
   confirmpassword: string;
 };

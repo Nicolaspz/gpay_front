@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState, useContext, useEffect } from "react"
-import { Lock, Mail, User, Eye, EyeOff, Loader2, CheckCircle, XCircle } from "lucide-react"
+import { Lock, Mail, User, Eye, EyeOff, Loader2, CheckCircle, XCircle, Phone } from "lucide-react"
 import { AuthContext } from "@/contexts/AuthContext"
 import { api } from "@/services/apiClients"
 import { toast } from "react-toastify"
@@ -27,6 +27,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
     const [registerForm, setRegisterForm] = useState({
         fullname: "",
         email: "",
+        phone_number: "",
         password: "",
         confirmpassword: ""
     })
@@ -84,6 +85,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
             setRegisterForm({
                 fullname: "",
                 email: "",
+                phone_number: "",
                 password: "",
                 confirmpassword: ""
             })
@@ -133,6 +135,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
             const response = await api.post("/users", {
                 fullname: registerForm.fullname,
                 email: registerForm.email,
+                phone_number: registerForm.phone_number,
                 password: registerForm.password,
                 confirmpassword: registerForm.confirmpassword
             })
@@ -171,6 +174,7 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
         setRegisterForm({
             fullname: "",
             email: "",
+            phone_number: "",
             password: "",
             confirmpassword: ""
         })
@@ -386,6 +390,21 @@ export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
                                             placeholder="seu@email.com"
                                             className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
                                             value={registerForm.email}
+                                            onChange={handleRegisterChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="register-phone_number" className="text-gray-700">Número de Telefone</Label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                        <Input
+                                            id="register-phone_number"
+                                            type="tel"
+                                            placeholder="+244 900 000 000"
+                                            className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
+                                            value={registerForm.phone_number}
                                             onChange={handleRegisterChange}
                                             required
                                         />
