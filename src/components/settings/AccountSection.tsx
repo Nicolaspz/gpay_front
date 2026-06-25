@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { AuthService } from "@/services/auth.service"
 import { toast } from "react-toastify"
 import { getErrorMessage } from "@/utils/api-error"
-import { Loader2, Camera, Trash2, MoreVertical } from "lucide-react"
+import { Loader2, Camera, Trash2, MoreVertical, Phone, Building2 } from "lucide-react"
 
 export function AccountSection() {
   const { user, setUser } = useAuth()
@@ -41,13 +41,14 @@ export function AccountSection() {
 
     try {
       setUploading(true)
-      if (user?.photo_url) {
+      const url = URL.createObjectURL(file)
+      if (user?.photo_url || user?.user_photo) {
         await AuthService.updatePhoto(file)
-        setUser({ ...user, photo_url: URL.createObjectURL(file) })
+        setUser({ ...user, photo_url: url, user_photo: url })
         toast.success("Foto atualizada com sucesso!")
       } else {
         await AuthService.uploadPhoto(file)
-        setUser({ ...user, photo_url: URL.createObjectURL(file) })
+        setUser({ ...user, photo_url: url, user_photo: url })
         toast.success("Foto enviada com sucesso!")
       }
     } catch (error: unknown) {
@@ -64,7 +65,7 @@ export function AccountSection() {
     try {
       setDeleting(true)
       await AuthService.deletePhoto()
-      setUser({ ...user, photo_url: undefined })
+      setUser({ ...user, photo_url: undefined, user_photo: undefined })
       setPreview(null)
       toast.success("Foto removida com sucesso!")
     } catch (error: unknown) {
@@ -74,7 +75,7 @@ export function AccountSection() {
     }
   }
 
-  const photoUrl = preview || user?.photo_url
+  const photoUrl = preview || user?.photo_url || user?.user_photo
 
   return (
     <Card className="p-6 space-y-6">
@@ -162,17 +163,65 @@ export function AccountSection() {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Nome Completo</Label>
-          <Input id="name" defaultValue={user?.fullname || ""} />
+          <Input id="name" defaultValue={user?.fullname || user?.fullName || ""} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">E-mail</Label>
           <Input id="email" type="email" defaultValue={user?.email || ""} disabled />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="phone_number">
+            <Phone className="inline w-3.5 h-3.5 mr-1" />
+            Número de Telefone
+          </Label>
+          <Input id="phone_number" type="tel" defaultValue={user?.phone_number || ""} />
         </div>
       </div>
 
       <div className="flex justify-end">
         <Button className="cursor-pointer">Salvar Alterações</Button>
       </div>
+
+      {user?.tenant && (
+        <Card className="p-6 space-y-4 bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-zinc-700">
+          <div className="flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-blue-500" />
+            <h3 className="text-lg font-semibold">Dados do Comerciante</h3>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {user.tenant.legal_name && (
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500">Nome Legal</p>
+                <p className="text-sm font-medium">{user.tenant.legal_name}</p>
+              </div>
+            )}
+            {user.tenant.status && (
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500">Status</p>
+                <p className="text-sm font-medium capitalize">{user.tenant.status}</p>
+              </div>
+            )}
+            {user.tenant.bank_iban && (
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500">IBAN</p>
+                <p className="text-sm font-medium font-mono">{user.tenant.bank_iban}</p>
+              </div>
+            )}
+            {user.tenant.bank_owner_name && (
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500">Titular da Conta</p>
+                <p className="text-sm font-medium">{user.tenant.bank_owner_name}</p>
+              </div>
+            )}
+            {user.tenant.client_reference_count && (
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500">Referências de Cliente</p>
+                <p className="text-sm font-medium">{user.tenant.client_reference_count}</p>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
     </Card>
   )
 }

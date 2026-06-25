@@ -55,7 +55,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="p-0 flex items-center gap-2 hover:bg-transparent">
               <Avatar className="w-8 h-8 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] border-2 border-[var(--border)]">
-                <AvatarImage src={user?.photo_url} alt={user?.fullname} />
+                <AvatarImage src={user?.photo_url || user?.user_photo} alt={user?.fullname} />
                 <AvatarFallback className="text-white font-semibold text-[var(--popover-foreground)]">
                   {getInitials(user?.fullname)}
                 </AvatarFallback>
