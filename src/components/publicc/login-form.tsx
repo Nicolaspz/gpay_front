@@ -52,7 +52,7 @@ export function LoginForm() {
   const { honeypotProps, isTriggered } = useHoneypot()
 
   const loginFieldIds = useMemo(() => ["login-email", "login-password"], [])
-  const { registerField: registerBotField, isSuspicious } = useBotBehavior({ fieldIds: loginFieldIds })
+  const { registerField: registerBotField } = useBotBehavior({ fieldIds: loginFieldIds })
   const emailField = useMemo(() => registerBotField("login-email"), [registerBotField])
   const passwordField = useMemo(() => registerBotField("login-password"), [registerBotField])
 
@@ -119,7 +119,6 @@ export function LoginForm() {
     e.preventDefault()
 
     if (isTriggered) return
-    if (isSuspicious()) return
 
     if (isLocked) {
       toast.error(`Muitas tentativas. Aguarde ${lockoutSecondsLeft} segundos.`)
