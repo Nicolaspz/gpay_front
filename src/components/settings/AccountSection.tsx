@@ -41,16 +41,14 @@ export function AccountSection() {
 
     try {
       setUploading(true)
-      const url = URL.createObjectURL(file)
       if (user?.photo_url || user?.user_photo) {
         await AuthService.updatePhoto(file)
-        setUser({ ...user, photo_url: url, user_photo: url })
-        toast.success("Foto atualizada com sucesso!")
       } else {
         await AuthService.uploadPhoto(file)
-        setUser({ ...user, photo_url: url, user_photo: url })
-        toast.success("Foto enviada com sucesso!")
       }
+      const updatedUser = await AuthService.me()
+      setUser({ ...user, ...updatedUser, photo_url: updatedUser.user_photo, user_photo: updatedUser.user_photo })
+      toast.success("Foto atualizada com sucesso!")
     } catch (error: unknown) {
       setPreview(null)
       toast.error(getErrorMessage(error, "Erro ao enviar foto"))
@@ -65,7 +63,8 @@ export function AccountSection() {
     try {
       setDeleting(true)
       await AuthService.deletePhoto()
-      setUser({ ...user, photo_url: undefined, user_photo: undefined })
+      const updatedUser = await AuthService.me()
+      setUser({ ...user, ...updatedUser, photo_url: updatedUser.user_photo, user_photo: updatedUser.user_photo })
       setPreview(null)
       toast.success("Foto removida com sucesso!")
     } catch (error: unknown) {
