@@ -12,10 +12,12 @@ import { AuthService } from "@/services/auth.service"
 import { PasswordInput } from "@/components/shared/PasswordInput"
 import { usePasswordValidation } from "@/hooks/usePasswordValidation"
 import { getErrorMessage } from "@/utils/api-error"
+import { Phone } from "lucide-react"
 
 export default function RegisterPage() {
   const [fullname, setFullname] = useState("")
   const [email, setEmail] = useState("")
+  const [phone_number, setPhone_number] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordTouched, setPasswordTouched] = useState(false)
@@ -41,6 +43,7 @@ export default function RegisterPage() {
       await AuthService.signUp({
         fullname,
         email,
+        phone_number,
         password,
         confirmpassword: confirmPassword,
       })
@@ -87,6 +90,22 @@ export default function RegisterPage() {
                 required
                 className="h-11"
               />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="phone_number">Número de Telefone</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="phone_number"
+                  type="tel"
+                  placeholder="+244 900 000 000"
+                  value={phone_number}
+                  onChange={(e) => setPhone_number(e.target.value)}
+                  required
+                  className="pl-10 h-11"
+                />
+              </div>
             </div>
 
             <div className="grid gap-2">

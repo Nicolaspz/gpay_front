@@ -2,10 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
-    BASE_API_URL: process.env.BASE_API_URL,
-    BASE_APIPAY_URL: process.env.BASE_APIPAY_URL,
-    NEXT_PUBLIC_BASE_API_URL: process.env.NEXT_PUBLIC_BASE_API_URL || process.env.BASE_API_URL,
-    NEXT_PUBLIC_BASE_APIPAY_URL: process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL,
+    BASE_API_URL: process.env.NEXT_PUBLIC_BASE_API_URL,
+    BASE_APIPAY_URL: process.env.NEXT_PUBLIC_BASE_APIPAY_URL,
   },
   async rewrites() {
     const payUrl = process.env.NEXT_PUBLIC_BASE_APIPAY_URL || process.env.BASE_APIPAY_URL;
@@ -46,7 +44,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://github.com https://*.github.com https://*.stripe.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; connect-src 'self' https://*.gpayment.ao https://*.gpayangola.com https://*.google-analytics.com https://api.stripe.com https://stripe-server-ztck.onrender.com;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://github.com https://*.github.com https://*.stripe.com https://res.cloudinary.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; connect-src 'self' https://*.gpayment.ao https://*.gpayangola.com https://*.google-analytics.com https://api.stripe.com https://stripe-server-ztck.onrender.com;",
           },
           {
             key: "X-Robots-Tag",

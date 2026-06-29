@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { toast } from "react-toastify"
-import { Mail, Lock, Loader2, Eye, EyeOff, User, ShieldAlert } from "lucide-react"
+import { Mail, Lock, Loader2, Eye, EyeOff, User, ShieldAlert, Phone } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -26,6 +26,7 @@ export function LoginForm() {
   const [registerForm, setRegisterForm] = useState({
     fullname: "",
     email: "",
+    phone_number: "",
     password: "",
     confirmpassword: ""
   })
@@ -51,7 +52,7 @@ export function LoginForm() {
   const { honeypotProps, isTriggered } = useHoneypot()
 
   const loginFieldIds = useMemo(() => ["login-email", "login-password"], [])
-  const { registerField: registerBotField, isSuspicious } = useBotBehavior({ fieldIds: loginFieldIds })
+  const { registerField: registerBotField } = useBotBehavior({ fieldIds: loginFieldIds })
   const emailField = useMemo(() => registerBotField("login-email"), [registerBotField])
   const passwordField = useMemo(() => registerBotField("login-password"), [registerBotField])
 
@@ -105,6 +106,7 @@ export function LoginForm() {
       setRegisterForm({
         fullname: "",
         email: "",
+        phone_number: "",
         password: "",
         confirmpassword: ""
       })
@@ -117,7 +119,6 @@ export function LoginForm() {
     e.preventDefault()
 
     if (isTriggered) return
-    if (isSuspicious()) return
 
     if (isLocked) {
       toast.error(`Muitas tentativas. Aguarde ${lockoutSecondsLeft} segundos.`)
@@ -165,6 +166,7 @@ export function LoginForm() {
       const credentials: SignUpCredentials = {
         fullname: registerForm.fullname,
         email: registerForm.email,
+        phone_number: registerForm.phone_number,
         password: registerForm.password,
         confirmpassword: registerForm.confirmpassword,
       }
@@ -174,6 +176,7 @@ export function LoginForm() {
       setRegisterForm({
         fullname: "",
         email: "",
+        phone_number: "",
         password: "",
         confirmpassword: ""
       })
@@ -419,6 +422,21 @@ export function LoginForm() {
                       placeholder="seu@email.com"
                       className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
                       value={registerForm.email}
+                      onChange={handleRegisterChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-phone_number" className="text-gray-700">Número de Telefone</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="register-phone_number"
+                      type="tel"
+                      placeholder="+244 900 000 000"
+                      className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
+                      value={registerForm.phone_number}
                       onChange={handleRegisterChange}
                       required
                     />
