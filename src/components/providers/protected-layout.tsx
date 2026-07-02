@@ -15,16 +15,12 @@ export function ProtectedLayout({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, isLoadingUser, router])
 
-  if (isLoadingUser) {
+  if (isLoadingUser || !isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-[#5b68eb]" />
       </div>
     )
-  }
-
-  if (!isAuthenticated) {
-    return null
   }
 
   return <>{children}</>

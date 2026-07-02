@@ -4,6 +4,8 @@ import type { LoginResponse, SignInCredentials, SignUpCredentials, User, ResetPa
 export const AuthService = {
   async me(): Promise<User> {
     const { data } = await api.get<User>("/me");
+
+    // console.log("me service", data);
     return data;
   },
 
