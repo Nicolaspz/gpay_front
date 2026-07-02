@@ -15,6 +15,7 @@ export const StripeService = {
     const endpoint = isAdmin
       ? "/transactions/admin/all"
       : `/transactions/user/${userId}`;
+
     return axios.get(`${BASE_URL}${endpoint}`, {
       headers: { Authorization: TOKEN },
     });
