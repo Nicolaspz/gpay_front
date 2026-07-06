@@ -176,22 +176,22 @@ export default function PayPayDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CardStat
           title="Saldo Disponível"
-          amount={balance ? `${balance.available_amount.toLocaleString("pt-AO")} AOA` : "---"}
+          amount={balance?.available_amount != null ? `${balance.available_amount.toLocaleString("pt-AO")} AOA` : "---"}
           icon={<FiDollarSign className="text-green-500" />}
         />
         <CardStat
           title="Total Creditado"
-          amount={balance ? `${balance.total_credited.toLocaleString("pt-AO")} AOA` : "---"}
+          amount={balance?.total_credited != null ? `${balance.total_credited.toLocaleString("pt-AO")} AOA` : "---"}
           icon={<FiArrowUp className="text-blue-500" />}
         />
         <CardStat
           title="Total Debitado"
-          amount={balance ? `${balance.total_debited.toLocaleString("pt-AO")} AOA` : "---"}
+          amount={balance?.total_debited != null ? `${balance.total_debited.toLocaleString("pt-AO")} AOA` : "---"}
           icon={<FiArrowDown className="text-red-500" />}
         />
         <CardStat
           title="Última Atualização"
-          amount={balance ? format(new Date(balance.updated_at), "dd/MM/yyyy HH:mm") : "---"}
+          amount={balance?.updated_at ? format(new Date(balance.updated_at), "dd/MM/yyyy HH:mm") : "---"}
           icon={<FiDatabase className="text-purple-500" />}
         />
       </div>
@@ -239,7 +239,7 @@ export default function PayPayDashboard() {
                       </span>
                     </td>
                     <td className="p-3 text-xs font-medium text-gray-900 dark:text-white">
-                      {mov.amount.toLocaleString("pt-AO")} AOA
+                      {mov.amount != null ? `${mov.amount.toLocaleString("pt-AO")} AOA` : "—"}
                     </td>
                     <td className="p-3 text-xs text-gray-600 dark:text-gray-400 font-mono">{mov.reference || "—"}</td>
                     <td className="p-3 text-xs text-gray-600 dark:text-gray-400">{mov.description || "—"}</td>

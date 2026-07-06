@@ -10,11 +10,21 @@ export function usePayPayFund() {
   const isAdmin = user?.user_type === "admin";
   const queryClient = useQueryClient();
 
-  const balanceQuery = useQuery<PayPayBalance>({
+  const balanceQuery = useQuery<PayPayBalance | null>({
     queryKey: ["paypay-balance"],
     queryFn: async () => {
       const res = await StripeService.getPayPayBalance();
-      return res.data;
+      const raw = res.data;
+      if (!raw || typeof raw !== "object") return null;
+      const balance = raw.data ?? raw.balance ?? raw;
+      if (
+        typeof balance.available_amount === "number" &&
+        typeof balance.total_credited === "number" &&
+        typeof balance.total_debited === "number"
+      ) {
+        return balance as PayPayBalance;
+      }
+      return null;
     },
     enabled: isAdmin,
   });
@@ -23,7 +33,10 @@ export function usePayPayFund() {
     queryKey: ["paypay-movements"],
     queryFn: async () => {
       const res = await StripeService.getPayPayMovements();
-      return Array.isArray(res.data) ? res.data : [];
+      const raw = res.data;
+      if (Array.isArray(raw)) return raw.filter((m: unknown) => m && typeof m === "object");
+      if (raw?.data && Array.isArray(raw.data)) return raw.data.filter((m: unknown) => m && typeof m === "object");
+      return [];
     },
     enabled: isAdmin,
   });
