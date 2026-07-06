@@ -4,10 +4,21 @@ import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { CardStat } from "@/components/dashboard/CardStat"
 import { Card } from "@/components/ui/card"
-import { FiDollarSign, FiArrowUp, FiCheckCircle, FiFilter } from "react-icons/fi"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { FiDollarSign, FiArrowUp, FiCheckCircle, FiFilter, FiX } from "react-icons/fi"
 import { Wallet, Plus, Loader2 } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { useStripeData } from "@/hooks/useStripeData"
+import { useWithdrawalValidation } from "@/hooks/useWithdrawalValidation"
+import { useClientBalanceByCurrency } from "@/hooks/useClientBalanceByCurrency"
 
 type ActivityType = "saque" | "deposito" | "recebimento" | "taxa"
 
@@ -98,6 +109,19 @@ export default function AccountPage() {
   const formatKz = (v: number) =>
     v.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })
 
+  const [selectedCurrency, setSelectedCurrency] = useState("usd")
+  const { balance: currencyBalance, isLoading: loadingCurrencyBalance } = useClientBalanceByCurrency(user?.id || "", selectedCurrency)
+
+  const [withdrawOpen, setWithdrawOpen] = useState(false)
+  const [withdrawAmount, setWithdrawAmount] = useState("")
+  const [withdrawCurrency, setWithdrawCurrency] = useState("usd")
+  const { validate, isValidating, validationResult, validationError, reset } = useWithdrawalValidation(user?.id || "")
+
+  const handleWithdrawValidation = () => {
+    if (!withdrawAmount) return
+    validate({ amount: Number(withdrawAmount), currency: withdrawCurrency })
+  }
+
   if (isLoadingUser || isAdmin) {
     return null
   }
@@ -119,12 +143,32 @@ export default function AccountPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex items-center gap-2">
+        <label className="text-sm text-gray-500 dark:text-gray-400">Consultar saldo por moeda:</label>
+        <select
+          value={selectedCurrency}
+          onChange={(e) => setSelectedCurrency(e.target.value)}
+          className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+        >
+          <option value="usd">USD</option>
+          <option value="aoa">AOA</option>
+          <option value="eur">EUR</option>
+        </select>
+        {loadingCurrencyBalance && <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CardStat
           title="Meu Saldo"
           amount={loadingBalance ? "0,00 Kz" : formatBalance(saldo)}
           change=""
           icon={loadingBalance ? <Loader2 className="w-5 h-5 text-blue-500 animate-spin" /> : <Wallet className="w-5 h-5 text-blue-500" />}
+        />
+        <CardStat
+          title={`Saldo (${selectedCurrency.toUpperCase()})`}
+          amount={loadingCurrencyBalance ? "..." : currencyBalance ? `${currencyBalance.balance.toLocaleString("pt-AO")} ${selectedCurrency.toUpperCase()}` : "—"}
+          change=""
+          icon={<FiDollarSign className="text-purple-500" />}
         />
         <CardStat
           title="Total de Saques"
@@ -141,9 +185,72 @@ export default function AccountPage() {
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2">
-          <FiDollarSign /> Fazer Saque
-        </button>
+        <Dialog open={withdrawOpen} onOpenChange={(open) => { setWithdrawOpen(open); if (!open) reset() }}>
+          <DialogTrigger asChild>
+            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2">
+              <FiDollarSign /> Fazer Saque
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Validar Saque</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Montante</label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="10.00"
+                  value={withdrawAmount}
+                  onChange={(e) => setWithdrawAmount(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Moeda</label>
+                <select
+                  value={withdrawCurrency}
+                  onChange={(e) => setWithdrawCurrency(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+                >
+                  <option value="usd">USD</option>
+                  <option value="aoa">AOA</option>
+                </select>
+              </div>
+              <Button
+                onClick={handleWithdrawValidation}
+                disabled={isValidating || !withdrawAmount}
+                className="w-full"
+              >
+                {isValidating ? "A validar..." : "Validar Saque"}
+              </Button>
+
+              {validationResult && (
+                <div className={`p-3 rounded-lg text-sm ${validationResult.valid ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400" : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"}`}>
+                  {validationResult.valid ? (
+                    <div className="flex items-center gap-2">
+                      <FiCheckCircle className="h-4 w-4" />
+                      <span>Saldo suficiente! Pode prosseguir com o saque.</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <FiX className="h-4 w-4" />
+                      <span>{validationResult.message || "Saldo insuficiente para este saque."}</span>
+                    </div>
+                  )}
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Saldo atual: {formatKz(validationResult.current_balance)} &bull; Solicitado: {formatKz(validationResult.requested_amount)}
+                  </div>
+                </div>
+              )}
+
+              {validationError && (
+                <p className="text-sm text-red-600 text-center">Erro ao validar saque. Tente novamente.</p>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-gray-700 rounded-lg text-sm font-medium flex items-center gap-2">
           <Plus /> Solicitar Aumento de Limite
         </button>
