@@ -2,8 +2,15 @@ import { api } from "@/services/apiClients";
 import type { LoginResponse, SignInCredentials, SignUpCredentials, User, ResetPasswordPayload } from "@/types/global";
 
 export const AuthService = {
+  async updateProfile(data: { fullname?: string; phone_number?: string }): Promise<User> {
+    const { data: response } = await api.put<User>("/users", data);
+    return response;
+  },
+
   async me(): Promise<User> {
     const { data } = await api.get<User>("/me");
+
+    // console.log("me service", data);
     return data;
   },
 
