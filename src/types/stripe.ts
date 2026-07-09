@@ -51,3 +51,81 @@ export type StripeStats = {
   totalNetUSD: number;
   totalNetAOA: number;
 };
+
+export type PayPayBalance = {
+  available_amount: number;
+  total_credited: number;
+  total_debited: number;
+  currency: string;
+  updated_at: string;
+};
+
+export type PayPayMovement = {
+  id: number;
+  type: "credit" | "debit" | "ignored";
+  amount: number;
+  reference: string | null;
+  description: string | null;
+  paypay_transaction_id: string | null;
+  internal_transaction_id: string | null;
+  created_at: string;
+};
+
+export type PayPayTopupPayload = {
+  amount: number;
+  reference: string;
+  description?: string;
+};
+
+export type PayPayValidateDebitPayload = {
+  amount: number;
+};
+
+export type WithdrawalValidationResponse = {
+  valid: boolean;
+  current_balance: number;
+  requested_amount: number;
+  currency: string;
+  message?: string;
+};
+
+export type RebuildBalancesResponse = {
+  message: string;
+  transactions_processed: number;
+};
+
+export type AdminClientSummary = {
+  userId: string;
+  fullname?: string;
+  email?: string;
+  totalTransactions: number;
+  totalGrossAmount: number;
+  totalNetAmount: number;
+  currency: string;
+};
+
+export type TransactionSummaryResponse = {
+  totalGrossAmount: number;
+  totalNetAmount: number;
+  totalPendingPayoutAmount: number;
+  totalPaidOutAmount: number;
+  currency: string;
+  transactionCount: number;
+};
+
+export type PayPayWebhookPayload = {
+  event_type: string;
+  paypay_transaction_id: string;
+  internal_transaction_id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  message?: string;
+};
+
+export type ClientBalanceByCurrency = {
+  userId: string;
+  balance: number;
+  currency: string;
+  updatedAt?: string;
+};

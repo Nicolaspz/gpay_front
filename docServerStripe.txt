@@ -1,0 +1,428 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "GPay Angola API",
+    "version": "1.0.0",
+    "description": "API para checkout internacional, simulacao de taxas, webhooks, saldos e transacoes."
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "PaymentSucceededWebhook": {
+        "type": "object",
+        "description": "Payload que a GPay Angola envia ao endpoint do cliente quando um pagamento e confirmado.",
+        "required": [
+          "event_type",
+          "transaction_id",
+          "internal_transaction_id",
+          "amount",
+          "net_amount",
+          "gpayment_fee",
+          "currency",
+          "status"
+        ],
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "example": "payment.succeeded"
+          },
+          "transaction_id": {
+            "type": "string",
+            "description": "ID da sessao Stripe.",
+            "example": "cs_live_a1o5A3FrxlH2Yb6nX1LthaJVM1xo4e63sKc8VfLzf60aXtF0RUtj25y7Jf"
+          },
+          "internal_transaction_id": {
+            "type": "string",
+            "description": "ID enviado pelo cliente ao criar o checkout.",
+            "example": "ORDEM-00005"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor bruto convertido para AOA para operacao local.",
+            "example": 5092.0
+          },
+          "net_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor liquido em AOA depois da taxa real da Stripe convertida e da taxa GPay. Custos PayPay estao incluidos na taxa GPay.",
+            "example": 4541.0
+          },
+          "gpayment_fee": {
+            "type": "number",
+            "format": "double",
+            "description": "Taxa GPay em AOA aplicada sobre o valor bruto convertido.",
+            "example": 127.3
+          },
+          "currency": {
+            "type": "string",
+            "description": "Moeda operacional usada no payload enviado ao cliente/PayPay.",
+            "example": "aoa"
+          },
+          "stripe_settlement_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor bruto liquidado pela Stripe na moeda da conta Stripe.",
+            "example": 5.36
+          },
+          "stripe_settlement_fee": {
+            "type": "number",
+            "format": "double",
+            "description": "Taxa real cobrada pela Stripe na moeda de liquidacao.",
+            "example": 0.45
+          },
+          "stripe_settlement_net_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor liquido deixado pela Stripe na moeda de liquidacao.",
+            "example": 4.91
+          },
+          "stripe_settlement_currency": {
+            "type": "string",
+            "description": "Moeda de liquidacao Stripe, normalmente USD.",
+            "example": "usd"
+          },
+          "stripe_exchange_rate": {
+            "type": "number",
+            "format": "double",
+            "description": "Taxa de cambio enviada pela Stripe quando existir. Ex.: 1 AOA = 0.001072 USD.",
+            "example": 0.001072
+          },
+          "usd_to_aoa_rate": {
+            "type": "number",
+            "format": "double",
+            "description": "Taxa usada pela GPay para converter USD para AOA. Se a Stripe nao enviar exchange_rate, usa USD_TO_AOA_RATE, padrao 950.",
+            "example": 932.84
+          },
+          "exchange_rate_source": {
+            "type": "string",
+            "description": "Origem da taxa usada: stripe ou default.",
+            "example": "stripe"
+          },
+          "status": {
+            "type": "string",
+            "example": "COMPLETED"
+          }
+        }
+      },
+      "WebhookTestPayload": {
+        "type": "object",
+        "description": "Payload enviado pela simulacao de webhook.",
+        "required": [
+          "event_type",
+          "user_id",
+          "message",
+          "sent_at"
+        ],
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "example": "webhook.test"
+          },
+          "user_id": {
+            "type": "string",
+            "example": "cliente-id"
+          },
+          "message": {
+            "type": "string",
+            "example": "Teste de webhook da GPay Angola"
+          },
+          "sent_at": {
+            "type": "string",
+            "example": "2026-06-16T10:30:00"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/client-balances/admin/all": {
+      "get": {
+        "summary": "Listar saldos de todos os clientes",
+        "responses": {
+          "200": {
+            "description": "Lista de saldos"
+          }
+        }
+      }
+    },
+    "/api/v1/client-balances/user/{userId}": {
+      "get": {
+        "summary": "Listar saldos de um cliente",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saldos do cliente"
+          }
+        }
+      }
+    },
+    "/api/v1/client-balances/user/{userId}/{currency}": {
+      "get": {
+        "summary": "Consultar saldo de um cliente por moeda",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "usd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saldo por moeda"
+          }
+        }
+      }
+    },
+    "/api/v1/client-balances/user/{userId}/validate-withdrawal": {
+      "post": {
+        "summary": "Validar saldo antes do saque",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "amount": 10.0,
+                "currency": "usd"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado da validacao do saque"
+          }
+        }
+      }
+    },
+    "/api/v1/client-balances/admin/rebuild-from-transactions": {
+      "post": {
+        "summary": "Reconstruir saldos a partir das transacoes concluidas",
+        "responses": {
+          "200": {
+            "description": "Quantidade de transacoes processadas"
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/user/{userId}": {
+      "get": {
+        "summary": "Listar transacoes de um cliente",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de transacoes"
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/user/{userId}/summary": {
+      "get": {
+        "summary": "Resumo de transacoes de um cliente",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumo do cliente"
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/user/{userId}/summaries": {
+      "get": {
+        "summary": "Resumo de transacoes por moeda",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de resumos por moeda"
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/admin/clients": {
+      "get": {
+        "summary": "Resumo administrativo de clientes",
+        "responses": {
+          "200": {
+            "description": "Lista de clientes com resumo de transacoes"
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/admin/all": {
+      "get": {
+        "summary": "Listar todas as transacoes",
+        "responses": {
+          "200": {
+            "description": "Lista de transacoes"
+          }
+        }
+      }
+    },
+    "/api/v1/paypay-fund/admin/balance": {
+      "get": {
+        "summary": "Consultar saldo operacional PayPay",
+        "description": "Retorna o saldo interno da conta PayPay operacional da GPay. Moeda sempre AOA. Requer APP_API_KEY.",
+        "responses": {
+          "200": {
+            "description": "Saldo PayPay operacional"
+          }
+        }
+      }
+    },
+    "/api/v1/paypay-fund/admin/movements": {
+      "get": {
+        "summary": "Listar movimentos do fundo PayPay",
+        "description": "Lista os ultimos 100 movimentos do fundo PayPay operacional. Requer APP_API_KEY.",
+        "responses": {
+          "200": {
+            "description": "Lista de creditos, debitos e eventos ignorados"
+          }
+        }
+      }
+    },
+    "/api/v1/paypay-fund/admin/topups": {
+      "post": {
+        "summary": "Creditar fundo PayPay manualmente",
+        "description": "Registra um carregamento manual/admin da conta PayPay operacional da GPay. Incrementa available_amount e total_credited em AOA. Requer APP_API_KEY.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "amount": 1000000,
+                "reference": "PAYPAY-TOPUP-2026-0001",
+                "description": "Carregamento manual da conta PayPay operacional"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado do credito manual"
+          }
+        }
+      }
+    },
+    "/api/v1/paypay-fund/admin/validate-debit": {
+      "post": {
+        "summary": "Validar fundo PayPay antes de debitar",
+        "description": "Verifica se o fundo operacional PayPay possui AOA suficiente antes de chamar a PayPay para carregar o cliente final. Requer APP_API_KEY.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "amount": 85000
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado da validacao do fundo"
+          }
+        }
+      }
+    },
+    "/webhook/paypay": {
+      "post": {
+        "summary": "Webhook recebido da PayPay",
+        "description": "Recebe notificacao da PayPay quando a conta PayPay operacional da GPay for debitada para carregar o cliente final. Valida header paypay-webhook-secret ou x-paypay-webhook-secret com PAYPAY_WEBHOOK_SECRET. Debita paypay_fund_balances apenas para eventos de debito concluido. Idempotente por paypay_transaction_id.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "event_type": "paypay.wallet.debited",
+                "paypay_transaction_id": "pp_tx_123",
+                "internal_transaction_id": "ORDEM-00005",
+                "amount": 85000,
+                "currency": "aoa",
+                "status": "COMPLETED",
+                "message": "Debito confirmado na conta PayPay da GPay"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processado ou ignorado"
+          },
+          "401": {
+            "description": "Secret PayPay invalida"
+          }
+        }
+      }
+    }
+  }
+}

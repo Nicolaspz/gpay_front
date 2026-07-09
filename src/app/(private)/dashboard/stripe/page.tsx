@@ -1,8 +1,10 @@
 'use client'
-import { FiCheckCircle, FiDollarSign, FiFilter, FiCreditCard, FiSearch, FiX } from "react-icons/fi";
+import { FiCheckCircle, FiDollarSign, FiFilter, FiCreditCard, FiSearch, FiX, FiUsers } from "react-icons/fi";
 import { useState, useMemo } from "react";
 import { CardStat } from "@/components/dashboard/CardStat";
+import { Card } from "@/components/ui/card";
 import { useStripeData } from "@/hooks/useStripeData";
+import { useTransactionSummary } from "@/hooks/useTransactionSummary";
 import type { StripeTransaction } from "@/types/stripe";
 
 const statusOptions = ["COMPLETED", "PENDING", "FAILED", "CANCELLED", "REFUNDED"] as const;
@@ -10,6 +12,7 @@ const currencyOptions = ["USD", "AOA"] as const;
 
 export default function AdminStripeDashboard() {
   const { newTransactions, stats, isAdmin, isLoading } = useStripeData();
+  const { adminClients, isLoadingAdminClients, userSummary, isLoadingUserSummary } = useTransactionSummary();
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -114,6 +117,85 @@ export default function AdminStripeDashboard() {
           icon={<FiCheckCircle className="text-green-500" />}
         />
       </div>
+
+      {isAdmin && (
+        <Card className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <FiUsers className="h-5 w-5 text-blue-500" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Resumo de Clientes</h2>
+          </div>
+          {isLoadingAdminClients ? (
+            <div className="flex justify-center py-4">
+              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : adminClients.length === 0 ? (
+            <p className="text-sm text-gray-500 text-center py-4">Nenhum cliente encontrado.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Cliente</th>
+                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Email</th>
+                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Transações</th>
+                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Bruto Total</th>
+                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Líquido Total</th>
+                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Moeda</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adminClients.map((c, idx) => (
+                    <tr key={c.userId || idx} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                      <td className="p-3 text-xs font-medium text-gray-900 dark:text-white">{c.fullname || c.userId?.slice(0, 12) || "—"}</td>
+                      <td className="p-3 text-xs text-gray-600 dark:text-gray-400">{c.email || "—"}</td>
+                      <td className="p-3 text-xs text-gray-800 dark:text-gray-300">{c.totalTransactions}</td>
+                      <td className="p-3 text-xs text-gray-700 dark:text-gray-300">
+                        {(c.totalGrossAmount || 0).toLocaleString("en-US", { style: "currency", currency: c.currency || "USD" })}
+                      </td>
+                      <td className="p-3 text-xs font-semibold text-green-600">
+                        {(c.totalNetAmount || 0).toLocaleString("en-US", { style: "currency", currency: c.currency || "USD" })}
+                      </td>
+                      <td className="p-3 text-xs font-bold">{c.currency || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {!isAdmin && userSummary && (
+        <Card className="p-5">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumo da Minha Conta</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Total Bruto</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                {(userSummary.totalGrossAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Total Líquido</p>
+              <p className="text-lg font-bold text-green-600">
+                {(userSummary.totalNetAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Pendente de Pagamento</p>
+              <p className="text-lg font-bold text-yellow-600">
+                {(userSummary.totalPendingPayoutAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Total Pago</p>
+              <p className="text-lg font-bold text-blue-600">
+                {(userSummary.totalPaidOutAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
         <div className="p-4 border-b border-gray-100 dark:border-gray-700">

@@ -9,7 +9,10 @@ import {
   CreditCard,
   Users,
   ScrollText,
-  User
+  User,
+  Wallet,
+  PiggyBank,
+  Webhook
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -29,6 +32,9 @@ const menuItems: MenuItem[] = [
   { icon: Key, label: "Chaves de API", href: "/dashboard/api_key", enabled: true },
   { icon: ActivityIcon, label: "WebHooks", href: "/dashboard/webhooks", enabled: true },
   { icon: Users, label: "Clientes", href: "/dashboard/clients", enabled: true, adminOnly: true },
+  { icon: Wallet, label: "Fundo PayPay", href: "/dashboard/paypay", enabled: true, adminOnly: true },
+  { icon: PiggyBank, label: "Saldos", href: "/dashboard/balances", enabled: true, adminOnly: true },
+  { icon: Webhook, label: "Simular Webhook", href: "/dashboard/webhook-test", enabled: true, adminOnly: true },
   { icon: ScrollText, label: "Logs", href: "/dashboard/logs", enabled: true, adminOnly: true },
 ]
 
