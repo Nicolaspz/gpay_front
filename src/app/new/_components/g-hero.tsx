@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, UserCircle2 } from "lucide-react";
+import { ArrowUpRight, TrendingUp, UserCircle2 } from "lucide-react";
 import G_logo from "@/assets/logo.svg"
 import G_imagem1 from "@/assets/eu.jpeg"
 import G_imagem2 from "@/assets/chris.jpeg"
@@ -37,7 +37,7 @@ export default function GPayGoHero({
             }}
           />
 
-          <div className="relative z-10 min-h-[598px] w-full mx-auto max-w-[1170px] pb-6 pt-6 sm:pb-8 sm:pt-7 lg:pb-10 lg:pt-7">
+          <div className="relative z-10 min-h-[598px] w-full mx-auto max-w-[1170px] pt-6 sm:pt-7 lg:pt-7">
             <header className="flex items-center justify-between gap-4">
               <div className="relative h-10 w-[118px] shrink-0 sm:h-11 sm:w-[132px]">
                 <Image
@@ -81,13 +81,16 @@ export default function GPayGoHero({
               </div>
             </header>
 
-            <div className="mt-10 grid items-end gap-10 lg:mt-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-6">
-              <div className="pt-2 lg:pt-10 xl:pl-5 border border-green-500">
+            {/* sessão conteudo texto + imagem da mulher a usar telemovel */}
+
+            <div className="relative mt-10 min-h-[598px] lg:mt-12">
+              {/* esquerda */}
+              <div className="relative z-10 max-w-[740px] pt-2 lg:pt-10 xl:pl-5">
                 <p className="text-[13px] font-bold uppercase tracking-[0.04em] text-[#7B52FF] sm:text-[14px]">
                   PAGAMENTOS SIMPLIFICADOS
                 </p>
 
-                <h1 className="mt-3 max-w-[740px] text-[41px] font-bold leading-[0.96] tracking-[-0.045em] text-[#0D1330] sm:text-[48px] md:text-[58px] lg:text-[64px] xl:text-[66px]">
+                <h1 className="mt-3 max-w-[740px] text-[41px] font-bold leading-[1.15] tracking-[-0.045em] text-[#0D1330] sm:text-[48px] md:text-[58px] lg:text-[64px] xl:text-[66px]">
                   A plataforma que integra
                   <br />
                   pagamentos online em
@@ -95,11 +98,8 @@ export default function GPayGoHero({
                   Angola
                 </h1>
 
-                <div className="mt-[-3px] flex items-start">
-                    <Image
-                        src={G_vector}
-                        alt="linha decorativa"
-                    />
+                <div className="absolute top-55 right-50">
+                  <Image src={G_vector} alt="linha decorativa" />
                 </div>
 
                 <p className="mt-4 max-w-[520px] text-[16px] font-medium leading-[1.55] text-[#5A5F73] sm:text-[17px]">
@@ -127,9 +127,10 @@ export default function GPayGoHero({
                   </a>
                 </div>
               </div>
-              
-              <div className="relative flex min-h-[360px] items-end justify-center lg:min-h-[520px] lg:justify-end">
-                <div className="relative z-10 h-[350px] w-[280px] sm:h-[390px] sm:w-[310px] lg:h-[608px] lg:w-[507px]">
+
+              {/* direita absoluta */}
+              <div className="pointer-events-none absolute bottom-0 right-0 hidden h-full w-[520px] lg:block">
+                <div className="absolute bottom-0 right-0 h-[608px] w-[507px]">
                   <Image
                     src={heroImage}
                     alt="Mulher a usar telemóvel"
@@ -139,7 +140,7 @@ export default function GPayGoHero({
                   />
                 </div>
 
-                <div className="absolute left-[18%] top-[56%] z-20 w-[186px] rounded-[10px] bg-white px-4 py-4 shadow-[0_10px_30px_rgba(24,24,60,0.10)] sm:left-[10%] sm:w-[198px] lg:left-[2%] lg:top-[64%] lg:w-[206px]">
+                <div className="absolute -left-[30px] top-[400px] z-20 w-[186px] rounded-[10px] bg-white px-4 py-4 shadow-[0_10px_30px_rgba(24,24,60,0.10)]">
                   <p className="text-[14px] font-bold leading-none text-[#23263A]">
                     Pagamento Processados
                   </p>
@@ -148,11 +149,11 @@ export default function GPayGoHero({
                   </p>
                   <div className="mt-2 flex items-end justify-between gap-3 text-[13px] font-medium text-[#6D7285]">
                     <span>01 Jan, 2026</span>
-                    <span className="text-[#28C77B]">3.09% ↗</span>
+                    <span className="text-[#28C77B] flex gap-2">3.09% <TrendingUp size={16} /></span>
                   </div>
                 </div>
 
-                <div className="absolute right-[4%] top-[44%] z-20 flex h-[54px] items-center gap-3 rounded-[10px] bg-white px-4 shadow-[0_10px_30px_rgba(24,24,60,0.10)] sm:right-[6%] sm:top-[42%] sm:h-[58px]">
+                <div className="absolute right-[22px] top-[300px] z-20 flex h-[54px] items-center gap-3 rounded-[10px] bg-white px-4 shadow-[0_10px_30px_rgba(24,24,60,0.10)]">
                   <div className="flex -space-x-2">
                     <Image
                       src={G_imagem1}
