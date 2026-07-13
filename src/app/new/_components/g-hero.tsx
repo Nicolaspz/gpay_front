@@ -37,8 +37,8 @@ export default function GPayGoHero({
   }, []);
 
   const headerShellStyles = hasScrolled
-    ? "mx-auto w-[min(100%,1040px)] rounded-full border border-white/60 bg-white/70 px-4 py-3 shadow-[0_18px_50px_rgba(13,19,48,0.10)] backdrop-blur-xl"
-    : "mx-auto w-full rounded-none border border-transparent bg-transparent px-0 py-0 shadow-none backdrop-blur-0";
+    ? "fixed top-4 left-1/2 z-50 w-[min(100%-2rem,1040px)] -translate-x-1/2 rounded-full border border-white/60 bg-white/70 px-4 py-3 shadow-[0_18px_50px_rgba(13,19,48,0.10)] backdrop-blur-xl"
+    : "relative mx-auto w-full rounded-none border border-transparent bg-transparent px-0 py-0 shadow-none backdrop-blur-0";
 
   return (
     <section className="w-full bg-white px-4 py-4 sm:px-6 lg:px-8">
@@ -56,10 +56,10 @@ export default function GPayGoHero({
             }}
           />
 
-          <div className="relative z-10 min-h-[598px] w-full mx-auto max-w-[1170px] pt-6 sm:pt-7 lg:pt-7">
-            <div
-              className={`sticky top-4 z-50 transition-all duration-300 ease-out ${headerShellStyles}`}
-            >
+          <div className="relative z-10 mx-auto min-h-[598px] w-full max-w-[1170px] pt-6 sm:pt-7 lg:pt-7">
+            {hasScrolled && <div className="h-[72px]" />}
+
+            <div className={headerShellStyles}>
               <header className="flex items-center justify-between gap-4">
                 <div className="relative h-10 w-[118px] shrink-0 sm:h-11 sm:w-[132px]">
                   <Image
@@ -96,7 +96,7 @@ export default function GPayGoHero({
                     size="default"
                     icon={<GButtonIcon size="default" />}
                   >
-                    Criar uma conta
+                    Entrar
                   </GButton>
                 </div>
               </header>
