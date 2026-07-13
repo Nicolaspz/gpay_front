@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { CreditCard, Download, Wallet } from "lucide-react";
-import GButton from "./g-button";
+import GButton, { GButtonIcon } from "./g-button";
 
 type HowItWorksProps = {
   videoSrc?: string;
@@ -51,7 +51,7 @@ export default function GPayGoHowItWorks({
             </h2>
           </div>
 
-          <GButton variant="primary" size="sm">
+          <GButton variant="primary" size="sm" icon={<GButtonIcon size="default" />}>
             Comece agora
           </GButton>
         </div>
