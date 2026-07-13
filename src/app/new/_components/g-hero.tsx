@@ -7,14 +7,14 @@ import G_imagem1 from "@/assets/eu.jpeg"
 import G_imagem2 from "@/assets/chris.jpeg"
 import G_imagem3 from "@/assets/euu.jpeg"
 import G_vector from "@/assets/Vector.svg"
-import GButton from "./g-button";
+import GButton, { GButtonIcon } from "./g-button";
 
 type HeroProps = {
   backgroundImage?: string;
   heroImage?: string;
 };
 
-const navItems = ["Início", "Sobre", "Serviço", "Preço", "Documentação"];
+const navItems = ["Início", "Sobre", "Serviço", "Preço", "Blog", "Docs"];
 
 export default function GPayGoHero({
   backgroundImage = "/page/bg.png",
@@ -70,13 +70,9 @@ export default function GPayGoHero({
                   <UserCircle2 className="h-[18px] w-[18px] stroke-[1.8]" />
                 </button>
 
-                <GButton variant="primary" size="default" >
+                <GButton variant="primary" size="default"  icon={<GButtonIcon size="default" />}>
                   Criar uma conta
                 </GButton>
-
-                {/* <GButton variant="primary" size="default"  icon={<GButtonIcon size="default" />}>
-                  Criar uma conta
-                </GButton> */}
               </div>
             </header>
 
@@ -108,11 +104,11 @@ export default function GPayGoHero({
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-3 sm:mt-9">
-                  <GButton variant="primary" size="default">
+                  <GButton variant="primary" size="default" icon={<GButtonIcon size="default" />}>
                     Entrar Em Contacto
                   </GButton>
 
-                  <GButton variant="secondary" size="default">
+                  <GButton variant="secondary" size="default" icon={<GButtonIcon size="default" />}>
                     Comece Agora
                   </GButton>
                 </div>

@@ -21,7 +21,7 @@ export default function GButton({
   className = "",
 }: GButtonProps) {
   const baseStyles =
-    "flex items-center gap-2 rounded-full font-semibold transition-transform hover:scale-[1.01]";
+    "group inline-flex items-center justify-between gap-2 rounded-full font-semibold transition-transform hover:scale-[1.01] px-2 py-3";
 
   const variants = {
     primary: "bg-[#5E53FF] text-white shadow-[0_10px_24px_rgba(94,83,255,0.22)]",
@@ -30,9 +30,9 @@ export default function GButton({
   };
 
   const sizes = {
-    default: "h-[48px] px-6 text-[15px]",
-    sm: "h-[42px] px-5 text-[14px]",
-    lg: "h-[44px] px-5 text-[13px]",
+    default: "h-[48px] pl-4 pr-2 text-[15px]",
+    sm: "h-[42px] pl-4 pr-2 text-[14px]",
+    lg: "h-[44px] pl-4 pr-2 text-[13px]",
   };
 
   const iconSizes = {
@@ -49,10 +49,10 @@ export default function GButton({
       <span>{children}</span>
       {icon && (
         <span
-          className={`grid ${iconSizes[size].container} place-items-center rounded-full bg-white text-[#5E53FF] shadow-[0_6px_12px_rgba(0,0,0,0.08)]`}
-        >
-          {icon}
-        </span>
+        className={`grid ${iconSizes[size].container} place-items-center rounded-full bg-white text-[#5E53FF] shadow-[0_6px_12px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out group-hover:scale-105`}
+      >
+        {icon}
+      </span>
       )}
     </a>
   );
@@ -69,5 +69,10 @@ export function GButtonIcon({
     lg: "h-[15px] w-[15px]",
   };
 
-  return <ArrowUpRight className={iconSizes[size]} strokeWidth={2.2} />;
+  return (
+    <ArrowUpRight
+      className={`${iconSizes[size]} transition-transform duration-300 ease-out group-hover:rotate-45`}
+      strokeWidth={2.2}
+    />
+  );
 }
