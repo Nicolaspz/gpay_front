@@ -24,9 +24,11 @@ export default function GButton({
     "group inline-flex items-center justify-between gap-2 rounded-full font-semibold transition-transform hover:scale-[1.01] px-2 py-3";
 
   const variants = {
-    primary: "bg-[#5E53FF] text-white shadow-[0_10px_24px_rgba(94,83,255,0.22)]",
+    primary:
+      "bg-[#5E53FF] text-white shadow-[0_10px_24px_rgba(94,83,255,0.22)]",
     secondary: "bg-[#D6D4D8] text-white shadow-[0_10px_18px_rgba(0,0,0,0.06)]",
-    outline: "border border-white/90 bg-transparent text-white hover:bg-white/8",
+    outline:
+      "border border-white/90 bg-transparent text-white hover:bg-white/8",
   };
 
   const sizes = {
@@ -49,10 +51,10 @@ export default function GButton({
       <span>{children}</span>
       {icon && (
         <span
-        className={`grid ${iconSizes[size].container} place-items-center rounded-full bg-white text-[#5E53FF] shadow-[0_6px_12px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out group-hover:scale-105`}
-      >
-        {icon}
-      </span>
+          className={`grid ${iconSizes[size].container} place-items-center rounded-full bg-white text-[#5E53FF] shadow-[0_6px_12px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out group-hover:scale-105`}
+        >
+          {icon}
+        </span>
       )}
     </a>
   );

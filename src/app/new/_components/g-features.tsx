@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import {
-    ArrowLeft,
+  ArrowLeft,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
@@ -14,10 +14,10 @@ import {
 } from "lucide-react";
 import Image, { StaticImageData } from "next/image";
 
-import PayPayLogo from "@/assets/paysmethode/paypay.svg"
-import PagaLogo from "@/assets/paysmethode/baipaga.png"
-import ExpressLogo from "@/assets/paysmethode/express.png"
-import VisaLogo from "@/assets/paysmethode/visa.png"
+import PayPayLogo from "@/assets/paysmethode/paypay.svg";
+import PagaLogo from "@/assets/paysmethode/baipaga.png";
+import ExpressLogo from "@/assets/paysmethode/express.png";
+import VisaLogo from "@/assets/paysmethode/visa.png";
 
 import PagamentoNaHoraIcon from "@/assets/icons/pagamento-na-hora.svg";
 import ExtratoIcon from "@/assets/icons/p-2.svg";
@@ -33,65 +33,65 @@ interface FeatureCard {
 }
 
 interface PartnerLogo {
-    id: string;
-    image: StaticImageData;
-    alt: string;
-    width: number;
-    height: number;
-  }
+  id: string;
+  image: StaticImageData;
+  alt: string;
+  width: number;
+  height: number;
+}
 
-  const partnerLogos: PartnerLogo[] = [
-    {
-      id: "paypay",
-      image: PayPayLogo,
-      alt: "PayPay",
-      width: 112,
-      height: 30,
-    },
-    {
-      id: "paga",
-      image: PagaLogo,
-      alt: "Paga",
-      width: 72,
-      height: 28,
-    },
-    {
-      id: "express",
-      image: ExpressLogo,
-      alt: "Express",
-      width: 118,
-      height: 28,
-    },
-    {
-      id: "visa",
-      image: VisaLogo,
-      alt: "Visa",
-      width: 110,
-      height: 30,
-    }
-  ];
+const partnerLogos: PartnerLogo[] = [
+  {
+    id: "paypay",
+    image: PayPayLogo,
+    alt: "PayPay",
+    width: 112,
+    height: 30,
+  },
+  {
+    id: "paga",
+    image: PagaLogo,
+    alt: "Paga",
+    width: 72,
+    height: 28,
+  },
+  {
+    id: "express",
+    image: ExpressLogo,
+    alt: "Express",
+    width: 118,
+    height: 28,
+  },
+  {
+    id: "visa",
+    image: VisaLogo,
+    alt: "Visa",
+    width: 110,
+    height: 30,
+  },
+];
 
-  const featureCards: FeatureCard[] = [
-    {
-      backgroundColor: "#EEF2FF",
-      icon: PagamentoNaHoraIcon,
-      title: "Pagamento na hora",
-      description:
-        "Envie dinheiro para amigos ou familiares em tempo real, gratuitamente.",
-    },
-    {
-      backgroundColor: "#FBF3E9",
-      icon: ExtratoIcon,
-    },
-    {
-      backgroundColor: "#EAF7FF",
-      icon: CarteiraIcon,
-    },
-    {
-      backgroundColor: "#F2EAFE",
-      icon: CartaoIcon,
-    },
-  ];
+const featureCards: FeatureCard[] = [
+  {
+    backgroundColor: "#EEF2FF",
+    icon: PagamentoNaHoraIcon,
+    title: "Pagamento na hora",
+    description:
+      "Envie dinheiro para amigos ou familiares em tempo real, gratuitamente.",
+  },
+  {
+    backgroundColor: "#FBF3E9",
+    icon: ExtratoIcon,
+  },
+  {
+    backgroundColor: "#EAF7FF",
+    icon: CarteiraIcon,
+  },
+  {
+    backgroundColor: "#F2EAFE",
+    icon: CartaoIcon,
+  },
+];
 
 export default function GPayGoFeatures() {
   const cardsRowRef = useRef<HTMLDivElement>(null);
@@ -107,37 +107,39 @@ export default function GPayGoFeatures() {
     <section className="bg-white py-14 sm:py-[100px]">
       <div className="px-4 sm:px-6 md:px-0">
         <div className="mx-auto w-full max-w-[1170px] px-[145px]">
-        
-            <div className="flex items-center justify-between gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {partnerLogos.map((logo) => (
-                    <div
-                        key={logo.id}
-                        className="flex h-10 items-center justify-center shrink-0"
-                    >
-                        <Image
-                        src={logo.image}
-                        alt={logo.alt}
-                        width={logo.width}
-                        height={logo.height}
-                        className="h-auto w-auto object-contain"
-                        />
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-10 max-w-[560px] text-left sm:mt-12">
-            <h2 className="text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#10182A] sm:text-[32px]">
-                Gerencie seus pagamentos com confiança.
-                <br />
-                A G-Pay oferece o controle, a confiabilidade
-                <br />
-                e a total{" "}
-                <span className="text-[#9A9EA9]">segurança que você precisa.</span>
-            </h2>
-            </div>
+          <div className="flex items-center justify-between gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {partnerLogos.map((logo) => (
+              <div
+                key={logo.id}
+                className="flex h-10 items-center justify-center shrink-0"
+              >
+                <Image
+                  src={logo.image}
+                  alt={logo.alt}
+                  width={logo.width}
+                  height={logo.height}
+                  className="h-auto w-auto object-contain"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-11 overflow-hidden">
+        <section className="max-w-[1170px] mx-auto w-full mt-[72px]">
+          <div className="max-w-[560px] text-left sm:mt-12">
+            <h2 className="text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#10182A] sm:text-[32px]">
+              Gerencie seus pagamentos com confiança.
+              <br />
+              A G-Pay oferece o controle, a confiabilidade
+              <br />e a total{" "}
+              <span className="text-[#9A9EA9]">
+                segurança que você precisa.
+              </span>
+            </h2>
+          </div>
+        </section>
+
+        <div className="mt-[80px] overflow-hidden">
           <div
             ref={cardsRowRef}
             className="flex w-full mx-auto max-w-[1170px] gap-[13px] overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -183,7 +185,7 @@ export default function GPayGoFeatures() {
             onClick={() => scrollCards(-1)}
             className="grid h-9 w-9 place-items-center rounded-full text-[#1E2433] transition-colors hover:bg-black/5"
           >
-            <ArrowLeft  className="h-5 w-5 stroke-[1.7]" />
+            <ArrowLeft className="h-5 w-5 stroke-[1.7]" />
           </button>
 
           <button
