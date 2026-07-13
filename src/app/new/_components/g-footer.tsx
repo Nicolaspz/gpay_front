@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import GButton from "./g-button";
 
 type GPayGoFooterProps = {
   backgroundSrc?: string;
@@ -83,22 +83,13 @@ export default function GPayGoFooter({
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="#"
-                className="inline-flex h-[44px] items-center rounded-full bg-[#5E53FF] px-5 text-[13px] font-semibold text-white shadow-[0_10px_24px_rgba(94,83,255,0.22)] transition-transform hover:scale-[1.01]"
-              >
+              <GButton variant="primary" size="lg">
                 Entrar Em Contato
-              </Link>
+              </GButton>
 
-              <Link
-                href="#"
-                className="inline-flex h-[44px] items-center gap-2 rounded-full border border-white/90 bg-transparent pl-5 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-white/8"
-              >
-                <span>Comece Agora</span>
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[#5E53FF]">
-                  <ArrowUpRight className="h-[15px] w-[15px] stroke-[2.4]" />
-                </span>
-              </Link>
+              <GButton variant="outline" size="lg">
+                Comece Agora
+              </GButton>
             </div>
           </div>
         </section>

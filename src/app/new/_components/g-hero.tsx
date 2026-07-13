@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, TrendingUp, UserCircle2 } from "lucide-react";
+import { TrendingUp, UserCircle2 } from "lucide-react";
 import G_logo from "@/assets/logo.svg"
 import G_imagem1 from "@/assets/eu.jpeg"
 import G_imagem2 from "@/assets/chris.jpeg"
 import G_imagem3 from "@/assets/euu.jpeg"
 import G_vector from "@/assets/Vector.svg"
+import GButton from "./g-button";
 
 type HeroProps = {
   backgroundImage?: string;
@@ -69,15 +70,13 @@ export default function GPayGoHero({
                   <UserCircle2 className="h-[18px] w-[18px] stroke-[1.8]" />
                 </button>
 
-                <a
-                  href="#"
-                  className="inline-flex h-[48px] items-center gap-3 rounded-full bg-[#5E53FF] pl-5 pr-1.5 text-[15px] font-semibold text-white shadow-[0_10px_24px_rgba(94,83,255,0.22)] transition-transform hover:scale-[1.01]"
-                >
-                  <span>Criar uma conta</span>
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-[#5E53FF]">
-                    <ArrowUpRight className="h-[17px] w-[17px] stroke-[2.2]" />
-                  </span>
-                </a>
+                <GButton variant="primary" size="default" >
+                  Criar uma conta
+                </GButton>
+
+                {/* <GButton variant="primary" size="default"  icon={<GButtonIcon size="default" />}>
+                  Criar uma conta
+                </GButton> */}
               </div>
             </header>
 
@@ -109,22 +108,13 @@ export default function GPayGoHero({
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-3 sm:mt-9">
-                  <a
-                    href="#"
-                    className="inline-flex h-[48px] items-center rounded-full bg-[#5E53FF] px-6 text-[15px] font-semibold text-white shadow-[0_10px_24px_rgba(94,83,255,0.22)] transition-transform hover:scale-[1.01]"
-                  >
+                  <GButton variant="primary" size="default">
                     Entrar Em Contacto
-                  </a>
+                  </GButton>
 
-                  <a
-                    href="#"
-                    className="inline-flex h-[48px] items-center gap-3 rounded-full bg-[#D6D4D8] pl-6 pr-1.5 text-[15px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.06)]"
-                  >
-                    <span className="opacity-90">Comece Agora</span>
-                    <span className="grid h-10 w-10 place-items-center rounded-full bg-white text-[#5E53FF] shadow-[0_6px_12px_rgba(0,0,0,0.08)]">
-                      <ArrowUpRight className="h-[17px] w-[17px] stroke-[2.2]" />
-                    </span>
-                  </a>
+                  <GButton variant="secondary" size="default">
+                    Comece Agora
+                  </GButton>
                 </div>
               </div>
 

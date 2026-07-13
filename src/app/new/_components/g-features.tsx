@@ -19,9 +19,14 @@ import PagaLogo from "@/assets/paysmethode/baipaga.png"
 import ExpressLogo from "@/assets/paysmethode/express.png"
 import VisaLogo from "@/assets/paysmethode/visa.png"
 
+import PagamentoNaHoraIcon from "@/assets/icons/pagamento-na-hora.svg";
+import ExtratoIcon from "@/assets/icons/p-2.svg";
+import CarteiraIcon from "@/assets/icons/p-3.svg";
+import CartaoIcon from "@/assets/icons/p-4.svg";
+
 interface FeatureCard {
   backgroundColor: string;
-  icon: ReactNode;
+  icon: StaticImageData;
   badge?: ReactNode;
   title?: string;
   description?: string;
@@ -35,7 +40,7 @@ interface PartnerLogo {
     height: number;
   }
 
-const partnerLogos: PartnerLogo[] = [
+  const partnerLogos: PartnerLogo[] = [
     {
       id: "paypay",
       image: PayPayLogo,
@@ -66,45 +71,27 @@ const partnerLogos: PartnerLogo[] = [
     }
   ];
 
-const featureCards: FeatureCard[] = [
-  {
-    backgroundColor: "#EEF2FF",
-    icon: <CreditCard className="h-[19px] w-[19px] stroke-[2] text-[#1F2945]" />,
-    title: "Pagamento na hora",
-    description: "Envie dinheiro para amigos ou familiares em tempo real, gratuitamente.",
-  },
-  { 
-    backgroundColor: "#FBF3E9",
-    icon: <FileText className="h-[19px] w-[19px] stroke-[2] text-[#1F2945]" />,
-    badge: (
-      <span className="absolute -right-1 -bottom-1 grid h-4 w-4 place-items-center rounded-full bg-[#3D66FF] text-[9px] font-bold text-white">
-        ×
-      </span>
-    ),
-  },
-  {
-    backgroundColor: "#EAF7FF",
-    icon: <WalletCards className="h-[19px] w-[19px] stroke-[2] text-[#1F2945]" />,
-  },
-  {
-    backgroundColor: "#F2EAFE",
-    icon: <CreditCard className="h-[19px] w-[19px] stroke-[2] text-[#1F2945]" />,
-    badge: (
-      <span className="absolute -right-1 -bottom-1 grid h-4 w-4 place-items-center rounded-full bg-[#3D66FF] text-white">
-        <ShieldCheck className="h-[10px] w-[10px] stroke-[2.5]" />
-      </span>
-    ),
-  },
-  {
-    backgroundColor: "#F2EAFE",
-    icon: <CreditCard className="h-[19px] w-[19px] stroke-[2] text-[#1F2945]" />,
-    badge: (
-      <span className="absolute -right-1 -bottom-1 grid h-4 w-4 place-items-center rounded-full bg-[#3D66FF] text-white">
-        <ShieldCheck className="h-[10px] w-[10px] stroke-[2.5]" />
-      </span>
-    ),
-  },
-];
+  const featureCards: FeatureCard[] = [
+    {
+      backgroundColor: "#EEF2FF",
+      icon: PagamentoNaHoraIcon,
+      title: "Pagamento na hora",
+      description:
+        "Envie dinheiro para amigos ou familiares em tempo real, gratuitamente.",
+    },
+    {
+      backgroundColor: "#FBF3E9",
+      icon: ExtratoIcon,
+    },
+    {
+      backgroundColor: "#EAF7FF",
+      icon: CarteiraIcon,
+    },
+    {
+      backgroundColor: "#F2EAFE",
+      icon: CartaoIcon,
+    },
+  ];
 
 export default function GPayGoFeatures() {
   const cardsRowRef = useRef<HTMLDivElement>(null);
@@ -158,21 +145,28 @@ export default function GPayGoFeatures() {
             {featureCards.map((card, index) => (
               <article
                 key={index}
-                className="relative h-[324px] min-w-[254px] shrink-0 rounded-[18px] p-4"
+                className="relative h-[324px] min-w-[337px] shrink-0 rounded-[18px] p-4"
                 style={{ backgroundColor: card.backgroundColor }}
               >
                 <div className="relative inline-flex h-8 w-8 items-center justify-center">
-                  {card.icon}
+                  <Image
+                    src={card.icon}
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="h-8 w-8"
+                  />
+
                   {card.badge}
                 </div>
 
                 {card.title ? (
                   <div className="mt-auto flex h-[calc(100%-40px)] flex-col justify-end pb-1">
-                    <h3 className="max-w-[192px] text-[22px] font-semibold leading-[1.05] tracking-[-0.04em] text-[#10182A]">
+                    <h3 className="max-w-[192px] text-[22px] font-bold leading-[1.05] tracking-[-0.04em] text-[#10182A]">
                       {card.title}
                     </h3>
 
-                    <p className="mt-3 max-w-[205px] text-[16px] leading-[1.55] tracking-[-0.02em] text-[#596173]">
+                    <p className="mt-3 max-w-[220px] font-medium text-[16px] leading-[1.55] tracking-[-0.02em] text-[#596173]">
                       {card.description}
                     </p>
                   </div>

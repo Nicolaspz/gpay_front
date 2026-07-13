@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, CreditCard, Download, Wallet } from "lucide-react";
+import { CreditCard, Download, Wallet } from "lucide-react";
+import GButton from "./g-button";
 
 type HowItWorksProps = {
   videoSrc?: string;
@@ -10,21 +11,21 @@ type HowItWorksProps = {
 const steps = [
   {
     number: "01",
-    icon: Download,
+    icon: "/icons/download.svg",
     title: "Acessa e crie a conta client",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.",
   },
   {
     number: "02",
-    icon: CreditCard,
+    icon: "/icons/2.svg",
     title: "----------",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut lib",
   },
   {
     number: "03",
-    icon: Wallet,
+    icon: "/icons/3.svg",
     title: "----------",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut lib",
@@ -43,27 +44,20 @@ export default function GPayGoHowItWorks({
               Como funciona
             </p>
 
-            <h2 className="mt-2 max-w-[640px] text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#0F172A] sm:text-[34px] lg:text-[38px]">
+            <h2 className="mt-2 max-w-[640px] text-[40px] font-bold leading-[1.08] tracking-[-0.055em] text-[#0F172A] sm:text-[34px] lg:text-[38px]">
               Faça pagamentos, transferências e
               <br />
               muito mais em 3 passos simples
             </h2>
           </div>
 
-          <a
-            href="#"
-            className="inline-flex h-[42px] items-center gap-3 rounded-full bg-[#5E53FF] pl-5 pr-1.5 text-[14px] font-semibold text-white shadow-[0_10px_24px_rgba(94,83,255,0.18)] transition-transform hover:scale-[1.01]"
-          >
-            <span>Comece agora</span>
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[#5E53FF]">
-              <ArrowUpRight className="h-[16px] w-[16px] stroke-[2.4]" />
-            </span>
-          </a>
+          <GButton variant="primary" size="sm">
+            Comece agora
+          </GButton>
         </div>
 
         <div className="mt-10 grid gap-[14px] rounded-[16px] bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)] md:grid-cols-3 md:p-8">
           {steps.map((step) => {
-            const Icon = step.icon;
 
             return (
               <article
@@ -75,14 +69,20 @@ export default function GPayGoHowItWorks({
                 </span>
 
                 <div className="relative mt-8 flex h-10 w-10 items-center justify-center">
-                  <Icon className="h-[28px] w-[28px] stroke-[1.9] text-[#111827]" />
+                  <Image
+                    src={step.icon}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="h-7 w-7"
+                  />
                 </div>
 
-                <h3 className="mt-10 max-w-[230px] text-[15px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#111827]">
+                <h3 className="mt-10 max-w-[230px] text-[20px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#111827]">
                   {step.title}
                 </h3>
 
-                <p className="mt-2 max-w-[230px] text-[13px] leading-[1.55] tracking-[-0.01em] text-[#6B7280]">
+                <p className="mt-2 max-w-[230px] text-[16px] font-medium leading-[1.55] tracking-[-0.01em] text-[#6B7280]">
                   {step.description}
                 </p>
               </article>

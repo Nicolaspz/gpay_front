@@ -61,11 +61,18 @@ export default function GPayGoStories() {
     <section className="bg-white py-24">
       <div className="mx-auto w-full max-w-[1170px] px-4">
 
-        <h2 className="max-w-[620px] text-[44px] font-bold leading-[1.1] tracking-[-0.05em] text-[#0F172A]">
-          Quando a certeza importa,
-          <br />
-          a G-Pay é a plataforma preferida.
-        </h2>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#7B52FF]">
+            Confiança
+          </p>
+
+          <h2 className="max-w-[620px] text-[44px] font-bold leading-[1.1] tracking-[-0.05em] text-[#0F172A]">
+            Quando a certeza importa,
+            <br />
+            a G-Pay é a plataforma preferida.
+          </h2>
+        </div>
+        
 
         <div className="mt-14 grid gap-4 lg:grid-cols-[1.25fr_1fr]">
 
