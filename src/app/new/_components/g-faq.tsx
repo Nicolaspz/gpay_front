@@ -60,9 +60,7 @@ export default function GPayGoFaq({
           </p>
 
           <h2 className="mt-2 max-w-[560px] text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#0E172A] sm:text-[34px] lg:text-[38px]">
-            Construímos confiança com
-            <br />
-            avaliações de usuários reais.
+            Perguntas Frequentes
           </h2>
 
           <div className="mt-10 border-t border-[#E5E7EF]">
@@ -80,8 +78,8 @@ export default function GPayGoFaq({
                     <span
                       className={`text-[14px] leading-[1.35] tracking-[-0.02em] sm:text-[15px] ${
                         isOpen
-                          ? "font-medium text-[#0E172A]"
-                          : "font-normal text-[#5E6474]"
+                          ? "font-semibold text-[#0E172A]"
+                          : "font-medium text-[#5E6474]"
                       }`}
                     >
                       {item.question}

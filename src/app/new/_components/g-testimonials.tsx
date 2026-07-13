@@ -86,19 +86,19 @@ export default function GPayGoTestimonials() {
 
   return (
     <section className="bg-[#F7F7FA] px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto grid w-full max-w-[1210px] items-center gap-10 lg:grid-cols-[390px_1fr] lg:gap-10">
-        <div className="max-w-[390px]">
+      <div className="mx-auto grid w-full max-w-[1100px] items-center gap-10 lg:grid-cols-[390px_1fr] lg:gap-10">
+        <div className="">
           <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#7B52FF]">
             Depoimento
           </p>
 
-          <h2 className="mt-2 text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#0E172A] sm:text-[34px] lg:text-[38px]">
+          <h2 className="mt-2 text-[30px] font-semibold leading-[1.08] tracking-[-0.055em] text-[#0E172A] sm:text-[34px] lg:text-[34px]">
             Construímos confiança com
             <br />
             avaliações de usuários reais.
           </h2>
 
-          <p className="mt-4 max-w-[340px] text-[13px] leading-[1.55] tracking-[-0.01em] text-[#6E7486]">
+          <p className="mt-4 font-medium max-w-[340px] text-[13px] leading-[1.55] tracking-[-0.01em] text-[#6E7486]">
             Aumente sua credibilidade exibindo depoimentos autênticos de
             usuários reais, destacando suas experiências positivas e satisfação
             com os serviços da G-Pay.
@@ -133,7 +133,7 @@ export default function GPayGoTestimonials() {
             {testimonials.map((testimonial) => (
               <article
                 key={testimonial.id}
-                className="relative h-[300px] w-[244px] shrink-0 rounded-[14px] bg-white px-5 py-5 shadow-[0_10px_30px_rgba(28,32,44,0.06)]"
+                className="relative w-[390px] shrink-0 rounded-[14px] bg-white px-5 py-8 shadow-[0_10px_30px_rgba(28,32,44,0.06)]"
               >
                 <div className="flex items-center gap-[2px]">
                   {Array.from({ length: 5 }).map((_, index) => (
@@ -144,7 +144,7 @@ export default function GPayGoTestimonials() {
                   ))}
                 </div>
 
-                <p className="mt-4 text-[12px] leading-[1.55] tracking-[-0.01em] text-[#515A6B]">
+                <p className="mt-4 font-medium text-[14px] leading-[1.55] tracking-[-0.01em] text-[#515A6B]">
                   {testimonial.text}
                 </p>
 

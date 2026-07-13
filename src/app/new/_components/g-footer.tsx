@@ -66,17 +66,17 @@ export default function GPayGoFooter({
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-black/58" />
+            <div className="absolute inset-0 bg-black/20" />
           </div>
 
-          <div className="relative flex min-h-[250px] flex-col items-center justify-center px-5 py-10 text-center sm:px-8">
-            <h2 className="max-w-[560px] text-[24px] font-semibold leading-[1.18] tracking-[-0.05em] text-white sm:text-[28px]">
+          <div className="relative flex min-h-[452px] flex-col items-center justify-center px-5 py-10 text-center sm:px-8">
+            <h2 className="max-w-[560px] text-[24px] font-semibold leading-[1.18] tracking-[0.05em] text-white sm:text-[28px]">
               Pronto para vivenciar pagamentos
               <br />
               seguros e fluídos?
             </h2>
 
-            <p className="mt-3 max-w-[600px] text-[11px] leading-[1.5] text-white/85 sm:text-[12px]">
+            <p className="mt-3 max-w-[600px] font-medium text-[12px] leading-[1.5] text-white/85 sm:text-[14px]">
               Pronto para pagamentos seguros e descomplicados ? Comece a usar a
               G-PayGo hoje mesmo: é rápido, gratuito e focado em manter suas
               transações seguras !
@@ -99,7 +99,7 @@ export default function GPayGoFooter({
             <div className="max-w-[230px]">
               <GPayGoLogo logoSrc={logoSrc} />
 
-              <p className="mt-4 max-w-[220px] text-[12px] leading-[1.7] tracking-[-0.01em] text-[#61677A]">
+              <p className="mt-4 max-w-[370px] font-medium text-[13px] leading-[1.7] tracking-[-0.01em] text-[#61677A]">
                 Oferecemos integração de pagamentos
                 <br />
                 seguros, fluídos e sem taxas para
@@ -113,7 +113,7 @@ export default function GPayGoFooter({
                 Links Úteis
               </h3>
 
-              <div className="mt-4 space-y-3 text-[12px] leading-[1.5] text-[#5F6576]">
+              <div className="mt-4 space-y-3 text-[13px] leading-[1.5] font-medium text-[#5F6576]">
                 <Link href="#" className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
                   {usefulLinks[0]}
                 </Link>
@@ -136,7 +136,7 @@ export default function GPayGoFooter({
                 Outras páginas
               </h3>
 
-              <div className="mt-4 space-y-3 text-[12px] leading-[1.5] text-[#5F6576]">
+              <div className="mt-4 space-y-3 font-medium text-[13px] leading-[1.5] text-[#5F6576]">
                 {otherPages.map((item) => (
                   <Link
                     key={item}
@@ -151,8 +151,8 @@ export default function GPayGoFooter({
           </div>
 
           <div className="mt-10 border-t border-[#E7E7EC] pt-5">
-            <div className="flex flex-col gap-3 text-[11px] text-[#61677A] sm:flex-row sm:items-center sm:justify-between">
-              <p>Desenvolvida pela G-Corporate</p>
+            <div className="flex flex-col gap-3 font-medium text-[13px] text-[#61677A] sm:flex-row sm:items-center sm:justify-between">
+              <p>Desenvolvida pela <Link href="https://g-corporate.com/" target="blanck" className="border-b border-transparent hover:border-[#9CA3AF]">G-Corporate</Link></p>
               <p>Copyright 2026 © Gpayment. Todos os Direitos Reservados.</p>
             </div>
           </div>
