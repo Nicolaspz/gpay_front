@@ -1,4 +1,4 @@
-// src/app/new/_components/g-testimonials.tsx
+
 "use client";
 
 import Image from "next/image";
