@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CreditCard, Download, Wallet } from "lucide-react";
+import { Download } from "lucide-react";
 import GButton, { GButtonIcon } from "./g-button";
 
 type HowItWorksProps = {
@@ -12,23 +12,23 @@ const steps = [
   {
     number: "01",
     icon: "/icons/download.svg",
-    title: "Acessa e crie a conta client",
+    title: "Acesse e crie a sua conta",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.",
+      "Registre-se gratuitamente na plataforma e configure o perfil da sua empresa em minutos.",
   },
   {
     number: "02",
     icon: "/icons/2.svg",
-    title: "----------",
+    title: "Configure os métodos de pagamento",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut lib",
+      "Escolha entre Multicaixa Express, referências bancárias, PayPay ou Stripe para aceitar pagamentos.",
   },
   {
     number: "03",
     icon: "/icons/3.svg",
-    title: "----------",
+    title: "Comece a receber pagamentos",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut lib",
+      "Integre a API ou use o painel para gerar referências e acompanhar todas as suas transações em tempo real.",
   },
 ];
 
@@ -51,7 +51,7 @@ export default function GPayGoHowItWorks({
             </h2>
           </div>
 
-          <GButton variant="primary" size="sm" icon={<GButtonIcon size="default" />}>
+          <GButton variant="primary" size="sm" icon={<GButtonIcon size="default" />} href="/register">
             Comece agora
           </GButton>
         </div>
@@ -92,15 +92,6 @@ export default function GPayGoHowItWorks({
 
         <div className="mt-[14px] overflow-hidden rounded-[16px] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
           <div className="w-full">
-            {/* <video
-              className="h-full w-full object-cover"
-              src={videoSrc}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            /> */}
             <Image  
                 src={videoSrc}
                 alt="video"

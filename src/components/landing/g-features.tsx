@@ -5,12 +5,6 @@ import { useRef } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  CreditCard,
-  FileText,
-  ShieldCheck,
-  WalletCards,
 } from "lucide-react";
 import Image, { StaticImageData } from "next/image";
 
@@ -82,14 +76,23 @@ const featureCards: FeatureCard[] = [
   {
     backgroundColor: "#FBF3E9",
     icon: ExtratoIcon,
+    title: "Extrato detalhado",
+    description:
+      "Acesse o extrato completo de todas as suas transações com filtros por data e status.",
   },
   {
     backgroundColor: "#EAF7FF",
     icon: CarteiraIcon,
+    title: "Carteira digital",
+    description:
+      "Gerencie seus saldos em múltiplas moedas — AOA, USD e EUR — em um só lugar.",
   },
   {
     backgroundColor: "#F2EAFE",
     icon: CartaoIcon,
+    title: "Aceite cartões",
+    description:
+      "Receba pagamentos via Multicaixa Express, referências bancárias e cartões internacionais.",
   },
 ];
 

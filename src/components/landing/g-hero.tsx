@@ -15,7 +15,13 @@ type HeroProps = {
   heroImage?: string;
 };
 
-const navItems = ["Início", "Sobre", "Serviço", "Preço", "Blog", "Docs"];
+const navItems = [
+  { name: "Início", href: "#" },
+  { name: "Sobre", href: "#sobre" },
+  { name: "Serviço", href: "#servico" },
+  { name: "Preço", href: "#preco" },
+  { name: "Docs", href: "/document" },
+];
 
 export default function GPayGoHero({
   backgroundImage = "/page/bg.png",
@@ -74,11 +80,11 @@ export default function GPayGoHero({
                 <nav className="hidden items-center gap-8 xl:flex">
                   {navItems.map((item) => (
                     <a
-                      key={item}
-                      href="#"
+                      key={item.name}
+                      href={item.href}
                       className="text-[15px] font-medium text-[#40414F] transition-colors hover:text-[#5E53FF]"
                     >
-                      {item}
+                      {item.name}
                     </a>
                   ))}
                 </nav>
@@ -95,6 +101,7 @@ export default function GPayGoHero({
                     variant="primary"
                     size="default"
                     icon={<GButtonIcon size="default" />}
+                    href="/login"
                   >
                     Entrar
                   </GButton>
@@ -131,6 +138,7 @@ export default function GPayGoHero({
                     variant="primary"
                     size="default"
                     icon={<GButtonIcon size="default" />}
+                    href="/login"
                   >
                     Entrar Em Contacto
                   </GButton>
@@ -139,6 +147,7 @@ export default function GPayGoHero({
                     variant="secondary"
                     size="default"
                     icon={<GButtonIcon size="default" />}
+                    href="/register"
                   >
                     Comece Agora
                   </GButton>

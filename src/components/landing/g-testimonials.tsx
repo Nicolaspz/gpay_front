@@ -18,7 +18,7 @@ const testimonials: Testimonial[] = [
   {
     id: "joao-tambue",
     text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.",
+      "A Gpayment transformou a forma como processo pagamentos. Antes perdia horas a reconciliar transações, agora tenho tudo automatizado e os pagamentos chegam em tempo real.",
     name: "João Tambue",
     role: "Frontend Software Developer",
     avatarSrc: "/page/eu.jpeg",
@@ -27,7 +27,7 @@ const testimonials: Testimonial[] = [
   {
     id: "romeu-cajambe",
     text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.",
+      "Integrei a Gpayment na minha loja online em menos de um dia. A documentação é clara e a equipa de suporte é muito responsiva. Recomendo para qualquer negócio em Angola.",
     name: "Romeu Cajambe",
     role: "Product Designer",
     avatarSrc: "/page/euu.jpeg",
@@ -36,7 +36,7 @@ const testimonials: Testimonial[] = [
   {
     id: "carlos-fernando",
     text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea.",
+      "Usar a Gpayment para receber pagamentos internacionais via Stripe é incrivelmente simples. Os relatórios detalhados ajudam-me a acompanhar as receitas da empresa.",
     name: "Carlos Fernando",
     role: "UI Engineer",
     avatarSrc: "/page/chris.jpeg",

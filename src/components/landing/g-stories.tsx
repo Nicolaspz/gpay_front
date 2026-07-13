@@ -27,28 +27,28 @@ const stories: Story[] = [
   {
     id: 2,
     title:
-      "TUPUCA processa +100 transações por mês utilizando tecnologia de ponta.",
+      "Gpayment processa mais de 25 milhões de transações para empresas em todo o Angola.",
     logo: TupucaLogo,
   },
 
   {
     id: 3,
     title:
-      "TUPUCA processa +100 transações por mês utilizando tecnologia de ponta.",
+      "Nova integração com Stripe permite receber pagamentos internacionais em USD e EUR.",
     logo: TupucaLogo,
   },
 
   {
     id: 4,
     title:
-      "TUPUCA processa +100 transações por mês utilizando tecnologia de ponta.",
+      "Referências Multicaixa agora são geradas em tempo real via API da Gpayment.",
     logo: TupucaLogo,
   },
 
   {
     id: 5,
     title:
-      "TUPUCA processa +100 transações por mês utilizando tecnologia de ponta.",
+      "Empresas angolanas adotam pagamentos digitais com a segurança da Gpayment.",
     logo: TupucaLogo,
   },
 ];
@@ -75,7 +75,7 @@ export default function GPayGoStories() {
             </h2>
           </div>
 
-          <GButton variant="primary" size="default"  icon={<GButtonIcon size="default" />}>
+          <GButton variant="primary" size="default" icon={<GButtonIcon size="default" />} href="/document">
             Ir para blog
           </GButton>
         </div>

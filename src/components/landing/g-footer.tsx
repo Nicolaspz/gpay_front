@@ -10,13 +10,16 @@ type GPayGoFooterProps = {
 };
 
 const usefulLinks = [
-  "Documentação",
-  "Suporte - suporte@gpayment.ao",
-  "vendas - vendas@gpayment.ao,",
-  "+244 222 123 457",
+  { label: "Documentação", href: "/document" },
+  { label: "Suporte", href: "mailto:suporte@gpayment.ao" },
+  { label: "Vendas", href: "mailto:vendas@gpayment.ao" },
+  { label: "+244 222 123 457", href: "tel:+244222123457" },
 ];
 
-const otherPages = ["Politica de Reembolso", "Termos e Condições"];
+const otherPages = [
+  { label: "Política de Reembolso", href: "/refund" },
+  { label: "Termos e Condições", href: "/terms" },
+];
 
 function GPayGoLogo({ logoSrc }: { logoSrc?: string }) {
   if (logoSrc) {
@@ -83,11 +86,11 @@ export default function GPayGoFooter({
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <GButton variant="primary" size="lg">
+              <GButton variant="primary" size="lg" href="/login">
                 Entrar Em Contato
               </GButton>
 
-              <GButton variant="outline" size="lg">
+              <GButton variant="outline" size="lg" href="/register">
                 Comece Agora
               </GButton>
             </div>
@@ -114,18 +117,18 @@ export default function GPayGoFooter({
               </h3>
 
               <div className="mt-4 space-y-3 text-[13px] leading-[1.5] font-medium text-[#5F6576]">
-                <Link href="#" className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
-                  {usefulLinks[0]}
+                <Link href={usefulLinks[0].href} className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
+                  {usefulLinks[0].label}
                 </Link>
-                <Link href="#" className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
-                  {usefulLinks[1]}
+                <Link href={usefulLinks[1].href} className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
+                  {usefulLinks[1].label}
                 </Link>
                 <div>
-                  <Link href="#" className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
-                    {usefulLinks[2]}
+                  <Link href={usefulLinks[2].href} className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
+                    {usefulLinks[2].label}
                   </Link>
-                  <Link href="#" className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
-                    {usefulLinks[3]}
+                  <Link href={usefulLinks[3].href} className="block w-fit border-b border-transparent hover:border-[#9CA3AF]">
+                    {usefulLinks[3].label}
                   </Link>
                 </div>
               </div>
@@ -139,11 +142,11 @@ export default function GPayGoFooter({
               <div className="mt-4 space-y-3 font-medium text-[13px] leading-[1.5] text-[#5F6576]">
                 {otherPages.map((item) => (
                   <Link
-                    key={item}
-                    href="#"
+                    key={item.label}
+                    href={item.href}
                     className="block w-fit border-b border-transparent hover:border-[#9CA3AF]"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 ))}
               </div>
@@ -152,7 +155,7 @@ export default function GPayGoFooter({
 
           <div className="mt-10 border-t border-[#E7E7EC] pt-5">
             <div className="flex flex-col gap-3 font-medium text-[13px] text-[#61677A] sm:flex-row sm:items-center sm:justify-between">
-              <p>Desenvolvida pela <Link href="https://g-corporate.com/" target="blanck" className="border-b border-transparent hover:border-[#9CA3AF]">G-Corporate</Link></p>
+              <p>Desenvolvida pela <Link href="https://g-corporate.com/" target="_blank" className="border-b border-transparent hover:border-[#9CA3AF]">G-Corporate</Link></p>
               <p>Copyright 2026 © Gpayment. Todos os Direitos Reservados.</p>
             </div>
           </div>
