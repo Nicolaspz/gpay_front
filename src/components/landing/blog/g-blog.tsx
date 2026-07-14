@@ -1,88 +1,7 @@
 "use client";
 
 import { BlogCard } from "../ui/g-blogCard";
-
-
-
-type BlogPost = {
-  id: string;
-  title: string;
-  excerpt: string;
-  image: string;
-  author: {
-    name: string;
-    date: string;
-  };
-};
-
-const posts: BlogPost[] = [
-  {
-    id: "1",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,...",
-    excerpt:
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute ir...",
-    image: "/blog.png",
-    author: {
-      name: "Author",
-      date: "Nov 29, 2024",
-    },
-  },
-  {
-    id: "2",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,...",
-    excerpt:
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute ir...",
-    image: "/blog.png",
-    author: {
-      name: "Saarah Mcbride",
-      date: "Nov 29, 2024",
-    },
-  },
-  {
-    id: "3",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,...",
-    excerpt:
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute ir...",
-    image: "/blog.png",
-    author: {
-      name: "Cruz Mcintyre",
-      date: "Nov 29, 2024",
-    },
-  },
-  {
-    id: "4",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,...",
-    excerpt:
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute ir...",
-    image: "/blog.png",
-    author: {
-      name: "Author",
-      date: "Nov 29, 2024",
-    },
-  },
-  {
-    id: "5",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,...",
-    excerpt:
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute ir...",
-    image: "/blog.png",
-    author: {
-      name: "Saarah Mcbride",
-      date: "Nov 29, 2024",
-    },
-  },
-  {
-    id: "6",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit,...",
-    excerpt:
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute ir...",
-    image: "/blog.png",
-    author: {
-      name: "Cruz Mcintyre",
-      date: "Nov 29, 2024",
-    },
-  },
-];
+import { blogArticles } from "@/data/blog";
 
 export default function GPayGoBlogGrid() {
   return (
@@ -101,8 +20,21 @@ export default function GPayGoBlogGrid() {
         </header>
 
         <div className="mt-10 grid grid-cols-1 gap-x-7 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <BlogCard key={post.id} post={post} />
+          {blogArticles.map((article) => (
+            <BlogCard
+              key={article.slug}
+              post={{
+                id: article.slug,
+                slug: article.slug,
+                title: article.title,
+                excerpt: article.excerpt,
+                image: article.cover,
+                author: {
+                  name: article.author,
+                  date: article.date,
+                },
+              }}
+            />
           ))}
         </div>
       </div>

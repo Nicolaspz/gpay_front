@@ -1,6 +1,7 @@
 "use client";
 
 import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
 
 import PayPayBackground from "@/assets/story/paypay-background.png";
 import PayPayLogo from "@/assets/story/logo-paypay.png";
@@ -9,6 +10,7 @@ import GButton, { GButtonIcon } from "./ui/g-button";
 
 interface Story {
   id: number;
+  slug: string;
   title: string;
   image?: StaticImageData;
   logo: StaticImageData;
@@ -18,6 +20,7 @@ interface Story {
 const stories: Story[] = [
   {
     id: 1,
+    slug: "top-up-visa-paypay",
     title: "Agora é possível realizar top up usando o cartão Visa dentro da PayPay.",
     image: PayPayBackground,
     logo: PayPayLogo,
@@ -26,6 +29,7 @@ const stories: Story[] = [
 
   {
     id: 2,
+    slug: "gpayment-25-milhoes-transacoes",
     title:
       "Gpayment processa mais de 25 milhões de transações para empresas em todo o Angola.",
     logo: TupucaLogo,
@@ -33,6 +37,7 @@ const stories: Story[] = [
 
   {
     id: 3,
+    slug: "integracao-stripe-pagamentos-internacionais",
     title:
       "Nova integração com Stripe permite receber pagamentos internacionais em USD e EUR.",
     logo: TupucaLogo,
@@ -40,6 +45,7 @@ const stories: Story[] = [
 
   {
     id: 4,
+    slug: "referencias-multicaixa-api",
     title:
       "Referências Multicaixa agora são geradas em tempo real via API da Gpayment.",
     logo: TupucaLogo,
@@ -47,6 +53,7 @@ const stories: Story[] = [
 
   {
     id: 5,
+    slug: "empresas-angolanas-pagamentos-digitais",
     title:
       "Empresas angolanas adotam pagamentos digitais com a segurança da Gpayment.",
     logo: TupucaLogo,
@@ -75,7 +82,7 @@ export default function GPayGoStories() {
             </h2>
           </div>
 
-          <GButton variant="primary" size="default" icon={<GButtonIcon size="default" />} href="/document">
+          <GButton variant="primary" size="default" icon={<GButtonIcon size="default" />} href="/blog">
             Ir para blog
           </GButton>
         </div>
@@ -87,43 +94,45 @@ export default function GPayGoStories() {
           {/* CARD PRINCIPAL */}
 
           {featuredStory && (
-            <article className="relative overflow-hidden rounded-[6px] h-[713px]">
-
-              <Image
-                src={featuredStory.image!}
-                alt=""
-                fill
-                className="object-cover"
-              />
-
-              <div className="absolute inset-0 bg-black/80" />
-
-              <span className="absolute right-4 top-4 text-[11px] font-medium uppercase tracking-wider text-white">
-                Blog
-              </span>
-
-              <div className="absolute inset-0 flex items-center justify-center">
+            <Link href={`/blog/${featuredStory.slug}`}>
+              <article className="relative overflow-hidden rounded-[6px] h-[713px]">
 
                 <Image
-                  src={featuredStory.logo}
-                  alt="PayPay"
-                  width={140}
-                  height={42}
+                  src={featuredStory.image!}
+                  alt=""
+                  fill
+                  className="object-cover"
                 />
 
-              </div>
+                <div className="absolute inset-0 bg-black/80" />
 
-              <div className="absolute bottom-6 left-6 max-w-[380px]">
+                <span className="absolute right-4 top-4 text-[11px] font-medium uppercase tracking-wider text-white">
+                  Blog
+                </span>
 
-                <p className="text-[20px] font-semibold leading-[1.25] text-white">
-                  {featuredStory.title}
-                </p>
+                <div className="absolute inset-0 flex items-center justify-center">
 
-              </div>
+                  <Image
+                    src={featuredStory.logo}
+                    alt="PayPay"
+                    width={140}
+                    height={42}
+                  />
 
-              <div className="aspect-[0.67]" />
+                </div>
 
-            </article>
+                <div className="absolute bottom-6 left-6 max-w-[380px]">
+
+                  <p className="text-[20px] font-semibold leading-[1.25] text-white">
+                    {featuredStory.title}
+                  </p>
+
+                </div>
+
+                <div className="aspect-[0.67]" />
+
+              </article>
+            </Link>
           )}
 
           {/* GRID */}
@@ -132,32 +141,34 @@ export default function GPayGoStories() {
 
             {secondaryStories.map((story) => (
 
-              <article key={story.id}>
+              <Link key={story.id} href={`/blog/${story.slug}`}>
+                <article>
 
-                <div className="relative overflow-hidden rounded-[6px] bg-[#F5F3F0]">
+                  <div className="relative overflow-hidden rounded-[6px] bg-[#F5F3F0]">
 
-                  <span className="absolute left-4 top-4 text-[11px] uppercase tracking-wide text-[#3C3C3C]">
-                    Blog
-                  </span>
+                    <span className="absolute left-4 top-4 text-[11px] uppercase tracking-wide text-[#3C3C3C]">
+                      Blog
+                    </span>
 
-                  <div className="flex aspect-square items-center justify-center">
+                    <div className="flex aspect-square items-center justify-center">
 
-                    <Image
-                      src={story.logo}
-                      alt=""
-                      width={110}
-                      height={34}
-                    />
+                      <Image
+                        src={story.logo}
+                        alt=""
+                        width={110}
+                        height={34}
+                      />
+
+                    </div>
 
                   </div>
 
-                </div>
+                  <p className="mt-3 text-[15px] leading-[1.45] text-[#202020]">
+                    {story.title}
+                  </p>
 
-                <p className="mt-3 text-[15px] leading-[1.45] text-[#202020]">
-                  {story.title}
-                </p>
-
-              </article>
+                </article>
+              </Link>
 
             ))}
 

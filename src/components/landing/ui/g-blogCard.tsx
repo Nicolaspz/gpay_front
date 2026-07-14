@@ -1,8 +1,10 @@
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 type BlogPost = {
     id: string;
+    slug: string;
     title: string;
     excerpt: string;
     image: string;
@@ -38,21 +40,21 @@ export function BlogCard({ post }: BlogCardProps) {
           </div>
         </div>
   
-        <h3 className="mt-2 max-w-[320px] text-[17px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#1F1F1F] sm:text-[18px]">
+        <h3 className="mt-2 max-w-[320px] text-[18px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#1F1F1F] sm:text-[18px]">
           {post.title}
         </h3>
   
-        <p className="mt-2 max-w-[330px] text-[13px] leading-[1.45] text-[#676767]">
+        <p className="mt-2 max-w-[330px] font-medium text-[16px] leading-[1.45] text-[#676767]">
           {post.excerpt}
         </p>
   
-        <a
-          href="#"
+        <Link
+          href={`/blog/${post.slug}`}
           className="mt-4 inline-flex h-[32px] items-center gap-2 bg-[#F2F2F2] px-3 text-[11px] font-medium uppercase tracking-[0.04em] text-[#444] transition-colors hover:bg-[#E8E8E8]"
         >
           <span>LER MAIS</span>
           <ChevronRight className="h-3.5 w-3.5 stroke-[1.8]" />
-        </a>
+        </Link>
       </article>
     );
   }
