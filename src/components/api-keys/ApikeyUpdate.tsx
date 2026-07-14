@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
 import { updateApiKey } from "@/lib/api-keys"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { useContext, useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { getErrorMessage } from "@/utils/api-error"
@@ -80,7 +80,7 @@ export function EditApiKeyModal({ isOpen, onClose, apiKey, onUpdated }: EditApiK
             </Button>
             <Button 
               type="submit" 
-              className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2" 
+              className="bg-[var(--accent-primary)] hover:opacity-90 flex items-center gap-2" 
               disabled={loading}
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}

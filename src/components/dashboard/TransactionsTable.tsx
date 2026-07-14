@@ -14,32 +14,35 @@ type Transaction = {
 
 export function TransactionsTable({ transactions = [] }: { transactions?: Transaction[] }) {
   return (
-    <Card className="p-6 bg-[#F9FAFB] dark:bg-[#1F2937] border-0 rounded-xl shadow-sm">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transações Recentes</h2>
-        <button className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-          View all
+    <Card className="p-0 bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-xs)] overflow-hidden">
+      <div className="flex justify-between items-center px-6 py-4 border-b border-[var(--border)]">
+        <div>
+          <h2 className="text-[15px] font-bold text-[var(--foreground)]" style={{ fontFamily: "var(--font-clash-display)" }}>Transações Recentes</h2>
+          <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Últimas transações processadas</p>
+        </div>
+        <button className="text-xs font-medium text-[var(--accent-primary)] hover:underline">
+          Ver todas →
         </button>
       </div>
 
       {transactions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-          <FiAlertCircle className="h-8 w-8 mb-4" />
-          <p>No transactions found</p>
+        <div className="flex flex-col items-center justify-center py-16 text-[var(--muted-foreground)]">
+          <FiAlertCircle className="h-8 w-8 mb-3 opacity-40" />
+          <p className="text-sm">Nenhuma transação encontrada</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px]">
             <thead>
-              <tr className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                <th className="pb-3 px-4">Member</th>
-                <th className="pb-3 px-4">Plan</th>
-                <th className="pb-3 px-4">Amount</th>
-                <th className="pb-3 px-4">Status</th>
-                <th className="pb-3 px-4">Date</th>
+              <tr className="bg-[var(--secondary)] text-left">
+                <th className="px-6 py-3 text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-[0.05em]">Membro</th>
+                <th className="px-6 py-3 text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-[0.05em]">Plano</th>
+                <th className="px-6 py-3 text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-[0.05em]">Valor</th>
+                <th className="px-6 py-3 text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-[0.05em]">Status</th>
+                <th className="px-6 py-3 text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-[0.05em]">Data</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody>
               {transactions.map((transaction) => (
                 <TransactionRow key={transaction.id} transaction={transaction} />
               ))}
@@ -51,72 +54,68 @@ export function TransactionsTable({ transactions = [] }: { transactions?: Transa
   );
 }
 
-// ... (mantenha os outros componentes auxiliares como TransactionRow, MemberCell, etc.)
-
-// Componente de linha da tabela
 function TransactionRow({ transaction }: { transaction: Transaction }) {
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-      <td className="py-4 px-4">
+    <tr className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--secondary)] transition-colors duration-150">
+      <td className="px-6 py-3.5">
         <MemberCell member={transaction.member} email={transaction.email} />
       </td>
-      <td className="py-4 px-4 text-gray-700 dark:text-gray-300">{transaction.plan}</td>
-      <td className="py-4 px-4">
+      <td className="px-6 py-3.5 text-sm text-[var(--muted-foreground)]">{transaction.plan}</td>
+      <td className="px-6 py-3.5">
         <AmountCell amount={transaction.amount} type={transaction.type} />
       </td>
-      <td className="py-4 px-4">
+      <td className="px-6 py-3.5">
         <StatusBadge status={transaction.status} />
       </td>
-      <td className="py-4 px-4 text-gray-500 dark:text-gray-400">{transaction.date}</td>
+      <td className="px-6 py-3.5 text-xs text-[var(--muted-foreground)]">{transaction.date}</td>
     </tr>
   );
 }
 
-// Componente de célula do membro
 function MemberCell({ member, email }: { member: string; email: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-        <FiUser className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+      <div className="h-8 w-8 rounded-full bg-[var(--muted)] flex items-center justify-center">
+        <FiUser className="h-4 w-4 text-[var(--muted-foreground)]" />
       </div>
       <div>
-        <p className="font-medium text-gray-900 dark:text-white">{member}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">{email}</p>
+        <p className="text-sm font-medium text-[var(--foreground)]">{member}</p>
+        <p className="text-xs text-[var(--muted-foreground)]">{email}</p>
       </div>
     </div>
   );
 }
 
-// Componente de valor (com ícone de crédito/débito)
 function AmountCell({ amount, type }: { amount: string; type: 'credit' | 'debit' }) {
   const Icon = type === 'credit' ? FiArrowUpRight : FiArrowDownRight;
-  const colorClass = type === 'credit' ? 'text-green-500' : 'text-red-500';
-  
+  const colorClass = type === 'credit' ? 'text-[var(--success)]' : 'text-[var(--danger)]';
+
   return (
-    <div className="flex items-center gap-2">
-      <Icon className={`h-4 w-4 ${colorClass}`} />
-      <span className={`font-medium ${colorClass}`}>{amount}</span>
+    <div className="flex items-center gap-1.5">
+      <Icon className={`h-3.5 w-3.5 ${colorClass}`} />
+      <span className={`text-sm font-semibold ${colorClass}`} style={{ fontFeatureSettings: '"tnum"' }}>{amount}</span>
     </div>
   );
 }
 
-// Componente de badge de status
 function StatusBadge({ status }: { status: Transaction['status'] }) {
-  const statusClasses = {
-    Completed: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
-    Pending: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200',
-    Failed: 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200',
-    Refunded: 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200'
+  const config = {
+    Completed: { bg: "bg-[var(--success-subtle)]", text: "text-[var(--success)]", dot: "bg-[var(--success)]" },
+    Pending: { bg: "bg-[var(--warning-subtle)]", text: "text-[var(--warning)]", dot: "bg-[var(--warning)]" },
+    Failed: { bg: "bg-[var(--danger-subtle)]", text: "text-[var(--danger)]", dot: "bg-[var(--danger)]" },
+    Refunded: { bg: "bg-[var(--info-subtle)]", text: "text-[var(--info)]", dot: "bg-[var(--info)]" },
   };
 
+  const c = config[status];
+
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusClasses[status]}`}>
-      {status}
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium ${c.bg} ${c.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+      {status === 'Completed' ? 'Concluída' : status === 'Pending' ? 'Pendente' : status === 'Failed' ? 'Falhou' : 'Reembolsado'}
     </span>
   );
 }
 
-// Dados mockados (pode ser movido para um arquivo separado)
 export const mockTransactions: Transaction[] = [
   {
     id: '1',

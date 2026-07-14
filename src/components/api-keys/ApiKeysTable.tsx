@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Trash2, Copy, Edit2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { deleteApiKey } from "@/lib/api-keys"
 import { useContext, useEffect, useMemo, useState } from "react"
 import { ApiKeyModal } from "./AddApiKeyModal"
@@ -54,7 +54,7 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-500 hover:bg-green-600">Ativa</Badge>
+        return <Badge className="bg-[var(--success)] hover:opacity-90">Ativa</Badge>
       case "inactive":
         return <Badge variant="secondary">Inativa</Badge>
       case "expired":
@@ -165,7 +165,7 @@ export function ApiKeysTable({ data, onRefresh }: ApiKeysTableProps) {
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button variant="ghost" size="icon" onClick={() => setEditing(apiKey)} className="cursor-pointer">
-                    <Edit2 className="h-4 w-4 text-blue-600" />
+                    <Edit2 className="h-4 w-4 text-[var(--accent-primary)]" />
                   </Button>
                   <DeleteAlert onConfirm={() => handleDelete(apiKey.id)} />
                 </div>

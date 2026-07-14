@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { TransactionsService } from "@/services/transactions.service"
 import { useApiKeyStore } from "@/store/useApiKeyStore"
 import { getErrorMessage } from "@/utils/api-error"

@@ -6,8 +6,8 @@ interface ApiKeysHeaderProps {
   export function ApiKeysHeader({ title, description }: ApiKeysHeaderProps) {
     return (
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{title}</h1>
-        <p className="text-gray-600">{description}</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">{title}</h1>
+        <p className="text-[var(--muted-foreground)]">{description}</p>
       </div>
     )
   }

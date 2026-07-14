@@ -15,7 +15,7 @@ import { useState, useContext, useEffect } from "react"
 import { Lock, Mail, User, Eye, EyeOff, Loader2, CheckCircle, XCircle, Phone } from "lucide-react"
 import { AuthContext } from "@/contexts/AuthContext"
 import { api } from "@/services/apiClients"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 
 export function AuthModal({ trigger }: { trigger?: React.ReactNode }) {
     const { signIn } = useContext(AuthContext)

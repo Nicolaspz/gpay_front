@@ -24,9 +24,9 @@ export function NewTransactionButton() {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md bg-[#1B1C2A] border-[#2D2E3F]">
+      <DialogContent className="sm:max-w-md bg-[var(--card)] border-[var(--border)]">
         <DialogHeader>
-          <DialogTitle className="text-white">Create New Transaction</DialogTitle>
+          <DialogTitle className="text-[var(--foreground)]">Create New Transaction</DialogTitle>
         </DialogHeader>
         <TransactionForm onSuccess={() => setOpen(false)} />
       </DialogContent>

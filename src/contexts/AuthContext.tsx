@@ -1,7 +1,7 @@
 'use client'
 import { createContext, ReactNode, useState, useEffect, useCallback, Suspense, useRef } from "react";
 import { destroyCookie, setCookie, parseCookies } from 'nookies'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { api } from '../services/apiClients';
 import { AuthService } from "@/services/auth.service";

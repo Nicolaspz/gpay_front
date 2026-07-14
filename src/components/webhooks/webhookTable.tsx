@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Copy, Edit2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { useContext, useMemo, useState } from "react"
 import { DeleteAlert } from "../deteleteconfirm"
 import { WebhookModal } from "./webhookModal" 
@@ -140,7 +140,7 @@ export function WebhooksTable({ data, onRefresh }: WebhooksTableProps) {
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button variant="ghost" size="icon" onClick={() => setEditing(webhook)} className="cursor-pointer">
-                    <Edit2 className="h-4 w-4 text-blue-600" />
+                    <Edit2 className="h-4 w-4 text-[var(--accent-primary)]" />
                   </Button>
                   <DeleteAlert onConfirm={() => handleDelete(webhook.id)} />
                 </div>

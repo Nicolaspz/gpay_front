@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdminClients } from "@/hooks/useAdminClients";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ClientsService } from "@/services/clients.service";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/api-error";
 import { MoreVertical, Loader2 } from "lucide-react";
 import {
@@ -65,7 +65,7 @@ export default function ClientsDashboard() {
   if (isLoadingUser) {
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-12 h-12 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -73,8 +73,8 @@ export default function ClientsDashboard() {
   if (!isAdmin) {
     return (
       <div className="p-6 text-center">
-        <h2 className="text-xl font-bold text-red-600">Acesso Negado</h2>
-        <p className="text-gray-600">Você não tem permissão para acessar esta página.</p>
+        <h2 className="text-xl font-bold text-[var(--danger)]">Acesso Negado</h2>
+        <p className="text-[var(--muted-foreground)]">Você não tem permissão para acessar esta página.</p>
       </div>
     );
   }
@@ -82,83 +82,83 @@ export default function ClientsDashboard() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6 bg-white dark:bg-[#111827] min-h-screen">
+    <div className="p-6 space-y-6 bg-[var(--background)] min-h-screen">
       <div className="flex justify-between items-center">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <FiUsers className="text-blue-600" />
+          <h1 className="text-2xl font-bold text-[var(--foreground)] flex items-center gap-2">
+            <FiUsers className="text-[var(--accent-primary)]" />
             Gestão de Clientes
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Administre todas as empresas e usuários registrados na plataforma.
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+      <div className="flex items-center gap-4 bg-[var(--muted)] p-4 rounded-xl border border-[var(--border)]">
         <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
           <input 
             type="text" 
             placeholder="Buscar por nome, empresa ou email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full pl-10 pr-4 py-2 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--accent-primary)] outline-none"
           />
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-[var(--muted-foreground)]">
           Total: <strong>{filteredClients.length}</strong> clientes
         </div>
       </div>
 
-      <Card className="overflow-hidden border-0 shadow-sm bg-[#F9FAFB] dark:bg-[#1F2937]">
+      <Card className="overflow-hidden border-0 shadow-sm bg-[var(--card)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Empresa / Razão Social</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Representante</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Contacto</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Status</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Ações</th>
+              <tr className="border-b border-[var(--border)]">
+                <th className="p-4 text-sm font-semibold text-[var(--muted-foreground)]">Empresa / Razão Social</th>
+                <th className="p-4 text-sm font-semibold text-[var(--muted-foreground)]">Representante</th>
+                <th className="p-4 text-sm font-semibold text-[var(--muted-foreground)]">Contacto</th>
+                <th className="p-4 text-sm font-semibold text-[var(--muted-foreground)]">Status</th>
+                <th className="p-4 text-sm font-semibold text-[var(--muted-foreground)]">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-[var(--border)]">
               {paginatedClients.map((client) => (
-                <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <tr key={client.id} className="hover:bg-[var(--muted)] transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <FiBriefcase className="text-blue-600 dark:text-blue-400 text-xl" />
+                      <div className="h-10 w-10 rounded-lg bg-[var(--accent-primary-subtle)] flex items-center justify-center">
+                        <FiBriefcase className="text-[var(--accent-primary)] text-xl" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900 dark:text-white">
+                        <p className="text-sm font-bold text-[var(--foreground)]">
                           {client.tenant?.legal_name || "Sem Empresa"}
                         </p>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-tighter">ID: {client.tenant?.id || "---"}</p>
+                        <p className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-tighter">ID: {client.tenant?.id || "---"}</p>
                       </div>
                     </div>
                   </td>
                   <td className="p-4">
-                    <p className="text-sm text-gray-900 dark:text-white font-medium">{client.fullname}</p>
-                    <p className="text-xs text-blue-600 font-semibold">{client.user_type.toUpperCase()}</p>
+                    <p className="text-sm text-[var(--foreground)] font-medium">{client.fullname}</p>
+                    <p className="text-xs text-[var(--accent-primary)] font-semibold">{client.user_type.toUpperCase()}</p>
                   </td>
                   <td className="p-4">
-                    <p className="text-sm text-gray-700 dark:text-gray-300">{client.email}</p>
+                    <p className="text-sm text-[var(--muted-foreground)]">{client.email}</p>
                   </td>
                   <td className="p-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       client.status === 'active' 
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                      ? 'bg-[var(--success-subtle)] text-[var(--success)]' 
                       : client.status === 'blocked'
-                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-[var(--danger-subtle)] text-[var(--danger)]'
+                      : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
                     }`}>
                       {client.status.toUpperCase()}
                     </span>
@@ -166,16 +166,16 @@ export default function ClientsDashboard() {
                   <td className="p-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
-                          <MoreVertical className="h-4 w-4 text-gray-500" />
+                        <button className="p-1.5 rounded-md hover:bg-[var(--muted)] transition-colors cursor-pointer">
+                          <MoreVertical className="h-4 w-4 text-[var(--muted-foreground)]" />
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 min-w-[120px]">
+                      <DropdownMenuContent align="end" className="bg-[var(--card)] border border-[var(--border)] min-w-[120px]">
                         {client.status === 'blocked' ? (
                           <DropdownMenuItem
                             onClick={() => activateMutation.mutate(client.id)}
                             disabled={activateMutation.isPending}
-                            className="cursor-pointer text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 focus:text-green-700 focus:bg-green-50 dark:focus:bg-green-900/20"
+                            className="cursor-pointer text-[var(--success)] hover:opacity-80 hover:bg-[var(--success-subtle)] focus:text-[var(--success)] focus:bg-[var(--success-subtle)]"
                           >
                             {activateMutation.isPending ? (
                               <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -186,7 +186,7 @@ export default function ClientsDashboard() {
                           <DropdownMenuItem
                             onClick={() => blockMutation.mutate(client.id)}
                             disabled={blockMutation.isPending}
-                            className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 focus:text-red-700 focus:bg-red-50 dark:focus:bg-red-900/20"
+                            className="cursor-pointer text-[var(--danger)] hover:opacity-80 hover:bg-[var(--danger-subtle)] focus:text-[var(--danger)] focus:bg-[var(--danger-subtle)]"
                           >
                             {blockMutation.isPending ? (
                               <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -201,7 +201,7 @@ export default function ClientsDashboard() {
               ))}
               {filteredClients.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-12 text-center text-gray-500">
+                  <td colSpan={5} className="p-12 text-center text-[var(--muted-foreground)]">
                     Nenhum cliente encontrado para sua busca.
                   </td>
                 </tr>
@@ -212,15 +212,15 @@ export default function ClientsDashboard() {
       </Card>
 
       {/* Paginação */}
-      <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-        <p className="text-sm text-gray-500">
+      <div className="flex justify-between items-center bg-[var(--muted)] p-4 rounded-xl border border-[var(--border)]">
+        <p className="text-sm text-[var(--muted-foreground)]">
           Mostrando <strong>{paginatedClients.length}</strong> de <strong>{filteredClients.length}</strong> clientes
         </p>
         <div className="flex gap-2">
           <button 
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm disabled:opacity-50"
+            className="px-4 py-2 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm disabled:opacity-50"
           >
             Anterior
           </button>
@@ -230,7 +230,7 @@ export default function ClientsDashboard() {
           <button 
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm disabled:opacity-50"
+            className="px-4 py-2 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm disabled:opacity-50"
           >
             Próximo
           </button>
