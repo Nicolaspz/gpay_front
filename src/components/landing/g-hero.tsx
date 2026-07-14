@@ -1,51 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { TrendingUp, UserCircle2 } from "lucide-react";
-import G_logo from "@/assets/logo.svg";
+import { TrendingUp } from "lucide-react";
 import G_imagem1 from "@/assets/eu.jpeg";
 import G_imagem2 from "@/assets/chris.jpeg";
 import G_imagem3 from "@/assets/euu.jpeg";
 import G_vector from "@/assets/Vector.svg";
-import GButton, { GButtonIcon } from "./g-button";
+import GButton, { GButtonIcon } from "./ui/g-button";
+import GPayGoHeader from "./ui/g-header";
 
 type HeroProps = {
   backgroundImage?: string;
   heroImage?: string;
 };
 
-const navItems = [
-  { name: "Início", href: "#" },
-  { name: "Sobre", href: "#sobre" },
-  { name: "Serviço", href: "#servico" },
-  { name: "Preço", href: "#preco" },
-  { name: "Docs", href: "/document" },
-];
-
 export default function GPayGoHero({
   backgroundImage = "/page/bg.png",
   heroImage = "/page/modelo.png",
 }: HeroProps) {
-  const [hasScrolled, setHasScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setHasScrolled(window.scrollY > 10);
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const headerShellStyles = hasScrolled
-    ? "fixed top-4 left-1/2 z-50 w-[min(100%-2rem,1040px)] -translate-x-1/2 rounded-full border border-white/60 bg-white/70 px-4 py-3 shadow-[0_18px_50px_rgba(13,19,48,0.10)] backdrop-blur-xl"
-    : "relative mx-auto w-full rounded-none border border-transparent bg-transparent px-0 py-0 shadow-none backdrop-blur-0";
-
   return (
     <section className="w-full bg-white px-4 py-4 sm:px-6 lg:px-8">
       <div className="mx-auto w-full">
@@ -63,52 +35,7 @@ export default function GPayGoHero({
           />
 
           <div className="relative z-10 mx-auto min-h-[598px] w-full max-w-[1170px] pt-6 sm:pt-7 lg:pt-7">
-            {hasScrolled && <div className="h-[72px]" />}
-
-            <div className={headerShellStyles}>
-              <header className="flex items-center justify-between gap-4">
-                <div className="relative h-10 w-[118px] shrink-0 sm:h-11 sm:w-[132px]">
-                  <Image
-                    src={G_logo}
-                    alt="GPayGo"
-                    fill
-                    className="object-contain object-left"
-                    priority
-                  />
-                </div>
-
-                <nav className="hidden items-center gap-8 xl:flex">
-                  {navItems.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="text-[15px] font-medium text-[#40414F] transition-colors hover:text-[#5E53FF]"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-                </nav>
-
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <button
-                    aria-label="Conta"
-                    className="grid h-9 w-9 place-items-center rounded-full text-[#1E1E2C] transition-colors hover:bg-white/70"
-                  >
-                    <UserCircle2 className="h-[18px] w-[18px] stroke-[1.8]" />
-                  </button>
-
-                  <GButton
-                    variant="primary"
-                    size="default"
-                    icon={<GButtonIcon size="default" />}
-                    href="/login"
-                  >
-                    Entrar
-                  </GButton>
-                </div>
-              </header>
-            </div>
-
+          <GPayGoHeader />
             <div className="relative mt-10 min-h-[598px] lg:mt-12">
               <div className="relative z-10 max-w-[740px] pt-2 lg:pt-10 xl:pl-5">
                 <p className="text-[13px] font-bold uppercase tracking-[0.04em] text-[#7B52FF] sm:text-[14px]">

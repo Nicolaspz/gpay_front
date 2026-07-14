@@ -5,7 +5,7 @@ import Image, { StaticImageData } from "next/image";
 import PayPayBackground from "@/assets/story/paypay-background.png";
 import PayPayLogo from "@/assets/story/logo-paypay.png";
 import TupucaLogo from "@/assets/story/tupuca-logo.png";
-import GButton, { GButtonIcon } from "./g-button";
+import GButton, { GButtonIcon } from "./ui/g-button";
 
 interface Story {
   id: number;

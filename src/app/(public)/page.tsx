@@ -6,6 +6,7 @@ import GPayGoHowItWorks from "@/components/landing/g-how-it-works";
 import GPayGoStories from "@/components/landing/g-stories";
 import GPayGoTestimonials from "@/components/landing/g-testimonials";
 import { urbanist } from "@/components/landing/font";
+import GPayGoCTA from "@/components/landing/g-cta";
 
 export default function Home() {
   return (
@@ -16,6 +17,9 @@ export default function Home() {
       <GPayGoStories />
       <GPayGoFaq />
       <GPayGoTestimonials />
+      <GPayGoCTA
+        backgroundSrc="/page/footer-bg.png"
+      />
       <GPayGoFooter
         backgroundSrc="/page/footer-bg.png"
         logoSrc="/page/logo.svg"

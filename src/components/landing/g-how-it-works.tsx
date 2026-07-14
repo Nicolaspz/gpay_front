@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Download } from "lucide-react";
-import GButton, { GButtonIcon } from "./g-button";
+import GButton, { GButtonIcon } from "./ui/g-button";
 
 type HowItWorksProps = {
   videoSrc?: string;
