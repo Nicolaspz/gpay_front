@@ -66,10 +66,10 @@ export default function PayPayDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">
             Fundo Operacional PayPay
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-sm">
+          <p className="text-[var(--muted-foreground)] text-sm">
             Gestão do saldo operacional da conta PayPay (AOA)
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function PayPayDashboard() {
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Montante (AOA)</label>
+                  <label className="text-sm font-medium text-[var(--foreground)]">Montante (AOA)</label>
                   <Input
                     type="number"
                     placeholder="1000000"
@@ -96,7 +96,7 @@ export default function PayPayDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Referência</label>
+                  <label className="text-sm font-medium text-[var(--foreground)]">Referência</label>
                   <Input
                     placeholder="PAYPAY-TOPUP-2026-0001"
                     value={topupReference}
@@ -104,7 +104,7 @@ export default function PayPayDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição (opcional)</label>
+                  <label className="text-sm font-medium text-[var(--foreground)]">Descrição (opcional)</label>
                   <Input
                     placeholder="Carregamento manual"
                     value={topupDescription}
@@ -115,7 +115,7 @@ export default function PayPayDashboard() {
                   {isTopuping ? "A creditar..." : "Creditar"}
                 </Button>
                 {topupData && (
-                  <p className="text-sm text-green-600 text-center">
+                  <p className="text-sm text-[var(--success)] text-center">
                     Fundo creditado com sucesso!
                   </p>
                 )}
@@ -136,7 +136,7 @@ export default function PayPayDashboard() {
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Montante (AOA)</label>
+                  <label className="text-sm font-medium text-[var(--foreground)]">Montante (AOA)</label>
                   <Input
                     type="number"
                     placeholder="85000"
@@ -148,17 +148,17 @@ export default function PayPayDashboard() {
                   {isValidating ? "A validar..." : "Validar"}
                 </Button>
                 {validateDebitData && (
-                  <p className="text-sm text-green-600 text-center">
+                  <p className="text-sm text-[var(--success)] text-center">
                     Débito validado com sucesso!
                   </p>
                 )}
                 {validateDebitError && (
-                  <p className="text-sm text-red-600 text-center">
+                  <p className="text-sm text-[var(--danger)] text-center">
                     Saldo insuficiente ou erro na validação.
                   </p>
                 )}
                 {debitResult && (
-                  <p className={`text-sm text-center ${debitResult.valid ? "text-green-600" : "text-red-600"}`}>
+                  <p className={`text-sm text-center ${debitResult.valid ? "text-[var(--success)]" : "text-[var(--danger)]"}`}>
                     {debitResult.message}
                   </p>
                 )}
@@ -177,73 +177,73 @@ export default function PayPayDashboard() {
         <CardStat
           title="Saldo Disponível"
           amount={balance?.available_amount != null ? `${balance.available_amount.toLocaleString("pt-AO")} AOA` : "---"}
-          icon={<FiDollarSign className="text-green-500" />}
+          icon={<FiDollarSign className="text-[var(--success)]" />}
         />
         <CardStat
           title="Total Creditado"
           amount={balance?.total_credited != null ? `${balance.total_credited.toLocaleString("pt-AO")} AOA` : "---"}
-          icon={<FiArrowUp className="text-blue-500" />}
+          icon={<FiArrowUp className="text-[var(--accent-primary)]" />}
         />
         <CardStat
           title="Total Debitado"
           amount={balance?.total_debited != null ? `${balance.total_debited.toLocaleString("pt-AO")} AOA` : "---"}
-          icon={<FiArrowDown className="text-red-500" />}
+          icon={<FiArrowDown className="text-[var(--danger)]" />}
         />
         <CardStat
           title="Última Atualização"
           amount={balance?.updated_at ? format(new Date(balance.updated_at), "dd/MM/yyyy HH:mm") : "---"}
-          icon={<FiDatabase className="text-purple-500" />}
+          icon={<FiDatabase className="text-[var(--info)]" />}
         />
       </div>
 
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">
             Movimentos do Fundo PayPay
           </h2>
-          <span className="text-sm text-gray-500">{movements.length} movimentos</span>
+          <span className="text-sm text-[var(--muted-foreground)]">{movements.length} movimentos</span>
         </div>
 
         {isLoadingMovements ? (
           <div className="flex justify-center py-8">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : movements.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">Nenhum movimento encontrado.</p>
+          <p className="text-center text-[var(--muted-foreground)] py-8">Nenhum movimento encontrado.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-                  <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">ID</th>
-                  <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Tipo</th>
-                  <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Montante</th>
-                  <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Referência</th>
-                  <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Descrição</th>
-                  <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Data</th>
+                <tr className="bg-[var(--muted)] border-b border-[var(--border)]">
+                  <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">ID</th>
+                  <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Tipo</th>
+                  <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Montante</th>
+                  <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Referência</th>
+                  <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Descrição</th>
+                  <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Data</th>
                 </tr>
               </thead>
               <tbody>
                 {movements.map((mov) => (
-                  <tr key={mov.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    <td className="p-3 text-xs font-mono text-gray-800 dark:text-gray-300">{mov.id}</td>
+                  <tr key={mov.id} className="border-b border-[var(--border)] hover:bg-[var(--muted)] transition">
+                    <td className="p-3 text-xs font-mono text-[var(--foreground)]">{mov.id}</td>
                     <td className="p-3">
                       <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
                         mov.type === "credit"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                          ? "bg-[var(--success-subtle)] text-[var(--success)]"
                           : mov.type === "debit"
-                          ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+                          ? "bg-[var(--danger-subtle)] text-[var(--danger)]"
+                          : "bg-[var(--muted)] text-[var(--muted-foreground)]"
                       }`}>
                         {mov.type === "credit" ? "CRÉDITO" : mov.type === "debit" ? "DÉBITO" : "IGNORADO"}
                       </span>
                     </td>
-                    <td className="p-3 text-xs font-medium text-gray-900 dark:text-white">
+                    <td className="p-3 text-xs font-medium text-[var(--foreground)]">
                       {mov.amount != null ? `${mov.amount.toLocaleString("pt-AO")} AOA` : "—"}
                     </td>
-                    <td className="p-3 text-xs text-gray-600 dark:text-gray-400 font-mono">{mov.reference || "—"}</td>
-                    <td className="p-3 text-xs text-gray-600 dark:text-gray-400">{mov.description || "—"}</td>
-                    <td className="p-3 text-xs text-gray-500">
+                    <td className="p-3 text-xs text-[var(--muted-foreground)] font-mono">{mov.reference || "—"}</td>
+                    <td className="p-3 text-xs text-[var(--muted-foreground)]">{mov.description || "—"}</td>
+                    <td className="p-3 text-xs text-[var(--muted-foreground)]">
                       {mov.created_at ? format(new Date(mov.created_at), "dd/MM/yyyy HH:mm") : "—"}
                     </td>
                   </tr>

@@ -16,10 +16,10 @@ const statusFilters = [
 export function TransactionFilter() {
   return (
     <Select defaultValue="all">
-      <SelectTrigger className="w-full bg-[#1B1C2A] border-[#2D2E3F]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Filter by status" />
       </SelectTrigger>
-      <SelectContent className="bg-[#1B1C2A] border-[#2D2E3F]">
+      <SelectContent>
         {statusFilters.map((filter) => (
           <SelectItem key={filter.value} value={filter.value}>
             {filter.label}

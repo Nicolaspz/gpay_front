@@ -94,7 +94,7 @@ export function SettingsTabs({ tabs, defaultTab }: SettingsTabsProps) {
               </span>
               <span className="truncate">{tab.label}</span>
               {!isEnabled && (
-                <span className="ml-1 md:ml-2 text-xs bg-gray-100 text-gray-400 px-1 py-0.5 rounded hidden md:inline">
+                <span className="ml-1 md:ml-2 text-xs bg-[var(--muted)] text-[var(--muted-foreground)] px-1 py-0.5 rounded hidden md:inline">
                   Em breve
                 </span>
               )}
@@ -106,7 +106,7 @@ export function SettingsTabs({ tabs, defaultTab }: SettingsTabsProps) {
       {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id} className="mt-6">
           {loading ? (
-            <div className="flex items-center justify-center h-40 text-gray-500">
+            <div className="flex items-center justify-center h-40 text-[var(--muted-foreground)]">
               <Loader2 className="h-6 w-6 animate-spin mr-2" />
               <span>Carregando {tab.label}...</span>
             </div>

@@ -37,7 +37,6 @@ export function TransactionForm({ onSuccess }: { onSuccess: () => void }) {
   })
 
   const onSubmit = async (data:any) => {
-    // Lógica para enviar a transação
     console.log(data)
     onSuccess()
   }
@@ -50,14 +49,14 @@ export function TransactionForm({ onSuccess }: { onSuccess: () => void }) {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-300">Transaction Type</FormLabel>
+              <FormLabel>Transaction Type</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="bg-[#2D2E3F] border-[#3E3F4E]">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent className="bg-[#1B1C2A] border-[#2D2E3F]">
+                <SelectContent>
                   {transactionTypes.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
@@ -75,11 +74,10 @@ export function TransactionForm({ onSuccess }: { onSuccess: () => void }) {
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-300">Amount</FormLabel>
+              <FormLabel>Amount</FormLabel>
               <FormControl>
                 <Input 
                   {...field} 
-                  className="bg-[#2D2E3F] border-[#3E3F4E]" 
                   placeholder="0.00" 
                   type="number" 
                 />
@@ -93,7 +91,7 @@ export function TransactionForm({ onSuccess }: { onSuccess: () => void }) {
           <Button type="button" variant="outline" className="flex-1" onClick={onSuccess}>
             Cancel
           </Button>
-          <Button type="submit" className="flex-1 bg-[#8884d8] hover:bg-[#8884d8]/80">
+          <Button type="submit" className="flex-1">
             Confirm
           </Button>
         </div>

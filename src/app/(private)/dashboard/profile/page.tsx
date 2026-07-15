@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { getErrorMessage } from "@/utils/api-error"
 import { Loader2, Camera, Trash2, MoreVertical, Phone, Building2, Save } from "lucide-react"
 
@@ -99,10 +99,10 @@ export default function ProfilePage() {
   const photoUrl = preview || user?.photo_url || user?.user_photo
 
   return (
-    <div className="flex-1 space-y-6 p-6 bg-white dark:bg-[#111827] min-h-screen">
+    <div className="flex-1 space-y-6 p-6 bg-[var(--background)] min-h-screen">
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Meu Perfil</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Meu Perfil</h1>
+        <p className="text-sm text-[var(--muted-foreground)]">
           Gerencie suas informações pessoais e foto de perfil
         </p>
       </div>
@@ -127,7 +127,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 p-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
+                className="absolute bottom-0 right-0 p-1.5 rounded-full bg-[var(--accent-primary)] text-white hover:opacity-90 transition-colors cursor-pointer"
               >
                 <Camera className="h-4 w-4" />
               </button>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="p-1 rounded-full bg-white/90 dark:bg-zinc-800/90 shadow text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-zinc-700 transition-colors cursor-pointer"
+                  className="p-1 rounded-full bg-[var(--card)]/90 shadow text-[var(--muted-foreground)] hover:opacity-90 transition-colors cursor-pointer"
                 >
                   <MoreVertical className="h-3.5 w-3.5" />
                 </button>
@@ -146,12 +146,12 @@ export default function ProfilePage() {
                 {menuOpen && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                    <div className="absolute top-6 right-0 z-20 min-w-[140px] rounded-md border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-md py-1">
+                    <div className="absolute top-6 right-0 z-20 min-w-[140px] rounded-md border border-[var(--border)] bg-[var(--card)] shadow-md py-1">
                       <button
                         type="button"
                         onClick={handleDeletePhoto}
                         disabled={deleting}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 cursor-pointer transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--danger)] hover:bg-[var(--danger-subtle)] disabled:opacity-50 cursor-pointer transition-colors"
                       >
                         {deleting ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -176,8 +176,8 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-1">
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">{user?.fullname || "Usuário"}</p>
-            <p className="text-sm text-gray-500">{user?.email}</p>
+            <p className="text-lg font-semibold text-[var(--foreground)]">{user?.fullname || "Usuário"}</p>
+            <p className="text-sm text-[var(--muted-foreground)]">{user?.email}</p>
           </div>
         </div>
 
@@ -226,40 +226,40 @@ export default function ProfilePage() {
       </Card>
 
       {user?.tenant && (
-        <Card className="p-6 space-y-4 bg-gray-50 dark:bg-zinc-800/50 border border-gray-200 dark:border-zinc-700">
+        <Card className="p-6 space-y-4 bg-[var(--muted)] border border-[var(--border)]">
           <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-blue-500" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Dados do Comerciante</h3>
+            <Building2 className="w-5 h-5 text-[var(--accent-primary)]" />
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">Dados do Comerciante</h3>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {user.tenant.legal_name && (
               <div className="space-y-1">
-                <p className="text-xs text-gray-500">Nome Legal</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user.tenant.legal_name}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">Nome Legal</p>
+                <p className="text-sm font-medium text-[var(--foreground)]">{user.tenant.legal_name}</p>
               </div>
             )}
             {user.tenant.status && (
               <div className="space-y-1">
-                <p className="text-xs text-gray-500">Status</p>
-                <p className="text-sm font-medium capitalize text-gray-900 dark:text-white">{user.tenant.status}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">Status</p>
+                <p className="text-sm font-medium capitalize text-[var(--foreground)]">{user.tenant.status}</p>
               </div>
             )}
             {user.tenant.bank_iban && (
               <div className="space-y-1">
-                <p className="text-xs text-gray-500">IBAN</p>
-                <p className="text-sm font-medium font-mono text-gray-900 dark:text-white">{user.tenant.bank_iban}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">IBAN</p>
+                <p className="text-sm font-medium font-mono text-[var(--foreground)]">{user.tenant.bank_iban}</p>
               </div>
             )}
             {user.tenant.bank_owner_name && (
               <div className="space-y-1">
-                <p className="text-xs text-gray-500">Titular da Conta</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user.tenant.bank_owner_name}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">Titular da Conta</p>
+                <p className="text-sm font-medium text-[var(--foreground)]">{user.tenant.bank_owner_name}</p>
               </div>
             )}
             {user.tenant.client_reference_count && (
               <div className="space-y-1">
-                <p className="text-xs text-gray-500">Referências de Cliente</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{user.tenant.client_reference_count}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">Referências de Cliente</p>
+                <p className="text-sm font-medium text-[var(--foreground)]">{user.tenant.client_reference_count}</p>
               </div>
             )}
           </div>

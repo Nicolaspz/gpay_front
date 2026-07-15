@@ -55,10 +55,10 @@ const typeLabels: Record<ActivityType, string> = {
 }
 
 const typeColors: Record<ActivityType, string> = {
-  saque: "text-red-500",
-  deposito: "text-blue-500",
-  recebimento: "text-green-500",
-  taxa: "text-yellow-500",
+  saque: "text-[var(--danger)]",
+  deposito: "text-[var(--accent-primary)]",
+  recebimento: "text-[var(--success)]",
+  taxa: "text-[var(--warning)]",
 }
 
 const statusLabels: Record<string, string> = {
@@ -135,26 +135,26 @@ export default function AccountPage() {
     return v.toLocaleString("pt-AO", { style: "currency", currency: balanceCurrency })
   }
   return (
-    <div className="p-6 space-y-6 bg-white dark:bg-[#111827] min-h-screen">
+    <div className="p-6 space-y-6 bg-[var(--background)] min-h-screen">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Minha Conta</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Minha Conta</h1>
+        <p className="text-sm text-[var(--muted-foreground)]">
           Gerencie seu saldo, saques e consulte o histórico de atividades
         </p>
       </div>
 
       <div className="flex items-center gap-2">
-        <label className="text-sm text-gray-500 dark:text-gray-400">Consultar saldo por moeda:</label>
+        <label className="text-sm text-[var(--muted-foreground)]">Consultar saldo por moeda:</label>
         <select
           value={selectedCurrency}
           onChange={(e) => setSelectedCurrency(e.target.value)}
-          className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+          className="px-3 py-1.5 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-[var(--foreground)]"
         >
           <option value="usd">USD</option>
           <option value="aoa">AOA</option>
           <option value="eur">EUR</option>
         </select>
-        {loadingCurrencyBalance && <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />}
+        {loadingCurrencyBalance && <Loader2 className="w-4 h-4 text-[var(--accent-primary)] animate-spin" />}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -162,32 +162,32 @@ export default function AccountPage() {
           title="Meu Saldo"
           amount={loadingBalance ? "0,00 Kz" : formatBalance(saldo)}
           change=""
-          icon={loadingBalance ? <Loader2 className="w-5 h-5 text-blue-500 animate-spin" /> : <Wallet className="w-5 h-5 text-blue-500" />}
+          icon={loadingBalance ? <Loader2 className="w-5 h-5 text-[var(--accent-primary)] animate-spin" /> : <Wallet className="w-5 h-5 text-[var(--accent-primary)]" />}
         />
         <CardStat
           title={`Saldo (${selectedCurrency.toUpperCase()})`}
           amount={loadingCurrencyBalance ? "..." : currencyBalance ? `${currencyBalance.balance.toLocaleString("pt-AO")} ${selectedCurrency.toUpperCase()}` : "—"}
           change=""
-          icon={<FiDollarSign className="text-purple-500" />}
+          icon={<FiDollarSign className="text-[var(--info)]" />}
         />
         <CardStat
           title="Total de Saques"
           amount={formatKz(totalSaque)}
           change=""
-          icon={<FiArrowUp className="text-red-500" />}
+          icon={<FiArrowUp className="text-[var(--danger)]" />}
         />
         <CardStat
           title="Total Recebido"
           amount={formatKz(totalRecebido)}
           change=""
-          icon={<FiCheckCircle className="text-green-500" />}
+          icon={<FiCheckCircle className="text-[var(--success)]" />}
         />
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
         <Dialog open={withdrawOpen} onOpenChange={(open) => { setWithdrawOpen(open); if (!open) reset() }}>
           <DialogTrigger asChild>
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2">
+            <button className="px-4 py-2 bg-[var(--accent-primary)] hover:opacity-90 text-white rounded-lg text-sm font-medium flex items-center gap-2">
               <FiDollarSign /> Fazer Saque
             </button>
           </DialogTrigger>
@@ -197,7 +197,7 @@ export default function AccountPage() {
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Montante</label>
+                <label className="text-sm font-medium text-[var(--foreground)]">Montante</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -207,11 +207,11 @@ export default function AccountPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Moeda</label>
+                <label className="text-sm font-medium text-[var(--foreground)]">Moeda</label>
                 <select
                   value={withdrawCurrency}
                   onChange={(e) => setWithdrawCurrency(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+                  className="w-full px-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-[var(--foreground)]"
                 >
                   <option value="usd">USD</option>
                   <option value="aoa">AOA</option>
@@ -226,7 +226,7 @@ export default function AccountPage() {
               </Button>
 
               {validationResult && (
-                <div className={`p-3 rounded-lg text-sm ${validationResult.valid ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400" : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"}`}>
+                <div className={`p-3 rounded-lg text-sm ${validationResult.valid ? "bg-[var(--success-subtle)] text-[var(--success)]" : "bg-[var(--danger-subtle)] text-[var(--danger)]"}`}>
                   {validationResult.valid ? (
                     <div className="flex items-center gap-2">
                       <FiCheckCircle className="h-4 w-4" />
@@ -238,39 +238,39 @@ export default function AccountPage() {
                       <span>{validationResult.message || "Saldo insuficiente para este saque."}</span>
                     </div>
                   )}
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="mt-2 text-xs text-[var(--muted-foreground)]">
                     Saldo atual: {formatKz(validationResult.current_balance)} &bull; Solicitado: {formatKz(validationResult.requested_amount)}
                   </div>
                 </div>
               )}
 
               {validationError && (
-                <p className="text-sm text-red-600 text-center">Erro ao validar saque. Tente novamente.</p>
+                <p className="text-sm text-[var(--danger)] text-center">Erro ao validar saque. Tente novamente.</p>
               )}
             </div>
           </DialogContent>
         </Dialog>
 
-        <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-gray-700 rounded-lg text-sm font-medium flex items-center gap-2">
+        <button className="px-4 py-2 bg-[var(--muted)] text-[var(--foreground)] rounded-lg text-sm font-medium flex items-center gap-2">
           <Plus /> Solicitar Aumento de Limite
         </button>
       </div>
 
-      <Card className="p-5 bg-[#F9FAFB] dark:bg-[#1F2937] border-0 rounded-xl shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Histórico de Atividades</h2>
+      <Card className="p-5 bg-[var(--card)] border-0 rounded-xl shadow-sm">
+        <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Histórico de Atividades</h2>
 
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl flex flex-wrap items-end gap-4 border border-gray-100 dark:border-gray-700 mb-4">
+        <div className="bg-[var(--muted)] p-4 rounded-xl flex flex-wrap items-end gap-4 border border-[var(--border)] mb-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Início</label>
-            <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1) }} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-3 py-2 text-sm outline-none" />
+            <label className="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Início</label>
+            <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1) }} className="bg-[var(--card)] border border-[var(--border)] rounded-md px-3 py-2 text-sm outline-none" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Fim</label>
-            <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1) }} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-3 py-2 text-sm outline-none" />
+            <label className="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Fim</label>
+            <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1) }} className="bg-[var(--card)] border border-[var(--border)] rounded-md px-3 py-2 text-sm outline-none" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
-            <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value as ActivityType | "todas"); setCurrentPage(1) }} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-3 py-2 text-sm outline-none">
+            <label className="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Tipo</label>
+            <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value as ActivityType | "todas"); setCurrentPage(1) }} className="bg-[var(--card)] border border-[var(--border)] rounded-md px-3 py-2 text-sm outline-none">
               <option value="todas">Todas</option>
               <option value="recebimento">Recebimentos</option>
               <option value="saque">Saques</option>
@@ -278,14 +278,14 @@ export default function AccountPage() {
               <option value="taxa">Taxas</option>
             </select>
           </div>
-          <button onClick={() => { setStartDate(""); setEndDate(""); setTypeFilter("todas"); setCurrentPage(1) }} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium">
+          <button onClick={() => { setStartDate(""); setEndDate(""); setTypeFilter("todas"); setCurrentPage(1) }} className="px-4 py-2 bg-[var(--muted)] text-[var(--foreground)] rounded-lg text-xs font-medium">
             <FiFilter className="inline mr-1" /> Limpar
           </button>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="text-left text-sm text-gray-500 border-b border-gray-200 dark:border-gray-700">
+            <thead className="text-left text-sm text-[var(--muted-foreground)] border-b border-[var(--border)]">
               <tr>
                 <th className="pb-3 px-4">Tipo</th>
                 <th className="pb-3 px-4">Descrição</th>
@@ -294,15 +294,15 @@ export default function AccountPage() {
                 <th className="pb-3 px-4">Data</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-[var(--border)]">
               {paginatedActivities.map((a) => (
-                <tr key={a.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <tr key={a.id} className="hover:bg-[var(--muted)]">
                   <td className="py-4 px-4">
                     <span className={`text-sm font-medium ${typeColors[a.type]}`}>
                       {typeLabels[a.type]}
                     </span>
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-700 dark:text-gray-300 max-w-xs truncate">
+                  <td className="py-4 px-4 text-sm text-[var(--foreground)] max-w-xs truncate">
                     {a.description}
                   </td>
                   <td className="py-4 px-4 text-sm font-semibold">
@@ -310,34 +310,34 @@ export default function AccountPage() {
                   </td>
                   <td className="py-4 px-4">
                     <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-                      a.status === "concluido" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
-                      a.status === "pendente" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                      "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      a.status === "concluido" ? "bg-[var(--success-subtle)] text-[var(--success)]" :
+                      a.status === "pendente" ? "bg-[var(--warning-subtle)] text-[var(--warning)]" :
+                      "bg-[var(--danger-subtle)] text-[var(--danger)]"
                     }`}>
                       {statusLabels[a.status]}
                     </span>
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-500">
+                  <td className="py-4 px-4 text-sm text-[var(--muted-foreground)]">
                     {new Date(a.createdAt).toLocaleString("pt-PT")}
                   </td>
                 </tr>
               ))}
               {paginatedActivities.length === 0 && (
-                <tr><td colSpan={5} className="py-10 text-center text-gray-500">Nenhuma atividade encontrada.</td></tr>
+                <tr><td colSpan={5} className="py-10 text-center text-[var(--muted-foreground)]">Nenhuma atividade encontrada.</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 mt-4">
-          <p className="text-sm text-gray-500">
+        <div className="flex justify-between items-center bg-[var(--muted)] p-4 rounded-xl border border-[var(--border)] mt-4">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Mostrando <strong>{paginatedActivities.length}</strong> de <strong>{filteredActivities.length}</strong> atividades
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm disabled:opacity-50"
+              className="px-4 py-2 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm disabled:opacity-50"
             >
               Anterior
             </button>
@@ -347,7 +347,7 @@ export default function AccountPage() {
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm disabled:opacity-50"
+              className="px-4 py-2 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm disabled:opacity-50"
             >
               Próximo
             </button>

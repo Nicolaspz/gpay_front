@@ -17,13 +17,12 @@ const transactions = [
     status: "completed",
     recipient: "John Doe"
   },
-  // ... mais transações
 ]
 
 export function TransactionTable() {
   return (
     <Table>
-      <TableHeader className="bg-[#2D2E3F]">
+      <TableHeader className="bg-[var(--secondary)]">
         <TableRow>
           <TableHead>ID</TableHead>
           <TableHead>Type</TableHead>
@@ -35,7 +34,7 @@ export function TransactionTable() {
       </TableHeader>
       <TableBody>
         {transactions.map((tx) => (
-          <TableRow key={tx.id} className="border-[#2D2E3F]">
+          <TableRow key={tx.id}>
             <TableCell className="font-medium">{tx.id}</TableCell>
             <TableCell>{tx.type}</TableCell>
             <TableCell>{tx.amount}</TableCell>
