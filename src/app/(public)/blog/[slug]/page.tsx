@@ -27,9 +27,6 @@ export default async function BlogDetailPage({ params }: PageProps) {
         <GPayGoHeader />
       </header>
       <GPayGoBlogDetail article={article} />
-      <GPayGoCTA
-        backgroundSrc="/page/footer-bg.png"
-      />
       <GPayGoFooter logoSrc="/page/logo.svg" />
     </main>
   );

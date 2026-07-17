@@ -9,13 +9,12 @@ export default function Blog() {
       className={`${urbanist.variable} bg-white`}
       style={{ fontFamily: "var(--font-urbanist), sans-serif" }}
     >
-        <header className="py-[24px]">
-            <GPayGoHeader />
-        </header>
-        <GPayGoBlogGrid />
+      <header className="py-[24px]">
+        <GPayGoHeader />
+      </header>
+      <GPayGoBlogGrid />
 
-        <GPayGoFooter logoSrc="/page/logo.svg" />
-        
+      <GPayGoFooter logoSrc="/page/logo.svg" />
     </main>
   );
 }

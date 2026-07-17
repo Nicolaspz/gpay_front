@@ -13,13 +13,7 @@ export default function GPayGoBlogDetail({ article }: BlogDetailProps) {
       className="w-full bg-white px-4 pb-16 sm:px-6 lg:px-8"
       style={{ fontFamily: "Urbanist, sans-serif" }}
     >
-      <article className="mx-auto flex w-full max-w-[620px] flex-col items-start pt-6 sm:pt-8">
-        <Link
-          href="/blog"
-          className="mb-4 text-[16px] flex gap-4 font-medium text-[#7B52FF] transition-colors hover:text-[#5E53FF]"
-        >
-          <ArrowLeft /> Voltar ao blog
-        </Link>
+      <article className="mx-auto flex w-full max-w-[700px] flex-col items-start pt-6 sm:pt-8">
 
         <h1 className="max-w-[560px] text-[23px] font-semibold leading-[1.15] tracking-[-0.045em] text-[#1F1F1F] sm:text-[27px] md:text-[30px]">
           {article.title}
