@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { blogArticles } from "@/data/blog";
 
@@ -16,13 +16,26 @@ type TrendItem = {
 };
 
 const ARTICLES_PER_PAGE = 4;
+const CAROUSEL_INTERVAL = 5000;
 
 export default function GPayGoBlogGrid() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const articles = blogArticles;
   const totalPages = Math.ceil(articles.length / ARTICLES_PER_PAGE);
   const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
   const currentArticles = articles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
+
+  const carouselArticles = articles.slice(0, 5);
+
+  const nextSlide = useCallback(() => {
+    setCarouselIndex((prev) => (prev + 1) % carouselArticles.length);
+  }, [carouselArticles.length]);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, CAROUSEL_INTERVAL);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   const trendItems: TrendItem[] = articles.slice(0, 3).map((article) => ({
     slug: article.slug,
@@ -163,46 +176,65 @@ export default function GPayGoBlogGrid() {
               </div>
             </div>
 
-            <Link href={`/blog/${featuredSidebar.slug}`} className="mt-8 block">
-              <article className="relative h-[400px] overflow-hidden bg-[#1F1535] rounded-sm">
-                <Image
-                  src={featuredSidebar.cover}
-                  alt={featuredSidebar.title}
-                  fill
-                  className="object-cover opacity-35 mix-blend-screen"
-                  sizes="340px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/35 to-black/10" />
-
-                <div className="absolute inset-0 flex flex-col justify-end p-5">
-                  <p className="text-[10px] leading-none text-white/75">
-                    {featuredSidebar.date}
-                  </p>
-                  <h3 className="mt-2 max-w-[240px] text-[17px] leading-[1.3] tracking-[-0.04em] text-white">
-                    {featuredSidebar.title}
-                  </h3>
-                  <div className="mt-4 flex items-center gap-2">
-                    <div className="h-6 w-6 overflow-hidden rounded-full bg-white/20">
+            <div className="mt-8 relative">
+              <Link href={`/blog/${carouselArticles[carouselIndex].slug}`} className="block">
+                <article className="relative h-[400px] overflow-hidden bg-[#1F1535] rounded-sm">
+                  {carouselArticles.map((article, index) => (
+                    <div
+                      key={article.slug}
+                      className={`absolute inset-0 transition-opacity duration-700 ${
+                        index === carouselIndex ? "opacity-100" : "opacity-0"
+                      }`}
+                    >
                       <Image
-                        src={featuredSidebar.avatar}
-                        alt=""
-                        width={24}
-                        height={24}
-                        className="h-full w-full object-cover"
+                        src={article.cover}
+                        alt={article.title}
+                        fill
+                        className="object-cover opacity-35 mix-blend-screen"
+                        sizes="340px"
                       />
-                    </div>
-                    <span className="text-[11px] text-white/80">
-                      {featuredSidebar.author}
-                    </span>
-                  </div>
-                </div>
-              </article>
-            </Link>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/35 to-black/10" />
 
-            <div className="mt-5 flex justify-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#1F1F1F]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#D7D7D7]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#D7D7D7]" />
+                      <div className="absolute inset-0 flex flex-col justify-end p-5">
+                        <p className="text-[10px] leading-none text-white/75">
+                          {article.date}
+                        </p>
+                        <h3 className="mt-2 max-w-[240px] text-[17px] leading-[1.3] tracking-[-0.04em] text-white">
+                          {article.title}
+                        </h3>
+                        <div className="mt-4 flex items-center gap-2">
+                          <div className="h-6 w-6 overflow-hidden rounded-full bg-white/20">
+                            <Image
+                              src={article.avatar}
+                              alt=""
+                              width={24}
+                              height={24}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <span className="text-[11px] text-white/80">
+                            {article.author}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </article>
+              </Link>
+
+              <div className="mt-5 flex justify-center gap-2">
+                {carouselArticles.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCarouselIndex(index)}
+                    className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+                      index === carouselIndex
+                        ? "bg-[#1F1F1F] scale-110"
+                        : "bg-[#D7D7D7] hover:bg-[#999]"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </aside>
         </div>
