@@ -46,7 +46,7 @@ export default function GPayGoHowItWorks({
 
             <h2 className="mt-2 max-w-[640px] text-[40px] font-bold leading-[1.08] tracking-[-0.055em] text-[#0F172A] sm:text-[34px] lg:text-[38px]">
               Faça pagamentos, transferências e
-              <br />
+              <br className="" />
               muito mais em 3 passos simples
             </h2>
           </div>
