@@ -16,31 +16,58 @@ type Testimonial = {
 
 const testimonials: Testimonial[] = [
   {
-    id: "joao-tambue",
+    id: "tupuca",
     text:
-      "A Gpayment transformou a forma como processo pagamentos. Antes perdia horas a reconciliar transações, agora tenho tudo automatizado e os pagamentos chegam em tempo real.",
-    name: "João Tambue",
-    role: "Frontend Software Developer",
-    avatarSrc: "/page/eu.jpeg",
-    avatarAlt: "João Tambue",
+      "A G PayGo resolveu o nosso maior problema operacional: receber pagamentos de forma rápida e fiável. Com mais de 200 mil clientes em Angola e RDC, precisávamos de uma gateway que acompanhasse o nosso ritmo. A activação em 1 dia e a integração simples fizeram toda a diferença.",
+    name: "Tupuca",
+    role: "Logística & Entrega ao Domicílio",
+    avatarSrc: "/testemunhas/tupuca.png",
+    avatarAlt: "Tupuca",
   },
   {
-    id: "romeu-cajambe",
+    id: "g-smart",
     text:
-      "Integrei a Gpayment na minha loja online em menos de um dia. A documentação é clara e a equipa de suporte é muito responsiva. Recomendo para qualquer negócio em Angola.",
-    name: "Romeu Cajambe",
-    role: "Product Designer",
-    avatarSrc: "/page/euu.jpeg",
-    avatarAlt: "Romeu Cajambe",
+      "Como agência digital, recomendamos a G PayGo a todos os nossos clientes que querem vender online em Angola. É a única solução que integra Multicaixa Express, PayPay e métodos internacionais numa API só. Os nossos clientes PME viram resultados imediatos — menos abandono no checkout, mais conversões.",
+    name: "G-Smart Solutions",
+    role: "Agência de Marketing Digital, Luanda",
+    avatarSrc: "/testemunhas/g-smart.jfif",
+    avatarAlt: "G-Smart Solutions",
   },
   {
-    id: "carlos-fernando",
+    id: "mac-burger",
     text:
-      "Usar a Gpayment para receber pagamentos internacionais via Stripe é incrivelmente simples. Os relatórios detalhados ajudam-me a acompanhar as receitas da empresa.",
-    name: "Carlos Fernando",
-    role: "UI Engineer",
-    avatarSrc: "/page/chris.jpeg",
-    avatarAlt: "Carlos Fernando",
+      "No negócio de fast-food, a agilidade no pagamento é tão importante quanto a rapidez na cozinha. Com a G PayGo, os nossos clientes pagam por Multicaixa Express sem filas, sem erros, sem perda de tempo. As vendas subiram e as reclamações na caixa desapareceram.",
+    name: "Mac Burger",
+    role: "Rede de Fast-Food Angolana",
+    avatarSrc: "/testemunhas/mac-burger.jfif",
+    avatarAlt: "Mac Burger",
+  },
+  {
+    id: "nteka",
+    text:
+      "Lançar um marketplace em Angola sem uma gateway de pagamentos robusta seria impossível. A G PayGo deu-nos a infraestrutura que precisávamos: pagamentos locais e internacionais, dashboard em tempo real e suporte técnico que realmente responde. É o parceiro tecnológico certo para quem quer escalar o e-commerce em Angola.",
+    name: "N'TEKA",
+    role: "Marketplace Digital Angolano",
+    avatarSrc: "/testemunhas/nteka.jfif",
+    avatarAlt: "N'TEKA",
+  },
+  {
+    id: "pes-na-areia",
+    text:
+      "O nosso espaço recebe clientes angolanos e internacionais. Antes da G PayGo, perdíamos reservas porque não aceitávamos cartão nem pagamentos remotos. Hoje, o cliente reserva online, paga como prefere e nós recebemos na hora. É exactamente o que um negócio de turismo precisa.",
+    name: "Pés na Areia",
+    role: "Turismo, Lazer & Hospitalidade",
+    avatarSrc: "/testemunhas/pesnareia.jfif",
+    avatarAlt: "Pés na Areia",
+  },
+  {
+    id: "avanca-na-vida",
+    text:
+      "Na Avança na Vida, movimentamos dinheiro todos os dias — empréstimos, reembolsos, cobranças. A G PayGo deu-nos a segurança e a rastreabilidade que o sector financeiro exige. Cada transação registada, cada pagamento confirmado em tempo real. Para uma fintech, isso não é um extra — é fundamental.",
+    name: "Avança na Vida",
+    role: "Fintech de Microcrédito & Consultoria Financeira",
+    avatarSrc: "/testemunhas/avananavida.jfif",
+    avatarAlt: "Avança na Vida",
   },
 ];
 

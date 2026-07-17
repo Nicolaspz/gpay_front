@@ -5,7 +5,7 @@ import { Download } from "lucide-react";
 import GButton, { GButtonIcon } from "./ui/g-button";
 
 type HowItWorksProps = {
-  videoSrc?: string;
+  heroImage?: string;
 };
 
 const steps = [
@@ -19,21 +19,21 @@ const steps = [
   {
     number: "02",
     icon: "/icons/2.svg",
-    title: "Configure os métodos de pagamento",
+    title: "Integre nossa API",
     description:
-      "Escolha entre Multicaixa Express, referências bancárias, PayPay ou Stripe para aceitar pagamentos.",
+      "Integre a API ou use o painel para gerar referências e acompanhar todas as suas transações em tempo real.",
   },
   {
     number: "03",
     icon: "/icons/3.svg",
-    title: "Comece a receber pagamentos",
+    title: "Comece a receber e a crescer",
     description:
-      "Integre a API ou use o painel para gerar referências e acompanhar todas as suas transações em tempo real.",
+      "Com a conta activa e a integração concluída, o seu negócio aceita pagamentos dos seus clientes.",
   },
 ];
 
 export default function GPayGoHowItWorks({
-  videoSrc = "/page/video.svg",
+  heroImage = "/page/Video.svg",
 }: HowItWorksProps) {
   return (
     <section className="bg-[#F6F6F7] px-4 py-16 sm:px-6 lg:px-8">
@@ -93,7 +93,7 @@ export default function GPayGoHowItWorks({
         <div className="mt-[14px] overflow-hidden rounded-[16px] bg-white shadow-[0_10px_30px_rgba(15,23,42,0.04)]">
           <div className="w-full">
             <Image  
-                src={videoSrc}
+                src={heroImage || "/page/Video.svg"}
                 alt="video"
                 width={100}
                 height={100}

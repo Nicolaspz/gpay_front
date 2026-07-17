@@ -6,13 +6,14 @@ import Link from "next/link";
 import PayPayBackground from "@/assets/story/paypay-background.png";
 import PayPayLogo from "@/assets/story/logo-paypay.png";
 import TupucaLogo from "@/assets/story/tupuca-logo.png";
+import gPaylogo from "@/assets/logo.svg";
 import GButton, { GButtonIcon } from "./ui/g-button";
 
 interface Story {
   id: number;
   slug: string;
   title: string;
-  image?: StaticImageData;
+  image?: StaticImageData | string;
   logo: StaticImageData;
   featured?: boolean;
 }
@@ -32,7 +33,8 @@ const stories: Story[] = [
     slug: "gpayment-25-milhoes-transacoes",
     title:
       "Gpayment processa mais de 25 milhões de transações para empresas em todo o Angola.",
-    logo: TupucaLogo,
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=600&fit=crop",
+    logo: gPaylogo,
   },
 
   {
@@ -40,7 +42,8 @@ const stories: Story[] = [
     slug: "integracao-stripe-pagamentos-internacionais",
     title:
       "Nova integração com Stripe permite receber pagamentos internacionais em USD e EUR.",
-    logo: TupucaLogo,
+    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&h=600&fit=crop",
+    logo: gPaylogo,
   },
 
   {
@@ -48,7 +51,8 @@ const stories: Story[] = [
     slug: "referencias-multicaixa-api",
     title:
       "Referências Multicaixa agora são geradas em tempo real via API da Gpayment.",
-    logo: TupucaLogo,
+    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&h=600&fit=crop",
+    logo: gPaylogo,
   },
 
   {
@@ -56,7 +60,8 @@ const stories: Story[] = [
     slug: "empresas-angolanas-pagamentos-digitais",
     title:
       "Empresas angolanas adotam pagamentos digitais com a segurança da Gpayment.",
-    logo: TupucaLogo,
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=600&fit=crop",
+    logo: gPaylogo,
   },
 ];
 
@@ -142,33 +147,83 @@ export default function GPayGoStories() {
             {secondaryStories.map((story) => (
 
               <Link key={story.id} href={`/blog/${story.slug}`}>
-                <article>
+  <article>
 
-                  <div className="relative overflow-hidden rounded-[6px] bg-[#F5F3F0]">
+    <div className="group relative overflow-hidden rounded-[6px]">
 
-                    <span className="absolute left-4 top-4 text-[11px] uppercase tracking-wide text-[#3C3C3C]">
-                      Blog
-                    </span>
+      {/* BACKGROUND DEFAULT */}
+      <div className="absolute inset-0 bg-[#F5F3F0] transition-all duration-500 group-hover:opacity-0" />
 
-                    <div className="flex aspect-square items-center justify-center">
+      {/* IMAGEM HOVER */}
+      {story.image && (
+        <>
+          <Image
+            src={story.image}
+            alt=""
+            fill
+            className="
+              object-cover
+              scale-110
+              opacity-0
+              transition-all
+              duration-700
+              group-hover:scale-100
+              group-hover:opacity-100
+            "
+          />
 
-                      <Image
-                        src={story.logo}
-                        alt=""
-                        width={110}
-                        height={34}
-                      />
+          <div
+            className="
+              absolute inset-0
+              bg-black/80
+              opacity-0
+              transition-opacity
+              duration-500
+              group-hover:opacity-100
+            "
+          />
+        </>
+      )}
 
-                    </div>
+      <span
+        className="
+          absolute left-4 top-4 z-20
+          text-[11px] uppercase tracking-wide
+          text-[#3C3C3C]
+          transition-colors duration-300
+          group-hover:text-white
+        "
+      >
+        Blog
+      </span>
 
-                  </div>
+      <div className="relative z-20 flex aspect-square items-center justify-center overflow-hidden">
 
-                  <p className="mt-3 text-[15px] leading-[1.45] text-[#202020]">
-                    {story.title}
-                  </p>
+        <div
+          className="
+            transition-all
+            duration-500
+            group-hover:-translate-y-3
+          "
+        >
+          <Image
+            src={story.logo}
+            alt=""
+            width={110}
+            height={34}
+          />
+        </div>
 
-                </article>
-              </Link>
+      </div>
+
+    </div>
+
+    <p className="mt-3 text-[15px] leading-[1.45] text-[#202020]">
+      {story.title}
+    </p>
+
+  </article>
+</Link>
 
             ))}
 
