@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { blogArticles } from "@/data/blog";
 
@@ -14,34 +15,29 @@ type TrendItem = {
   date: string;
 };
 
-export default function GPayGoBlogGrid() {
-  const articles = blogArticles;
+const ARTICLES_PER_PAGE = 4;
 
-  const trendItems: TrendItem[] = [
-    {
-      slug: articles[0]?.slug ?? "#",
-      title: "Sustainable Travel Tips: Reducing Your Carbon Footprint",
-      image: articles[0]?.cover ?? "/page/blog/trend-1.png",
-      author: "Clara Wilson",
-      date: "Nov 29, 2024",
-    },
-    {
-      slug: articles[1]?.slug ?? "#",
-      title: "The Rise of Minimalist Interior Design",
-      image: articles[1]?.cover ?? "/page/blog/trend-2.png",
-      author: "Sophia Turner",
-      date: "Nov 29, 2024",
-    },
-    {
-      slug: articles[2]?.slug ?? "#",
-      title: "Mastering Night Photography: Capturing the Dark",
-      image: articles[2]?.cover ?? "/page/blog/trend-3.png",
-      author: "James Harper",
-      date: "Nov 29, 2024",
-    },
-  ];
+export default function GPayGoBlogGrid() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const articles = blogArticles;
+  const totalPages = Math.ceil(articles.length / ARTICLES_PER_PAGE);
+  const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
+  const currentArticles = articles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
+
+  const trendItems: TrendItem[] = articles.slice(0, 3).map((article) => ({
+    slug: article.slug,
+    title: article.title,
+    image: article.cover,
+    author: article.author,
+    date: article.date,
+  }));
 
   const featuredSidebar = articles[3] ?? articles[0];
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <section className="w-full bg-white px-4 pb-20 pt-6 sm:px-6 lg:px-8">
@@ -56,7 +52,7 @@ export default function GPayGoBlogGrid() {
             </div>
 
             <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2">
-              {articles.slice(0, 4).map((article) => (
+              {currentArticles.map((article) => (
                 <BlogCard
                   key={article.slug}
                   post={{
@@ -74,101 +70,46 @@ export default function GPayGoBlogGrid() {
               ))}
             </div>
 
-            <div className="mt-16 flex items-center justify-center gap-2">
-              <button
-                className="
-      flex h-10 w-10 items-center justify-center
-      rounded-full border border-[#E5E5E5]
-      transition-all duration-200
-      hover:border-[#1F1F1F]
-      hover:bg-[#1F1F1F]
-      hover:text-white
-    "
-              >
-                <ChevronLeft size={16} />
-              </button>
+            {totalPages > 1 && (
+              <div className="mt-16 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E5] transition-all duration-200 hover:border-[#1F1F1F] hover:bg-[#1F1F1F] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:border-[#E5E5E5]"
+                >
+                  <ChevronLeft size={16} />
+                </button>
 
-              <button
-                className="
-      h-10 min-w-[40px]
-      rounded-full
-      bg-[#1F1F1F]
-      px-4
-      text-sm
-      font-semibold
-      text-white
-    "
-              >
-                1
-              </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`h-10 min-w-[40px] rounded-full px-4 text-sm font-medium transition-colors hover:bg-[#F5F5F5] ${
+                      page === currentPage
+                        ? "bg-[#1F1F1F] text-white hover:bg-[#1F1F1F]"
+                        : "text-[#666]"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
 
-              <button
-                className="
-      h-10 min-w-[40px]
-      rounded-full
-      px-4
-      text-sm
-      font-medium
-      text-[#666]
-      transition-colors
-      hover:bg-[#F5F5F5]
-    "
-              >
-                2
-              </button>
-
-              <button
-                className="
-      h-10 min-w-[40px]
-      rounded-full
-      px-4
-      text-sm
-      font-medium
-      text-[#666]
-      transition-colors
-      hover:bg-[#F5F5F5]
-    "
-              >
-                3
-              </button>
-
-              <span className="px-1 text-[#999]">...</span>
-
-              <button
-                className="
-      h-10 min-w-[40px]
-      rounded-full
-      px-4
-      text-sm
-      font-medium
-      text-[#666]
-      transition-colors
-      hover:bg-[#F5F5F5]
-    "
-              >
-                12
-              </button>
-
-              <button
-                className="
-      flex h-10 w-10 items-center justify-center
-      rounded-full border border-[#E5E5E5]
-      transition-all duration-200
-      hover:border-[#1F1F1F]
-      hover:bg-[#1F1F1F]
-      hover:text-white
-    "
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E5] transition-all duration-200 hover:border-[#1F1F1F] hover:bg-[#1F1F1F] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:border-[#E5E5E5]"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* RIGHT SIDEBAR */}
           <aside className="pt-2">
             <p className="max-w-[270px] font-medium text-[15px] leading-[1.55] text-[#767676]">
-              Dive into a world of insights, ideas, and inspiration. Stay
-              updated with the latest trends shaping our present and future.
+              Explore artigos, guias e novidades sobre pagamentos digitais,
+              e-commerce e fintech em Angola.
             </p>
 
             <div className="mt-8">
@@ -235,15 +176,15 @@ export default function GPayGoBlogGrid() {
 
                 <div className="absolute inset-0 flex flex-col justify-end p-5">
                   <p className="text-[10px] leading-none text-white/75">
-                    Nov 29, 2024
+                    {featuredSidebar.date}
                   </p>
                   <h3 className="mt-2 max-w-[240px] text-[17px] leading-[1.3] tracking-[-0.04em] text-white">
-                    The Science of Sleep: How Rest Shapes Your Productivity
+                    {featuredSidebar.title}
                   </h3>
                   <div className="mt-4 flex items-center gap-2">
                     <div className="h-6 w-6 overflow-hidden rounded-full bg-white/20">
                       <Image
-                        src={featuredSidebar.cover}
+                        src={featuredSidebar.avatar}
                         alt=""
                         width={24}
                         height={24}
@@ -251,7 +192,7 @@ export default function GPayGoBlogGrid() {
                       />
                     </div>
                     <span className="text-[11px] text-white/80">
-                      Daniel Cruz
+                      {featuredSidebar.author}
                     </span>
                   </div>
                 </div>

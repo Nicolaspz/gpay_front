@@ -1,7 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { BlogArticle } from "@/data/blog";
-import { ArrowLeft } from "lucide-react";
 
 type BlogDetailProps = {
   article: BlogArticle;
@@ -63,7 +61,7 @@ export default function GPayGoBlogDetail({ article }: BlogDetailProps) {
         </div>
 
         <div
-          className="mt-4 w-full font-medium text-[14px] leading-[1.55] text-[#5E5E5E] sm:text-[16px]"
+          className="mt-4 w-full font-medium text-[14px] leading-[1.65] text-[#5E5E5E] sm:text-[16px] [&_p]:mb-4 [&_p]:text-justify [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:text-[20px] [&_h2]:font-semibold [&_h2]:tracking-[-0.03em] [&_h2]:text-[#1F1F1F] [&_ol]:mb-4 [&_ol]:ml-5 [&_ol]:list-decimal [&_ol>li]:mb-2 [&_ol>li]:pl-1 [&_ul]:mb-4 [&_ul]:ml-1 [&_ul]:list-none [&_ul>li]:mb-2 [&_ul>li]:pl-1"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
       </article>
