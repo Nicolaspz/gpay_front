@@ -1,11 +1,23 @@
-// components/landing/blog/g-blog.tsx
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { blogArticles } from "@/data/blog";
+
+type SanityArticle = {
+  _id: string;
+  title: string;
+  slug: string;
+  subtitle?: string;
+  excerpt?: string;
+  category?: string;
+  author?: string;
+  authorRole?: string;
+  publishedAt?: string;
+  cover?: string;
+  avatar?: string;
+};
 
 type TrendItem = {
   slug: string;
@@ -18,10 +30,15 @@ type TrendItem = {
 const ARTICLES_PER_PAGE = 4;
 const CAROUSEL_INTERVAL = 5000;
 
-export default function GPayGoBlogGrid() {
+function formatDate(dateStr?: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+}
+
+export default function GPayGoBlogGrid({ articles }: { articles: SanityArticle[] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const articles = blogArticles;
   const totalPages = Math.ceil(articles.length / ARTICLES_PER_PAGE);
   const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
   const currentArticles = articles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
@@ -40,9 +57,9 @@ export default function GPayGoBlogGrid() {
   const trendItems: TrendItem[] = articles.slice(0, 3).map((article) => ({
     slug: article.slug,
     title: article.title,
-    image: article.cover,
-    author: article.author,
-    date: article.date,
+    image: article.cover || "/blog.png",
+    author: article.author || "Gpayment",
+    date: formatDate(article.publishedAt),
   }));
 
   const featuredSidebar = articles[3] ?? articles[0];
@@ -67,16 +84,16 @@ export default function GPayGoBlogGrid() {
             <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2">
               {currentArticles.map((article) => (
                 <BlogCard
-                  key={article.slug}
+                  key={article._id}
                   post={{
                     id: article.slug,
                     slug: article.slug,
                     title: article.title,
-                    excerpt: article.excerpt,
-                    image: article.cover,
+                    excerpt: article.excerpt || "",
+                    image: article.cover || "/blog.png",
                     author: {
-                      name: article.author,
-                      date: article.date,
+                      name: article.author || "Gpayment",
+                      date: formatDate(article.publishedAt),
                     },
                   }}
                 />
@@ -181,13 +198,13 @@ export default function GPayGoBlogGrid() {
                 <article className="relative h-[400px] overflow-hidden bg-[#1F1535] rounded-sm">
                   {carouselArticles.map((article, index) => (
                     <div
-                      key={article.slug}
+                      key={article._id}
                       className={`absolute inset-0 transition-opacity duration-700 ${
                         index === carouselIndex ? "opacity-100" : "opacity-0"
                       }`}
                     >
                       <Image
-                        src={article.cover}
+                        src={article.cover || "/blog.png"}
                         alt={article.title}
                         fill
                         className="object-cover opacity-35 mix-blend-screen"
@@ -197,7 +214,7 @@ export default function GPayGoBlogGrid() {
 
                       <div className="absolute inset-0 flex flex-col justify-end p-5">
                         <p className="text-[10px] leading-none text-white/75">
-                          {article.date}
+                          {formatDate(article.publishedAt)}
                         </p>
                         <h3 className="mt-2 max-w-[240px] text-[17px] leading-[1.3] tracking-[-0.04em] text-white">
                           {article.title}
@@ -205,7 +222,7 @@ export default function GPayGoBlogGrid() {
                         <div className="mt-4 flex items-center gap-2">
                           <div className="h-6 w-6 overflow-hidden rounded-full bg-white/20">
                             <Image
-                              src={article.avatar}
+                              src={article.avatar || "/page/logo.svg"}
                               alt=""
                               width={24}
                               height={24}
@@ -213,7 +230,7 @@ export default function GPayGoBlogGrid() {
                             />
                           </div>
                           <span className="text-[11px] text-white/80">
-                            {article.author}
+                            {article.author || "Gpayment"}
                           </span>
                         </div>
                       </div>
