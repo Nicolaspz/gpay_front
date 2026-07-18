@@ -109,7 +109,7 @@ export default function GPayGoFeatures() {
   return (
     <section className="bg-white py-14 sm:py-[100px]">
       <div className="px-4 sm:px-6 md:px-0">
-        <div className="mx-auto w-full max-w-[1170px] px-[145px]">
+        <div className="mx-auto w-full max-w-[1170px] px-3 sm:px-[145px]">
           <div className="flex items-center justify-between gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {partnerLogos.map((logo) => (
               <div

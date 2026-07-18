@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { getBlogArticleBySlug } from "@/data/blog";
+import { client } from "@/sanity/client";
+import { POST_QUERY } from "@/sanity/queries";
 import GPayGoBlogDetail from "@/components/landing/blog/g-blog-detail";
 import { urbanist } from "@/components/landing/font";
 import GPayGoFooter from "@/components/landing/g-footer";
 import GPayGoHeader from "@/components/landing/ui/g-header";
-import GPayGoCTA from "@/components/landing/g-cta";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -12,7 +12,7 @@ type PageProps = {
 
 export default async function BlogDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const article = getBlogArticleBySlug(slug);
+  const article = await client.fetch(POST_QUERY, { slug });
 
   if (!article) {
     notFound();
@@ -27,9 +27,6 @@ export default async function BlogDetailPage({ params }: PageProps) {
         <GPayGoHeader />
       </header>
       <GPayGoBlogDetail article={article} />
-      <GPayGoCTA
-        backgroundSrc="/page/footer-bg.png"
-      />
       <GPayGoFooter logoSrc="/page/logo.svg" />
     </main>
   );

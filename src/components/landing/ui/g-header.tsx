@@ -38,7 +38,7 @@ export default function GPayGoHeader() {
 
   return (
     <div className={headerStyles}>
-      <header className="flex items-center justify-between gap-4">
+      <header className="flex items-center justify-between gap-4 px-3 sm:px-0">
         <Link href="/" className="relative h-10 w-[118px] shrink-0 sm:h-11 sm:w-[132px]">
           <Image
             src={G_logo}

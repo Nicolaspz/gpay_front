@@ -37,7 +37,7 @@ export default function GPayGoHero({
           <div className="relative z-10 mx-auto min-h-[598px] w-full max-w-[1170px] pt-6 sm:pt-7 lg:pt-7">
           <GPayGoHeader />
             <div className="relative mt-10 min-h-[598px] lg:mt-12">
-              <div className="relative z-10 max-w-[740px] pt-2 lg:pt-10 xl:pl-5">
+              <div className="relative z-10 max-w-[740px] pt-2 lg:pt-10 xl:pl-5 px-3 sm:px-0">
                 <p className="text-[13px] font-bold uppercase tracking-[0.04em] text-[#7B52FF] sm:text-[14px]">
                   PAGAMENTOS SIMPLIFICADOS
                 </p>

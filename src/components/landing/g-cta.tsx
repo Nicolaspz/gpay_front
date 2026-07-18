@@ -1,5 +1,5 @@
 import Image from "next/image";
-import GButton from "./ui/g-button";
+import GButton, { GButtonIcon } from "./ui/g-button";
 
 type GPayGoFooterProps = {
   backgroundSrc?: string;
@@ -32,17 +32,17 @@ export default function GPayGoCTA({
             </h2>
 
             <p className="mt-3 max-w-[600px] font-medium text-[12px] leading-[1.5] text-white/85 sm:text-[14px]">
-              Pronto para pagamentos seguros e descomplicados ? Comece a usar a
-              G-PayGo hoje mesmo: é rápido, gratuito e focado em manter suas
-              transações seguras !
+              Descubra como a G PayGo pode transformar a forma como você realiza
+              pagamentos e transferências, oferecendo uma experiência digital
+              inovadora e segura.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <GButton variant="primary" size="lg" href="/login">
+              <GButton variant="primary" size="lg" href="/login" icon={<GButtonIcon size="default" />}>
                 Entrar Em Contato
               </GButton>
 
-              <GButton variant="outline" size="lg" href="/register">
+              <GButton variant="outline" size="lg" href="/register" icon={<GButtonIcon size="default" />}>
                 Comece Agora
               </GButton>
             </div>

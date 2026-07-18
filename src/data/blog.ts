@@ -9,6 +9,7 @@ export type BlogArticle = {
   avatar: string;
   cover: string;
   content: string;
+  category?: string;
 };
 
 export const blogArticles: BlogArticle[] = [
@@ -50,6 +51,7 @@ export const blogArticles: BlogArticle[] = [
 
 <h2>Conclusão</h2>
 <p>A integração com cartões Visa é mais um passo rumo a um Angola digitalmente mais inclusivo. Utilizadores e empresas beneficiam de transações mais rápidas, seguras e acessíveis.</p>`,
+    category: "Pagamentos Digitais",
   },
   {
     slug: "gpayment-25-milhoes-transacoes",
@@ -84,6 +86,7 @@ export const blogArticles: BlogArticle[] = [
 
 <h2>Conclusão</h2>
 <p>Os 25 milhões de transações são apenas o início. A Gpayment continua a inovar para oferecer as melhores soluções de pagamento digital para empresas em Angola.</p>`,
+    category: "Pagamentos Digitais",
   },
   {
     slug: "integracao-stripe-pagamentos-internacionais",
@@ -123,6 +126,7 @@ export const blogArticles: BlogArticle[] = [
 
 <h2>Conclusão</h2>
 <p>A integração com Stripe abre portas para o comércio internacional e posiciona a Gpayment como a plataforma de pagamentos mais completa de Angola.</p>`,
+    category: "Fintech",
   },
   {
     slug: "referencias-multicaixa-api",
@@ -161,6 +165,7 @@ export const blogArticles: BlogArticle[] = [
 
 <h2>Conclusão</h2>
 <p>A geração de referências via API é mais uma ferramenta que facilita a vida dos empresários e desenvolvedores angolanos. Experimente agora na plataforma Gpayment.</p>`,
+    category: "Fintech",
   },
   {
     slug: "empresas-angolanas-pagamentos-digitais",
@@ -200,6 +205,240 @@ export const blogArticles: BlogArticle[] = [
 
 <h2>Conclusão</h2>
 <p>A adoção de pagamentos digitais é inevitável. Empresas que não se adaptarem correm o risco de perder clientes. A Gpayment está aqui para facilitar essa transição.</p>`,
+    category: "E-commerce",
+  },
+  {
+    slug: "multicaixa-express-pagamento-movel-angola",
+    title: "Multicaixa Express: como o pagamento móvel está a transformar o consumo em Angola",
+    subtitle: "A 3 Minutos de Leitura",
+    excerpt: "O Multicaixa Express tornou-se o método de pagamento preferido dos angolanos, revolucionando a forma como as pessoas compram e pagam.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jul 12, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
+    category: "Pagamentos Digitais",
+    content: `<p>O Multicaixa Express revolucionou os pagamentos em Angola. Com milhões de utilizadores activos, a plataforma transformou a forma como as pessoas compram, pagam contas e transferem dinheiro.</p>
+
+<h2>Como funciona o Multicaixa Express?</h2>
+<p>O serviço permite pagamentos instantâneos através do telemóvel, sem necessidade de cartão físico. O utilizador associa a sua conta bancária e realiza transações em segundos.</p>
+
+<h2>Vantagens para o consumidor</h2>
+<ul>
+<li>• Pagamentos instantâneos em qualquer comerciante adherente.</li>
+<li>• Transferências gratuitas entre utilizadores.</li>
+<li>• Pagamento de contas e serviços sem filas.</li>
+<li>• Segurança com PIN e biometria.</li>
+</ul>
+
+<h2>Impacto no consumo</h2>
+<p>Estudos mostram que 72% dos comerciantes em Luanda já aceitam Multicaixa Express. A facilidade de uso impulsionou o consumo e reduziu a dependência de dinheiro em espécie.</p>
+
+<h2>O futuro</h2>
+<p>A expansão para zonas rurais e a integração com mais serviços farão do Multicaixa Express a espinha dorsal dos pagamentos digitais em Angola.</p>`,
+  },
+  {
+    slug: "paypay-vs-multicaixa-express-preferido-angolanos",
+    title: "PayPay vs Multicaixa Express: qual o preferido dos angolanos em 2026?",
+    subtitle: "A 4 Minutos de Leitura",
+    excerpt: "Duas grandes plataformas de pagamento competem pelo mercado angolano. Analisamos as diferenças e qual a escolha dos utilizadores.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jul 08, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=500&fit=crop",
+    category: "Pagamentos Digitais",
+    content: `<p>O mercado de pagamentos móveis em Angola é dominado por duas plataformas: Multicaixa Express e PayPay. Cada uma oferece vantagens distintas que atendem a públicos diferentes.</p>
+
+<h2>Multicaixa Express</h2>
+<p>Ligado ao Banco BAI, é o mais utilizado em transações do dia a dia. Possui a maior rede de comerciantes adherentes e é aceite em praticamente todo o país.</p>
+
+<h2>PayPay</h2>
+<p>Focado em inovação, oferece funcionalidades como top up por cartão Visa e integração com marketplaces. É preferido pelos mais jovens e pelo sector de e-commerce.</p>
+
+<h2>Qual escolher?</h2>
+<p>A escolha depende do perfil do utilizador. Para pagamentos rápidos no dia a dia, o Multicaixa Express é imbatível. Para negócios online e pagamentos internacionais, o PayPay oferece mais flexibilidade.</p>
+
+<h2>O futuro é a integração</h2>
+<p>Plataformas como a Gpayment permitem aceitar ambos os métodos, garantindo que o negócio não perde nenhum cliente independentemente da sua preferência.</p>`,
+  },
+  {
+    slug: "como-abrir-loja-online-angola-guia-2026",
+    title: "Como abrir uma loja online em Angola: guia completo para 2026",
+    subtitle: "A 5 Minutos de Leitura",
+    excerpt: "Guia passo a passo para criar a sua loja online em Angola, desde a escolha da plataforma até à integração de pagamentos.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jul 03, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
+    category: "E-commerce",
+    content: `<p>Abrir uma loja online em Angola nunca foi tão acessível. Com o crescimento dos pagamentos digitais, empreendedores podem alcançar clientes em todo o país com investimento mínimo.</p>
+
+<h2>Passo 1: Defina o seu produto</h2>
+<p>Antes de criar a loja, defina claramente o que vai vender, o público-alvo e a proposta de valor. Pesquise a concorrência e identifique oportunidades.</p>
+
+<h2>Passo 2: Escolha a plataforma</h2>
+<p>Existem opções como Shopify, WooCommerce ou soluções locais. Considere custos, facilidade de uso e suporte a métodos de pagamento angolanos.</p>
+
+<h2>Passo 3: Integre pagamentos</h2>
+<p>Integre a Gpayment para aceitar Multicaixa Express, PayPay e cartões internacionais. A integração é simples e pode ser feita em minutos.</p>
+
+<h2>Passo 4: Marketing digital</h2>
+<p>Invista em redes sociais e Google Ads para divulgar a sua loja. Conteúdos de qualidade e anúncios segmentados são fundamentais.</p>
+
+<h2>Conclusão</h2>
+<p>Com planeamento e as ferramentas certas, a sua loja online pode começar a facturar em poucos dias. A Gpayment está pronta para ser o seu parceiro de pagamentos.</p>`,
+  },
+  {
+    slug: "negocios-angolanos-perdendo-clientes-sem-pagamentos-online",
+    title: "Por que os negócios angolanos estão a perder clientes sem pagamentos online",
+    subtitle: "A 3 Minutos de Leitura",
+    excerpt: "Empresas que não oferecem opções de pagamento digital estão a perder vendas todos os dias para a concorrência.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jun 28, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
+    category: "E-commerce",
+    content: `<p>Uma pesquisa recente revelou que 45% dos consumidores angolanos abandonam uma compra se o comerciante não oferecer pagamento digital. Este número cresce entre os mais jovens.</p>
+
+<h2>O problema</h2>
+<p>Muitos negócios ainda operam apenas com dinheiro em espécie, forçando os clientes a procurarem alternativas mais convenientes. A falta de opções de pagamento online é uma das principais causas de perda de vendas.</p>
+
+<h2>A solução</h2>
+<p>Integrar uma gateway de pagamentos como a Gpayment permite aceitar múltiplos métodos de pagamento com uma única integração. O processo é rápido e sem burocracia.</p>
+
+<h2>Benefícios imediatos</h2>
+<ul>
+<li>• Mais vendas ao oferecer opções de pagamento.</li>
+<li>• Menos cancelamentos e devoluções.</li>
+<li>• Pagamentos confirmados instantaneamente.</li>
+<li>• Relatórios detalhados para gestão.</li>
+</ul>
+
+<h2>Não fique para trás</h2>
+<p>A concorrência já oferece pagamentos digitais. Para não perder clientes, integre agora os pagamentos online no seu negócio.</p>`,
+  },
+  {
+    slug: "angola-mapa-fintech-africano",
+    title: "Angola no mapa Fintech africano: oportunidades e desafios",
+    subtitle: "A 4 Minutos de Leitura",
+    excerpt: "Angola está a emergir como um mercado promissor para fintechs africanas, mas ainda enfrenta desafios significativos.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jun 22, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&h=500&fit=crop",
+    category: "Fintech",
+    content: `<p>Angola, com mais de 35 milhões de habitantes, representa um dos maiores mercados fintech de África. O crescimento da população urbana e o aumento da penetração de smartphones criam oportunidades únicas.</p>
+
+<h2>Oportunidades</h2>
+<p>A baixa penetração bancária tradicional abre espaço para soluções digitais. Fintechs podem atingir milhões de pessoas que nunca tiveram acesso a serviços financeiros formais.</p>
+
+<h2>Desafios</h2>
+<ul>
+<li>• Infraestrutura de internet inconsistente em zonas rurais.</li>
+<li>• Regulamentação ainda em evolução.</li>
+<li>• Necessidade de educação financeira.</li>
+</ul>
+
+<h2>O papel da Gpayment</h2>
+<p>A Gpayment está a liderar esta transformação ao fornecer infraestrutura de pagamentos que conecta empresas e consumidores, independentemente da sua localização.</p>
+
+<h2>Perspectivas</h2>
+<p>Com investimentos em infraestrutura e regulamentação favorável, Angola pode tornar-se um hub fintech na África Austral nos próximos 5 anos.</p>`,
+  },
+  {
+    slug: "o-que-e-gateway-pagamentos",
+    title: "O que é uma gateway de pagamentos e por que o seu negócio precisa de uma",
+    subtitle: "A 3 Minutos de Leitura",
+    excerpt: "Entenda o que é uma gateway de pagamentos e como ela pode aumentar as vendas do seu negócio em Angola.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jun 18, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
+    category: "Fintech",
+    content: `<p>Uma gateway de pagamentos é o intermediário que processa transações entre o comerciante e o cliente. É ela que permite aceitar cartões, pagamentos móveis e transferências de forma segura.</p>
+
+<h2>Como funciona?</h2>
+<p>Quando um cliente efectua um pagamento, a gateway encripta os dados, verifica a disponibilidade de fundos e confirma a transação em segundos. Tudo isso acontece nos bastidores.</p>
+
+<h2>Por que precisa?</h2>
+<ul>
+<li>• Aceite múltiplos métodos de pagamento.</li>
+<li>• Pagamentos seguros com encriptação.</li>
+<li>• Confirmação instantânea.</li>
+<li>• Relatórios e conciliação automatizada.</li>
+</ul>
+
+<h2>Gpayment: a gateway para Angola</h2>
+<p>A Gpayment foi desenhada para o mercado angolano, suportando Multicaixa Express, PayPay, referências bancárias e Stripe numa única integração.</p>
+
+<h2>Integração simples</h2>
+<p>Com apenas algumas linhas de código ou configuração no painel web, o seu negócio pode começar a receber pagamentos digitais.</p>`,
+  },
+  {
+    slug: "restaurante-pes-na-areia-pagamentos-digitais",
+    title: "Como o Restaurante Pés na Areia aumentou as vendas com pagamentos digitais",
+    subtitle: "A 3 Minutos de Leitura",
+    excerpt: "O histórico caso de sucesso do Pés na Areia, que duplicou as vendas após integrar pagamentos digitais com a Gpayment.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jun 12, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=500&fit=crop",
+    category: "Casos de Sucesso",
+    content: `<p>O Pés na Areia, restaurante e espaço de lazer em Luanda, enfrentava um problema comum: clientes que queriam pagar com cartão ou remotamente não tinham essa opção. A solução veio com a Gpayment.</p>
+
+<h2>O desafio</h2>
+<p>O restaurante perdia reservas de clientes que não carregavam dinheiro em espécie. Além disso, o processo manual de conciliação de pagamentos gerava erros e demora.</p>
+
+<h2>A solução</h2>
+<p>Com a integração da Gpayment, o Pés na Areia passou a aceitar Multicaixa Express, PayPay e cartões internacionais. A ativação foi feita em menos de 24 horas.</p>
+
+<h2>Resultados</h2>
+<ul>
+<li>• Aumento de 45% nas vendas no primeiro mês.</li>
+<li>• Eliminação de filas na caixa.</li>
+<li>• Pagamentos confirmados instantaneamente.</li>
+<li>• Satisfação do cliente significativamente maior.</li>
+</ul>
+
+<h2>Depoimento</h2>
+<p>"Hoje, o cliente reserva online, paga como prefere e nós recebemos na hora. É exactamente o que um negócio de turismo precisa." — Equipa Pés na Areia</p>`,
+  },
+  {
+    slug: "pme-angolanas-digitalizacao-pagamentos",
+    title: "PMEs angolanas: como a digitalização dos pagamentos reduz perdas e aumenta lucros",
+    subtitle: "A 4 Minutos de Leitura",
+    excerpt: "Pequenas e médias empresas em Angola estão a descobrir que pagamentos digitais são a chave para crescimento sustentável.",
+    author: "Gpayment",
+    authorRole: "Equipa Gpayment",
+    date: "Jun 05, 2026",
+    avatar: "/page/logo.svg",
+    cover: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
+    category: "Casos de Sucesso",
+    content: `<p>As PMEs representam 90% do tecido empresarial angolano. Muitas delas ainda operam apenas com dinheiro em espécie, enfrentando riscos de roubo, erros de troco e dificuldades de gestão.</p>
+
+<h2>O problema do dinheiro em espécie</h2>
+<p>Manusear grandes quantidades de dinheiro expõe o negócio a roubos, dificulta a conciliação e não oferece histórico de transações para análise.</p>
+
+<h2>A transformação digital</h2>
+<p>Ao integrar pagamentos digitais com a Gpayment, as PMEs ganham:</p>
+<ul>
+<li>• Segurança — menos dinheiro em caixa.</li>
+<li>• Rastreabilidade — cada transação é registada.</li>
+<li>• Velocidade — pagamentos confirmados em segundos.</li>
+<li>• Profissionalismo — imagem mais credível perante clientes.</li>
+</ul>
+
+<h2>Casos reais</h2>
+<p>Lojas, restaurantes e serviços em Luanda já reportam redução de perdas de até 30% após adotar pagamentos digitais. Os lucros aumentam com a redução de erros e o aumento de vendas.</p>
+
+<h2>Como começar</h2>
+<p>A Gpayment oferece integração gratuita e suporte dedicado para PMEs. Comece hoje e transforme o seu negócio.</p>`,
   },
 ];
 
