@@ -8,16 +8,16 @@ export function SecuritySection() {
     <Card className="p-6 space-y-6">
       <div className="space-y-2">
         <h2 className="text-xl font-semibold">Segurança</h2>
-        <p className="text-sm text-gray-600">Proteja seu acesso ao sistema</p>
+        <p className="text-sm text-[var(--muted-foreground)]">Proteja seu acesso ao sistema</p>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between p-4 border rounded-lg">
           <div className="flex items-center space-x-3">
-            <Key className="text-gray-500" />
+            <Key className="text-[var(--muted-foreground)]" />
             <div>
               <h3 className="font-medium">Senha de Acesso</h3>
-              <p className="text-sm text-gray-600">Última alteração: 15/05/2023</p>
+              <p className="text-sm text-[var(--muted-foreground)]">Última alteração: 15/05/2023</p>
             </div>
           </div>
           <Button variant="outline">Alterar Senha</Button>
@@ -25,10 +25,10 @@ export function SecuritySection() {
 
         <div className="flex items-center justify-between p-4 border rounded-lg">
           <div className="flex items-center space-x-3">
-            <Smartphone className="text-gray-500" />
+            <Smartphone className="text-[var(--muted-foreground)]" />
             <div>
               <h3 className="font-medium">Autenticação em Dois Fatores</h3>
-              <p className="text-sm text-gray-600">Proteção adicional para sua conta</p>
+              <p className="text-sm text-[var(--muted-foreground)]">Proteção adicional para sua conta</p>
             </div>
           </div>
           <Badge variant="outline">Desativado</Badge>

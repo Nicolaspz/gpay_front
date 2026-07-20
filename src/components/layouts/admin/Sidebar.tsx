@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Home,
   Book,
@@ -12,24 +14,34 @@ import {
   User,
   Wallet,
   PiggyBank,
-  Webhook
+  Webhook,
+  Circle
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import type { MenuItem } from "@/types/global"
+import Image from "next/image"
 
-const menuItems: MenuItem[] = [
-  { icon: Home, label: "Dashboard", href: "/dashboard", enabled: true },
+const mainItems: MenuItem[] = [
+  { icon: Home, label: "Visão Geral", href: "/dashboard", enabled: true },
   { icon: User, label: "Perfil", href: "/dashboard/profile", enabled: true },
+]
+
+const financeItems: MenuItem[] = [
   { icon: Book, label: "Transações Nacionais", href: "/dashboard/transactions", enabled: true },
   { icon: CreditCard, label: "Transações Internacionais", href: "/dashboard/stripe", enabled: true },
+]
+
+const commercialItems: MenuItem[] = [
   { icon: FileSearch, label: "Comercial", href: "/dashboard/comercial", enabled: true },
+]
+
+const settingsItems: MenuItem[] = [
   { icon: LineChart, label: "Definições", href: "/dashboard/settings", enabled: true },
-  { icon: Key, label: "Chaves de API", href: "/dashboard/api_key", enabled: true },
+  { icon: Key, label: "Chaves API", href: "/dashboard/api_key", enabled: true },
   { icon: ActivityIcon, label: "WebHooks", href: "/dashboard/webhooks", enabled: true },
   { icon: Users, label: "Clientes", href: "/dashboard/clients", enabled: true, adminOnly: true },
   { icon: Wallet, label: "Fundo PayPay", href: "/dashboard/paypay", enabled: true, adminOnly: true },
@@ -38,7 +50,51 @@ const menuItems: MenuItem[] = [
   { icon: ScrollText, label: "Logs", href: "/dashboard/logs", enabled: true, adminOnly: true },
 ]
 
-const footerIcons = [Settings]
+function SidebarSection({ label }: { label: string }) {
+  return (
+    <div className="px-3 pt-4 pb-1">
+      <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
+        {label}
+      </span>
+    </div>
+  )
+}
+
+function SidebarItem({
+  icon: Icon,
+  label,
+  href,
+  isActive,
+  onClick,
+  adminOnly,
+  isAdmin,
+}: {
+  icon: React.ElementType
+  label: string
+  href: string
+  isActive: boolean
+  onClick?: () => void
+  adminOnly?: boolean
+  isAdmin?: boolean
+}) {
+  if (adminOnly && !isAdmin) return null
+
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2.5 px-3 py-2 mx-2 rounded-[var(--radius-md)] text-[13px] font-medium transition-all duration-150",
+        isActive
+          ? "bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]"
+          : "text-[var(--muted-foreground)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)]"
+      )}
+    >
+      <Icon className={cn("w-[18px] h-[18px] shrink-0", isActive && "text-[var(--accent-primary)]")} />
+      {label}
+    </Link>
+  )
+}
 
 export default function Sidebar({ closeSidebar }: { closeSidebar?: () => void }) {
   const pathname = usePathname()
@@ -46,85 +102,77 @@ export default function Sidebar({ closeSidebar }: { closeSidebar?: () => void })
   const isAdmin = user?.user_type === "admin"
 
   return (
-    <aside className="h-screen w-64 bg-[var(--sidebar)] text-[var(--sidebar-foreground)] flex flex-col justify-between py-6 border-r border-[var(--sidebar-border)]">
-      {/* Fechar em mobile */}
+    <aside className="h-screen w-60 bg-[var(--sidebar)] text-[var(--sidebar-foreground)] flex flex-col justify-between border-r border-[var(--border)]">
+      {/* Close on mobile */}
       {closeSidebar && (
-        <div className="flex justify-end px-4 cursor-pointer">
-          <button onClick={closeSidebar} className="text-[var(--sidebar-foreground)] text-xl">×</button>
+        <div className="flex justify-end px-3 pt-3 cursor-pointer lg:hidden">
+          <button onClick={closeSidebar} className="text-[var(--muted-foreground)] text-xl leading-none">&times;</button>
         </div>
       )}
 
       {/* Top section */}
-      <div>
-        <div className="flex flex-col items-center justify-center gap-2 mb-5  w-15 h-15 mx-auto">
-          <Link href="/" onClick={closeSidebar} className="flex items-center justify-center w-full h-full">
-            <img
-              src="/assets/images/logo2.png"
-              alt="GPay"
-              className="w-auto h-auto max-w-full max-h-full object-contain"
-            />
+      <div className="flex-1 overflow-y-auto">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 px-5 pb-4 pt-8">
+          <Link href="/" onClick={closeSidebar} className="flex">
+            <Image src="/assets/images/gpa.png" alt="Logo" width={100} height={100} className="w-full" />
           </Link>
         </div>
 
-        {/* Menu */}
-        <nav className="space-y-2 px-6">
-          {menuItems.map(({ icon: Icon, label, href, enabled, adminOnly, clientOnly }) => {
-            const isActive = pathname === href
+        {/* Main navigation */}
+        <nav className="mt-1">
+          <SidebarSection label="Principal" />
+          {mainItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              isActive={pathname === item.href}
+              onClick={closeSidebar}
+              isAdmin={isAdmin}
+            />
+          ))}
 
-            if (adminOnly && !isAdmin) return null
-            if (clientOnly && isAdmin) return null
+          <SidebarSection label="Financeiro" />
+          {financeItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              isActive={pathname === item.href}
+              onClick={closeSidebar}
+              isAdmin={isAdmin}
+            />
+          ))}
 
-            if (enabled) {
-              // Item habilitado - clicável
-              return (
-                <Button
-                  key={label}
-                  variant="ghost"
-                  asChild
-                  className={cn(
-                    "w-full justify-start gap-3 text-[var(--muted-foreground)] hover:text-[var(--sidebar-accent-foreground)] hover:bg-[var(--sidebar-accent)]",
-                    isActive && "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]"
-                  )}
-                  onClick={closeSidebar}
-                >
-                  <Link href={href}>
-                    <Icon className="w-5 h-5" />
-                    {label}
-                  </Link>
-                </Button>
-              )
-            } else {
-              // Item desabilitado - não clicável
-              return (
-                <div
-                  key={label}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-4 py-2 text-[var(--muted-foreground)] opacity-50 cursor-not-allowed rounded-md",
-                    isActive && "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]"
-                  )}
-                >
-                  <Icon className="w-5 h-5" />
-                  {label}
-                </div>
-              )
-            }
-          })}
+          <SidebarSection label="Comercial" />
+          {commercialItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              isActive={pathname === item.href}
+              onClick={closeSidebar}
+              isAdmin={isAdmin}
+            />
+          ))}
+
+          <SidebarSection label="Sistema" />
+          {settingsItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              {...item}
+              isActive={pathname === item.href}
+              onClick={closeSidebar}
+              isAdmin={isAdmin}
+            />
+          ))}
         </nav>
       </div>
 
-      {/* Footer icons */}
-      <div className="flex items-center justify-evenly border-t border-[var(--sidebar-border)] pt-4 px-4">
-        {footerIcons.map((Icon, i) => (
-          <Button
-            key={i}
-            variant="ghost"
-            size="icon"
-            className="text-[var(--muted-foreground)] hover:text-[var(--sidebar-accent-foreground)]"
-            onClick={closeSidebar}
-          >
-            <Icon className="w-5 h-5" />
-          </Button>
-        ))}
+      {/* Footer — System status */}
+      <div className="border-t border-[var(--border)] px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Circle className="w-2 h-2 fill-[var(--success)] text-[var(--success)] animate-pulse-dot" />
+          <span className="text-[11px] text-[var(--muted-foreground)]">Sistema operacional</span>
+        </div>
       </div>
     </aside>
   )

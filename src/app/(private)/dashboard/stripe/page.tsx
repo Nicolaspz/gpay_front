@@ -20,7 +20,9 @@ export default function AdminStripeDashboard() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
+  const [clientsPage, setClientsPage] = useState(1);
   const itemsPerPage = 10;
+  const clientsPerPage = 12;
 
   const filtered = useMemo(() => {
     return newTransactions.filter((tx) => {
@@ -66,12 +68,18 @@ export default function AdminStripeDashboard() {
 
   const hasFilters = search || statusFilter || currencyFilter || startDate || endDate;
 
+  const clientsTotalPages = Math.ceil(adminClients.length / clientsPerPage);
+  const paginatedClients = adminClients.slice(
+    (clientsPage - 1) * clientsPerPage,
+    clientsPage * clientsPerPage
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600 dark:text-gray-300">A carregar transações...</p>
+          <div className="w-12 h-12 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-[var(--muted-foreground)]">A carregar transações...</p>
         </div>
       </div>
     );
@@ -80,10 +88,10 @@ export default function AdminStripeDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col mb-2">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--foreground)] mb-2">
           Pagamentos Internacionais
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 text-sm">
+        <p className="text-[var(--muted-foreground)] text-sm">
           {isAdmin
             ? "Gestão global de transações e liquidações internacionais."
             : "Visualize o histórico de suas vendas e recebimentos internacionais."}
@@ -96,13 +104,13 @@ export default function AdminStripeDashboard() {
           title="USD Processado"
           amount={stats.totalGrossUSD.toLocaleString("en-US", { style: "currency", currency: "USD" })}
           change=""
-          icon={<FiDollarSign className="text-blue-500" />}
+          icon={<FiDollarSign className="text-[var(--accent-primary)]" />}
         />
         <CardStat
           title="AOA Processado"
           amount={stats.totalGrossAOA.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}
           change=""
-          icon={<FiDollarSign className="text-yellow-500" />}
+          icon={<FiDollarSign className="text-[var(--warning)]" />}
         />
         <CardStat
           title="Bruto Processado"
@@ -114,52 +122,121 @@ export default function AdminStripeDashboard() {
           title="Líquido Total"
           amount={stats.totalNet.toLocaleString("en-US", { style: "currency", currency: "USD" })}
           change=""
-          icon={<FiCheckCircle className="text-green-500" />}
+          icon={<FiCheckCircle className="text-[var(--success)]" />}
         />
       </div>
 
       {isAdmin && (
         <Card className="p-5">
           <div className="flex items-center gap-2 mb-4">
-            <FiUsers className="h-5 w-5 text-blue-500" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Resumo de Clientes</h2>
+            <FiUsers className="h-5 w-5 text-[var(--accent-primary)]" />
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">Resumo de Clientes</h2>
           </div>
           {isLoadingAdminClients ? (
             <div className="flex justify-center py-4">
-              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : adminClients.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-4">Nenhum cliente encontrado.</p>
+            <p className="text-sm text-[var(--muted-foreground)] text-center py-4">Nenhum cliente encontrado.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Cliente</th>
-                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Email</th>
-                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Transações</th>
-                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Bruto Total</th>
-                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Líquido Total</th>
-                    <th className="p-3 font-medium text-gray-500 dark:text-gray-400 text-xs">Moeda</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adminClients.map((c, idx) => (
-                    <tr key={c.userId || idx} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                      <td className="p-3 text-xs font-medium text-gray-900 dark:text-white">{c.fullname || c.userId?.slice(0, 12) || "—"}</td>
-                      <td className="p-3 text-xs text-gray-600 dark:text-gray-400">{c.email || "—"}</td>
-                      <td className="p-3 text-xs text-gray-800 dark:text-gray-300">{c.totalTransactions}</td>
-                      <td className="p-3 text-xs text-gray-700 dark:text-gray-300">
-                        {(c.totalGrossAmount || 0).toLocaleString("en-US", { style: "currency", currency: c.currency || "USD" })}
-                      </td>
-                      <td className="p-3 text-xs font-semibold text-green-600">
-                        {(c.totalNetAmount || 0).toLocaleString("en-US", { style: "currency", currency: c.currency || "USD" })}
-                      </td>
-                      <td className="p-3 text-xs font-bold">{c.currency || "—"}</td>
+            <div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-[var(--muted)] border-b border-[var(--border)]">
+                      <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Cliente</th>
+                      <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Email</th>
+                      <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Transações</th>
+                      <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Bruto Total</th>
+                      <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Líquido Total</th>
+                      <th className="p-3 font-medium text-[var(--muted-foreground)] text-xs">Moeda</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {paginatedClients.map((c, idx) => (
+                      <tr key={c.userId || idx} className="border-b border-[var(--border)] hover:bg-[var(--muted)] transition">
+                        <td className="p-3 text-xs font-medium text-[var(--foreground)]">{c.fullname || c.userId?.slice(0, 12) || "—"}</td>
+                        <td className="p-3 text-xs text-[var(--muted-foreground)]">{c.email || "—"}</td>
+                        <td className="p-3 text-xs text-[var(--foreground)]">{c.totalTransactions}</td>
+                        <td className="p-3 text-xs text-[var(--foreground)]">
+                          {(c.totalGrossAmount || 0).toLocaleString("en-US", { style: "currency", currency: c.currency || "USD" })}
+                        </td>
+                        <td className="p-3 text-xs font-semibold text-[var(--success)]">
+                          {(c.totalNetAmount || 0).toLocaleString("en-US", { style: "currency", currency: c.currency || "USD" })}
+                        </td>
+                        <td className="p-3 text-xs font-bold">{c.currency || "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {clientsTotalPages > 1 && (
+                <div className="flex items-center justify-between px-3 py-3 border-t border-[var(--border)]">
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    A mostrar <strong>{paginatedClients.length}</strong> de <strong>{adminClients.length}</strong> clientes
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setClientsPage(1)}
+                      disabled={clientsPage === 1}
+                      className="px-2 py-1 text-xs border border-[var(--border)] rounded disabled:opacity-40 hover:bg-[var(--muted)] transition-colors"
+                    >
+                      «
+                    </button>
+                    <button
+                      onClick={() => setClientsPage((p) => Math.max(p - 1, 1))}
+                      disabled={clientsPage === 1}
+                      className="px-2 py-1 text-xs border border-[var(--border)] rounded disabled:opacity-40 hover:bg-[var(--muted)] transition-colors"
+                    >
+                      ‹
+                    </button>
+                    {Array.from({ length: clientsTotalPages }, (_, i) => i + 1)
+                      .filter((p) => {
+                        if (clientsTotalPages <= 7) return true;
+                        if (p === 1 || p === clientsTotalPages) return true;
+                        if (Math.abs(p - clientsPage) <= 1) return true;
+                        return false;
+                      })
+                      .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                        if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push("...");
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((p, i) =>
+                        p === "..." ? (
+                          <span key={`dots-${i}`} className="px-1 text-xs text-[var(--muted-foreground)]">…</span>
+                        ) : (
+                          <button
+                            key={p}
+                            onClick={() => setClientsPage(p as number)}
+                            className={`px-2.5 py-1 text-xs rounded transition-colors ${
+                              clientsPage === p
+                                ? "bg-[var(--accent-primary)] text-white font-medium"
+                                : "border border-[var(--border)] hover:bg-[var(--muted)]"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        )
+                      )}
+                    <button
+                      onClick={() => setClientsPage((p) => Math.min(p + 1, clientsTotalPages))}
+                      disabled={clientsPage === clientsTotalPages}
+                      className="px-2 py-1 text-xs border border-[var(--border)] rounded disabled:opacity-40 hover:bg-[var(--muted)] transition-colors"
+                    >
+                      ›
+                    </button>
+                    <button
+                      onClick={() => setClientsPage(clientsTotalPages)}
+                      disabled={clientsPage === clientsTotalPages}
+                      className="px-2 py-1 text-xs border border-[var(--border)] rounded disabled:opacity-40 hover:bg-[var(--muted)] transition-colors"
+                    >
+                      »
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </Card>
@@ -167,29 +244,29 @@ export default function AdminStripeDashboard() {
 
       {!isAdmin && userSummary && (
         <Card className="p-5">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumo da Minha Conta</h2>
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Resumo da Minha Conta</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total Bruto</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white">
+              <p className="text-xs text-[var(--muted-foreground)]">Total Bruto</p>
+              <p className="text-lg font-bold text-[var(--foreground)]">
                 {(userSummary.totalGrossAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total Líquido</p>
-              <p className="text-lg font-bold text-green-600">
+              <p className="text-xs text-[var(--muted-foreground)]">Total Líquido</p>
+              <p className="text-lg font-bold text-[var(--success)]">
                 {(userSummary.totalNetAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Pendente de Pagamento</p>
-              <p className="text-lg font-bold text-yellow-600">
+              <p className="text-xs text-[var(--muted-foreground)]">Pendente de Pagamento</p>
+              <p className="text-lg font-bold text-[var(--warning)]">
                 {(userSummary.totalPendingPayoutAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total Pago</p>
-              <p className="text-lg font-bold text-blue-600">
+              <p className="text-xs text-[var(--muted-foreground)]">Total Pago</p>
+              <p className="text-lg font-bold text-[var(--accent-primary)]">
                 {(userSummary.totalPaidOutAmount || 0).toLocaleString("en-US", { style: "currency", currency: userSummary.currency || "USD" })}
               </p>
             </div>
@@ -197,24 +274,24 @@ export default function AdminStripeDashboard() {
         </Card>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700">
-        <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+      <div className="bg-[var(--card)] rounded-lg shadow-sm overflow-hidden border border-[var(--border)]">
+        <div className="p-4 border-b border-[var(--border)]">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative min-w-[200px] flex-1 max-w-xs">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] h-4 w-4" />
               <input
                 type="text"
                 placeholder="Pesquisar por nome, ID, transação..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400"
+                className="w-full pl-9 pr-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-gray-900 dark:text-gray-100 placeholder-gray-400"
               />
             </div>
 
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+              className="px-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-[var(--foreground)]"
             >
               <option value="">Todos os estados</option>
               {statusOptions.map((s) => (
@@ -225,7 +302,7 @@ export default function AdminStripeDashboard() {
             <select
               value={currencyFilter}
               onChange={(e) => { setCurrencyFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+              className="px-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-[var(--foreground)]"
             >
               <option value="">Todas as moedas</option>
               {currencyOptions.map((c) => (
@@ -238,21 +315,21 @@ export default function AdminStripeDashboard() {
                 type="date"
                 value={startDate}
                 onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+                className="px-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-[var(--foreground)]"
               />
-              <span className="text-gray-400 text-xs">—</span>
+              <span className="text-[var(--muted-foreground)] text-xs">—</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
-                className="px-3 py-2 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 text-gray-700 dark:text-gray-300"
+                className="px-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/40 focus:border-[var(--accent-primary)] text-[var(--foreground)]"
               />
             </div>
 
             {hasFilters && (
               <button
                 onClick={clearFilters}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] bg-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--muted)] transition-colors"
               >
                 <FiX className="h-4 w-4" />
                 Limpar
@@ -261,11 +338,11 @@ export default function AdminStripeDashboard() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--border)] bg-[var(--muted)]">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">
             {isAdmin ? "Todas as Transações" : "Minhas Transações"}
           </h2>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
+          <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
             <FiFilter className="h-3.5 w-3.5" />
             {hasFilters ? (
               <span><strong>{filtered.length}</strong> de <strong>{newTransactions.length}</strong> resultados</span>
@@ -278,63 +355,63 @@ export default function AdminStripeDashboard() {
         <div className="overflow-x-auto relative">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">ID</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Transação Interna</th>
-                {isAdmin && <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">User ID</th>}
-                {isAdmin && <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Nome</th>}
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Montante</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Bruto</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Taxa</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Líquido</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Moeda</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Estado</th>
-                <th className="p-4 font-medium text-gray-500 dark:text-gray-400 text-xs">Data</th>
+              <tr className="bg-[var(--muted)] border-b border-[var(--border)]">
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">ID</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Transação Interna</th>
+                {isAdmin && <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">User ID</th>}
+                {isAdmin && <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Nome</th>}
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Montante</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Bruto</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Taxa</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Líquido</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Moeda</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Estado</th>
+                <th className="p-4 font-medium text-[var(--muted-foreground)] text-xs">Data</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedTx.map((tx: StripeTransaction) => (
-                <tr key={tx.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                  <td className="p-4 text-xs font-mono text-gray-800 dark:text-gray-300">{tx.id}</td>
-                  <td className="p-4 text-xs font-mono text-gray-600 dark:text-gray-400">{tx.internalTransactionId}</td>
+              {paginatedTx.map((tx: StripeTransaction, idx: number) => (
+                <tr key={`${tx.id}-${tx.internalTransactionId}-${idx}`} className="border-b border-[var(--border)] hover:bg-[var(--muted)] transition">
+                  <td className="p-4 text-xs font-mono text-[var(--foreground)]">{tx.id}</td>
+                  <td className="p-4 text-xs font-mono text-[var(--muted-foreground)]">{tx.internalTransactionId}</td>
                   {isAdmin && (
-                    <td className="p-4 text-xs text-gray-600 dark:text-gray-400 font-mono">{tx.userId?.slice(0, 8)}...</td>
+                    <td className="p-4 text-xs text-[var(--muted-foreground)] font-mono">{tx.userId?.slice(0, 8)}...</td>
                   )}
                   {isAdmin && (
-                    <td className="p-4 text-xs text-gray-800 dark:text-gray-200 font-medium">{tx.fullname || "—"}</td>
+                    <td className="p-4 text-xs text-[var(--foreground)] font-medium">{tx.fullname || "—"}</td>
                   )}
-                  <td className="p-4 text-xs font-medium text-gray-900 dark:text-white">
+                  <td className="p-4 text-xs font-medium text-[var(--foreground)]">
                     {(tx.amount || 0).toLocaleString("en-US", { style: "currency", currency: tx.currency || "USD" })}
                   </td>
-                  <td className="p-4 text-xs text-gray-700 dark:text-gray-300">
+                  <td className="p-4 text-xs text-[var(--foreground)]">
                     {(tx.grossAmount || 0).toLocaleString("en-US", { style: "currency", currency: tx.currency || "USD" })}
                   </td>
-                  <td className="p-4 text-xs text-red-500">
+                  <td className="p-4 text-xs text-[var(--danger)]">
                     {(tx.feeAmount || 0).toLocaleString("en-US", { style: "currency", currency: tx.currency || "USD" })}
                   </td>
-                  <td className="p-4 text-xs font-semibold text-green-600">
+                  <td className="p-4 text-xs font-semibold text-[var(--success)]">
                     {(tx.netAmount || 0).toLocaleString("en-US", { style: "currency", currency: tx.currency || "USD" })}
                   </td>
                   <td className="p-4 text-xs font-bold">{tx.currency || "—"}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${tx.status === 'COMPLETED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
+                    <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${tx.status === 'COMPLETED' ? 'bg-[var(--success-subtle)] text-[var(--success)]' : 'bg-[var(--warning-subtle)] text-[var(--warning)]'}`}>
                       {tx.status}
                     </span>
                   </td>
-                  <td className="p-4 text-xs text-gray-500">
+                  <td className="p-4 text-xs text-[var(--muted-foreground)]">
                     {tx.createdAt ? new Date(tx.createdAt).toLocaleString() : "—"}
                   </td>
                 </tr>
               ))}
               {paginatedTx.length === 0 && (
-                <tr><td colSpan={isAdmin ? 11 : 9} className="p-6 text-center text-gray-500 dark:text-gray-400">Nenhuma transação encontrada.</td></tr>
+                <tr><td colSpan={isAdmin ? 11 : 9} className="p-6 text-center text-[var(--muted-foreground)]">Nenhuma transação encontrada.</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-900/50 p-4 border-t border-gray-100 dark:border-gray-700">
-          <p className="text-xs text-gray-500">
+        <div className="flex justify-between items-center bg-[var(--muted)] p-4 border-t border-[var(--border)]">
+          <p className="text-xs text-[var(--muted-foreground)]">
             A mostrar <strong>{paginatedTx.length}</strong> de <strong>{filtered.length}</strong>
             {hasFilters && <span> (filtrados de {newTransactions.length})</span>}
           </p>
@@ -342,7 +419,7 @@ export default function AdminStripeDashboard() {
             <button
               onClick={() => setPage(prev => Math.max(prev - 1, 1))}
               disabled={page === 1}
-              className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-xs disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="px-3 py-1 bg-[var(--card)] border border-[var(--border)] rounded text-xs disabled:opacity-50 hover:bg-[var(--muted)] transition-colors"
             >
               Anterior
             </button>
@@ -352,7 +429,7 @@ export default function AdminStripeDashboard() {
             <button
               onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
               disabled={page === totalPages || totalPages === 0}
-              className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-xs disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="px-3 py-1 bg-[var(--card)] border border-[var(--border)] rounded text-xs disabled:opacity-50 hover:bg-[var(--muted)] transition-colors"
             >
               Próximo
             </button>

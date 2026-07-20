@@ -1,558 +1,194 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useMemo } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/hooks/useAuth"
-import { toast } from "react-toastify"
-import { Mail, Lock, Loader2, Eye, EyeOff, User, ShieldAlert, Phone } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { api } from "@/services/apiClients"
-import type { SignInCredentials, SignUpCredentials } from "@/types/global"
-import { useRateLimit, useHoneypot, useBotBehavior } from "@/lib/antibot"
+import Link from "next/link";
+import Image from "next/image";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLoginForm } from "@/hooks/useLoginForm";
+import { ForgotPasswordForm } from "./login/forgot-password-form";
+import { LoginTab } from "./login/login-tab";
+import { RegisterTab } from "./login/register-tab";
+import ThemeSwitcher from "../theme-switcher";
 
 export function LoginForm() {
-  const router = useRouter()
-  const { signIn, signUp, isAuthenticated } = useAuth()
-
-  const [forgotEmail, setForgotEmail] = useState("")
-  const [loginForm, setLoginForm] = useState({
-    email: "",
-    password: ""
-  })
-  const [registerForm, setRegisterForm] = useState({
-    fullname: "",
-    email: "",
-    phone_number: "",
-    password: "",
-    confirmpassword: ""
-  })
-  const [passwordErrors, setPasswordErrors] = useState<string[]>([])
-  const [passwordTouched, setPasswordTouched] = useState(false)
-  const [showPassword, setShowPassword] = useState({
-    login: false,
-    register: false,
-    confirm: false
-  })
-  const [loading, setLoading] = useState(false)
-  const [forgotMode, setForgotMode] = useState(false)
-  const [activeTab, setActiveTab] = useState("login")
-
-  // Antibot hooks
-  const {
-    isLocked,
-    lockoutSecondsLeft,
-    registerFailure,
-    registerSuccess,
-  } = useRateLimit({ maxAttempts: 5, lockoutMs: 30000 })
-
-  const { honeypotProps, isTriggered } = useHoneypot()
-
-  const loginFieldIds = useMemo(() => ["login-email", "login-password"], [])
-  const { registerField: registerBotField } = useBotBehavior({ fieldIds: loginFieldIds })
-  const emailField = useMemo(() => registerBotField("login-email"), [registerBotField])
-  const passwordField = useMemo(() => registerBotField("login-password"), [registerBotField])
-
-  // Regex patterns for password validation
-  const passwordRegex = {
-    uppercase: /[A-Z]/,
-    lowercase: /[a-z]/,
-    specialChar: /[!@#$%^&*(),.?":{}|<>]/,
-    minLength: /.{8,}/
-  }
-
-  const validatePassword = (password: string) => {
-    const errors: string[] = []
-
-    if (!passwordRegex.uppercase.test(password)) {
-      errors.push("A senha deve conter pelo menos uma letra maiúscula")
-    }
-    if (!passwordRegex.lowercase.test(password)) {
-      errors.push("A senha deve conter pelo menos uma letra minúscula")
-    }
-    if (!passwordRegex.specialChar.test(password)) {
-      errors.push("A senha deve conter pelo menos um caractere especial")
-    }
-    if (!passwordRegex.minLength.test(password)) {
-      errors.push("A senha deve ter pelo menos 8 caracteres")
-    }
-
-    return errors
-  }
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/dashboard")
-    }
-  }, [isAuthenticated, router])
-
-  // Validar senha do registro em tempo real
-  useEffect(() => {
-    if (passwordTouched) {
-      const errors = validatePassword(registerForm.password)
-      setPasswordErrors(errors)
-    }
-  }, [registerForm.password, passwordTouched])
-
-  // Resetar forms quando trocar de tab
-  useEffect(() => {
-    if (activeTab === "login") {
-      setLoginForm({ email: "", password: "" })
-    } else {
-      setRegisterForm({
-        fullname: "",
-        email: "",
-        phone_number: "",
-        password: "",
-        confirmpassword: ""
-      })
-      setPasswordErrors([])
-      setPasswordTouched(false)
-    }
-  }, [activeTab])
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-
-    if (isTriggered) return
-
-    if (isLocked) {
-      toast.error(`Muitas tentativas. Aguarde ${lockoutSecondsLeft} segundos.`)
-      return
-    }
-
-    setLoading(true)
-
-    try {
-      const credentials: SignInCredentials = {
-        email: loginForm.email,
-        password: loginForm.password
-      }
-      await signIn(credentials)
-      registerSuccess()
-      toast.success("Login feito com sucesso!")
-      router.push("/dashboard")
-    } catch (err) {
-      registerFailure()
-      console.error("Erro ao logar:", err)
-      toast.error("Erro ao fazer login. Verifique suas credenciais.")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-
-    const errors = validatePassword(registerForm.password)
-    if (errors.length > 0) {
-      toast.error("Por favor, corrija os erros na senha antes de continuar")
-      setLoading(false)
-      return
-    }
-
-    if (registerForm.password !== registerForm.confirmpassword) {
-      toast.error("As senhas não coincidem")
-      setLoading(false)
-      return
-    }
-
-    try {
-      const credentials: SignUpCredentials = {
-        fullname: registerForm.fullname,
-        email: registerForm.email,
-        phone_number: registerForm.phone_number,
-        password: registerForm.password,
-        confirmpassword: registerForm.confirmpassword,
-      }
-      await signUp(credentials)
-      toast.success("Conta criada com sucesso! Faça login.")
-      setActiveTab("login")
-      setRegisterForm({
-        fullname: "",
-        email: "",
-        phone_number: "",
-        password: "",
-        confirmpassword: ""
-      })
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao registrar")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleForgotPassword(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-
-    try {
-      await api.post("/auth/forgot-password", { email: forgotEmail })
-      toast.success("Enviamos um link de recuperação para o seu email.")
-      setForgotMode(false)
-      setForgotEmail("")
-    } catch (err) {
-      toast.error("Erro ao enviar email de recuperação, verifique se o email está correto")
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const isPasswordValid = passwordErrors.length === 0 && registerForm.password.length > 0
-  const passwordsMatch = registerForm.password === registerForm.confirmpassword &&
-    registerForm.confirmpassword.length > 0
-
-  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoginForm({ ...loginForm, [e.target.id.replace('login-', '')]: e.target.value })
-  }
-
-  const handleForgotEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForgotEmail(e.target.value)
-  }
-
-  const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const id = e.target.id.replace('register-', '')
-    setRegisterForm({ ...registerForm, [id]: e.target.value })
-
-    if (id === "password" && !passwordTouched) {
-      setPasswordTouched(true)
-    }
-  }
-
-  const togglePasswordVisibility = (type: 'login' | 'register' | 'confirm') => {
-    setShowPassword({ ...showPassword, [type]: !showPassword[type] })
-  }
+  const form = useLoginForm();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-[425px] bg-white rounded-2xl shadow-2xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Bem-vindo ao Gpayment</h1>
-          <p className="text-gray-600">Gerencie seus pagamentos de forma fácil</p>
+    <section className="min-h-screen flex flex-col bg-[var(--background)]">
+      <header className="w-full max-w-[1425px] mx-auto flex items-center justify-between">
+        <div className="w-full max-w-[425px] p-8">
+          {/* <button
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors mb-4"
+            >
+              <ArrowLeft size={16} />
+              Voltar
+            </button> */}
+          <div className="flex justify-start">
+            <Link href="/" className="flex items-center gap-2">
+              <Image
+                src="/assets/images/gpa.png"
+                alt="Logo"
+                width={100}
+                height={100}
+                className="w-full"
+              />
+            </Link>
+          </div>
         </div>
 
-        {forgotMode ? (
-          <form onSubmit={handleForgotPassword} className="space-y-4">
-            <div className="flex flex-col items-center space-y-2 mb-6">
-              <div className="p-3 rounded-full bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] bg-opacity-20">
-                <Mail className="h-6 w-6 text-[#5b68eb]" />
-              </div>
-              <h2 className="text-xl font-bold text-center text-gray-800">Recuperar Senha</h2>
-              <p className="text-sm text-gray-600 text-center">
-                Informe seu email para receber o link de redefinição
+        {/* mudar de tema dark e light */}
+        <div className="p-8">
+          <div className="flex justify-end bg-accent rounded-full p-2">
+            {/* icon para mudar de tema */}
+            <ThemeSwitcher />
+          </div>
+        </div>
+      </header>
+
+      <main className="flex flex-1 max-w-[1425px] mx-auto w-full">
+        {/* Formulário */}
+        <div className="w-1/3 flex items-center pr-8 py-8">
+          <div className="w-full max-w-[425px]">
+            <div className="text-start mb-8">
+              <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                Bem-vindo ao Gpayment
+              </h1>
+              <p className="text-[var(--muted-foreground)]">
+                Gerencie seus pagamentos de forma fácil
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="forgot-email" className="text-gray-700">Endereço de Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="forgot-email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
-                  value={forgotEmail}
-                  onChange={handleForgotEmailChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-11 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] hover:opacity-90 text-white flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Enviando...
-                </>
-              ) : (
-                "Enviar link de recuperação"
-              )}
-            </Button>
-
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setForgotMode(false)}
-                className="text-sm text-gray-600 hover:text-[#5b68eb] hover:underline"
+            {form.forgotMode ? (
+              <ForgotPasswordForm
+                email={form.forgotEmail}
+                loading={form.loading}
+                onEmailChange={form.handleForgotEmailChange}
+                onSubmit={form.handleForgotPassword}
+                onBack={() => form.setForgotMode(false)}
+              />
+            ) : (
+              <Tabs
+                value={form.activeTab}
+                onValueChange={form.setActiveTab}
+                className="w-full"
               >
-                Voltar ao login
-              </button>
-            </div>
-          </form>
-        ) : (
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg mb-6">
-              <TabsTrigger
-                value="login"
-                className="data-[state=active]:text-blue-900 data-[state=active]:font-semibold transition-all duration-200"
+                <TabsList className="grid w-full grid-cols-2 bg-[var(--muted)] p-1 rounded-lg mb-6">
+                  <TabsTrigger value="login">Entrar</TabsTrigger>
+
+                  <TabsTrigger value="register">Registrar</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="login">
+                  <LoginTab
+                    email={form.loginForm.email}
+                    password={form.loginForm.password}
+                    showPassword={form.showPassword.login}
+                    loading={form.loading}
+                    isLocked={form.isLocked}
+                    lockoutSecondsLeft={form.lockoutSecondsLeft}
+                    honeypotProps={form.honeypotProps}
+                    emailField={form.emailField}
+                    passwordField={form.passwordField}
+                    onEmailChange={form.handleLoginChange}
+                    onPasswordChange={form.handleLoginChange}
+                    onTogglePassword={() =>
+                      form.togglePasswordVisibility("login")
+                    }
+                    onForgotPassword={() => form.setForgotMode(true)}
+                    onSubmit={form.handleLogin}
+                  />
+                </TabsContent>
+
+                <TabsContent value="register">
+                  <RegisterTab
+                    fullname={form.registerForm.fullname}
+                    email={form.registerForm.email}
+                    phone={form.registerForm.phone_number}
+                    password={form.registerForm.password}
+                    confirmPassword={form.registerForm.confirmpassword}
+                    showPassword={form.showPassword.register}
+                    showConfirm={form.showPassword.confirm}
+                    passwordErrors={form.passwordErrors}
+                    passwordTouched={form.passwordTouched}
+                    isPasswordValid={form.isPasswordValid}
+                    passwordsMatch={form.passwordsMatch}
+                    loading={form.loading}
+                    onFullnameChange={form.handleRegisterChange}
+                    onEmailChange={form.handleRegisterChange}
+                    onPhoneChange={form.handleRegisterChange}
+                    onPasswordChange={form.handleRegisterChange}
+                    onConfirmChange={form.handleRegisterChange}
+                    onTogglePassword={() =>
+                      form.togglePasswordVisibility("register")
+                    }
+                    onToggleConfirm={() =>
+                      form.togglePasswordVisibility("confirm")
+                    }
+                    onSubmit={form.handleRegister}
+                  />
+                </TabsContent>
+              </Tabs>
+            )}
+
+            {/* <div className="mt-6 text-center text-sm text-gray-600">
+            <p>
+              Voltar para{" "}
+              <Link
+                href="/"
+                className="text-[#5b68eb] hover:underline font-medium"
               >
-                Entrar
-              </TabsTrigger>
-              <TabsTrigger
-                value="register"
-                className="data-[state=active]:text-blue-900 data-[state=active]:font-semibold transition-all duration-200"
-              >
-                Registrar
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login" className="space-y-4">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <input {...honeypotProps} />
-
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-gray-700">Email / Usuário</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="login-email"
-                      ref={emailField.ref}
-                      placeholder="seu@email.com"
-                      className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
-                      value={loginForm.email}
-                      onChange={handleLoginChange}
-                      onKeyDown={emailField.onKeyDown}
-                      onMouseDown={emailField.onMouseDown}
-                      onFocus={emailField.onFocus}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-gray-700">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="login-password"
-                      ref={passwordField.ref}
-                      type={showPassword.login ? "text" : "password"}
-                      className="pl-10 pr-10 h-11 bg-white border-gray-300 text-gray-900"
-                      value={loginForm.password}
-                      onChange={handleLoginChange}
-                      onKeyDown={passwordField.onKeyDown}
-                      onMouseDown={passwordField.onMouseDown}
-                      onFocus={passwordField.onFocus}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility('login')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword.login ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                  <div className="flex justify-end pt-2">
-                    <button
-                      type="button"
-                      className="text-sm text-[#5b68eb] hover:underline"
-                      onClick={() => setForgotMode(true)}
-                    >
-                      Esqueci minha senha
-                    </button>
-                  </div>
-                </div>
-
-                {isLocked && (
-                  <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400 px-3 py-2 rounded-md">
-                    <ShieldAlert className="h-4 w-4 flex-shrink-0" />
-                    <span>
-                      Muitas tentativas falhadas. Aguarde <strong>{lockoutSecondsLeft}s</strong>
-                    </span>
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  disabled={loading || isLocked}
-                  className="w-full h-11 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] hover:opacity-90 text-white flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Processando...
-                    </>
-                  ) : isLocked ? (
-                    `Aguarde ${lockoutSecondsLeft}s`
-                  ) : (
-                    "Entrar"
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="register" className="space-y-4">
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="register-fullname" className="text-gray-700">Nome Completo</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="register-fullname"
-                      placeholder="Seu nome"
-                      className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
-                      value={registerForm.fullname}
-                      onChange={handleRegisterChange}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-email" className="text-gray-700">Endereço de Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="register-email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
-                      value={registerForm.email}
-                      onChange={handleRegisterChange}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-phone_number" className="text-gray-700">Número de Telefone</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="register-phone_number"
-                      type="tel"
-                      placeholder="+244 900 000 000"
-                      className="pl-10 h-11 bg-white border-gray-300 text-gray-900"
-                      value={registerForm.phone_number}
-                      onChange={handleRegisterChange}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-password" className="text-gray-700">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="register-password"
-                      type={showPassword.register ? "text" : "password"}
-                      placeholder="••••••••"
-                      className={`pl-10 pr-10 h-11 bg-white border-gray-300 text-gray-900 ${
-                        passwordTouched && passwordErrors.length > 0
-                          ? "border-red-500 focus-visible:ring-red-500"
-                          : ""
-                      }`}
-                      value={registerForm.password}
-                      onChange={handleRegisterChange}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility('register')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword.register ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  {passwordTouched && (
-                    <div className="space-y-1 mt-2">
-                      {passwordErrors.map((error) => (
-                        <p key={error} className="text-xs text-red-500 flex items-center gap-1">
-                          <span>•</span>
-                          {error}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="register-confirmpassword" className="text-gray-700">
-                    Confirme sua senha
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="register-confirmpassword"
-                      type={showPassword.confirm ? "text" : "password"}
-                      placeholder="••••••••"
-                      className={`pl-10 pr-10 h-11 bg-white border-gray-300 text-gray-900 ${
-                        registerForm.confirmpassword.length > 0 && !passwordsMatch
-                          ? "border-red-500 focus-visible:ring-red-500"
-                          : ""
-                      }`}
-                      value={registerForm.confirmpassword}
-                      onChange={handleRegisterChange}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility('confirm')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword.confirm ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  {registerForm.confirmpassword.length > 0 && !passwordsMatch && (
-                    <p className="text-xs text-red-500">As senhas não coincidem</p>
-                  )}
-
-                  {passwordsMatch && (
-                    <p className="text-xs text-green-500">✓ Senhas coincidem</p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={loading || !isPasswordValid || !passwordsMatch}
-                  className="w-full h-11 bg-gradient-to-r from-[#5b68eb] to-[#28e1fd] hover:opacity-90 text-white flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Registrando...
-                    </>
-                  ) : (
-                    "Registrar"
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-        )}
-
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>
-            Voltar para{" "}
-            <Link href="/" className="text-[#5b68eb] hover:underline font-medium">
-              homepage
-            </Link>
-          </p>
+                homepage
+              </Link>
+            </p>
+          </div> */}
+          </div>
         </div>
-      </div>
-    </div>
-  )
+
+        {/* Imagem */}
+        <div className="hidden lg:block w-2/3 p-10">
+          <div className="relative w-full h-full rounded-3xl overflow-hidden">
+            <Image
+              src="/img-left.png"
+              alt="Gpayment"
+              fill
+              priority
+              className="object-cover dark:hidden"
+            />
+
+            <Image
+              src="/img-left-dark.png"
+              alt="Gpayment"
+              fill
+              priority
+              className="hidden object-cover dark:block"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-transparent" />
+          </div>
+        </div>
+      </main>
+
+      <footer className="w-full max-w-[1425px] mx-auto p-8 flex items-center justify-between">
+        <div>
+          <nav className="flex justify-center gap-4 mb-4">
+            <Link
+              href="/privacy"
+              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              Política de Privacidade
+            </Link>
+            <Link
+              href="/terms"
+              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              Termos de Serviço
+            </Link>
+          </nav>
+        </div>
+        <div className="flex justify-center text-[var(--muted-foreground)] text-sm">
+          &copy; {new Date().getFullYear()} Gpayment. Todos os direitos
+          reservados.
+        </div>
+      </footer>
+    </section>
+  );
 }

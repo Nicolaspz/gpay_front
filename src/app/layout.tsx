@@ -1,27 +1,17 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import type { Metadata } from "next";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import Script from "next/script";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
 const geistMono = Geist_Mono({
+  subsets: ["latin"],
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-})
-
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
-})
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -146,27 +136,28 @@ export default function RootLayout({
   return (
     <html lang="pt-AO" dir="ltr" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon1.ico" type="image/x-icon" />
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700,900&display=swap"
+          rel="stylesheet"
+        />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        <link rel="icon" href="/gpay.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="msapplication-TileColor" content="#3b82f6" />
         <meta name="theme-color" content="#ffffff" />
       </head>
-      <Script
-        id="google-tag-manager"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-TZLRXBBK');
-          `,
-        }}
-      />
-      <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} font-sans antialiased`}>
+      <Script id="google-tag-manager" strategy="afterInteractive">
+        {`
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-TZLRXBBK');
+        `}
+      </Script>
+      <body className={`${geistMono.variable} font-sans antialiased`}>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-TZLRXBBK"
@@ -182,7 +173,16 @@ export default function RootLayout({
           <ReactQueryProvider>
             <AuthProvider>{children}</AuthProvider>
           </ReactQueryProvider>
-          <ToastContainer position="top-right" autoClose={3000} />
+          <Toaster
+            position="top-right"
+            closeButton
+            toastOptions={{
+              style: {
+                fontFamily: "var(--font-satoshi)",
+                borderRadius: "var(--radius-md)",
+              }
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

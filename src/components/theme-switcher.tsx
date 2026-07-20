@@ -8,29 +8,29 @@ const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Avoid hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
     return (
-      <Button variant="outline" className="cursor-pointer" disabled>
-        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Button variant="ghost" size="icon" disabled>
+        <Sun className="h-[1.2rem] w-[1.2rem]" />
       </Button>
     );
   }
 
   return (
     <Button
-      className="cursor-pointer" 
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
-      variant={"outline"}
+      variant="ghost"
+      size="icon"
+      className="cursor-pointer"
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       {theme === 'light' ? (
-        <Moon className="bg-white" />
+        <Moon className="h-[1.2rem] w-[1.2rem] transition-transform duration-300" />
       ) : (
-        <Sun />
+        <Sun className="h-[1.2rem] w-[1.2rem] transition-transform duration-300" />
       )}
     </Button>
   )

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { useContext, useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2, X } from "lucide-react"
@@ -88,20 +88,20 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
 
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div 
-          className="relative w-full max-w-md rounded-lg shadow-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+          className="relative w-full max-w-md rounded-lg shadow-xl bg-[var(--card)] border border-[var(--border)]"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">
               {mode === "create" ? "Criar Novo Webhook" : "Editar Webhook"}
             </h2>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="h-8 w-8 p-0 hover:bg-[var(--muted)]"
             >
-              <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+              <X className="h-4 w-4 text-[var(--muted-foreground)]" />
             </Button>
           </div>
 
@@ -109,7 +109,7 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
             <div className="space-y-3">
               <Label 
                 htmlFor="name" 
-                className="text-gray-700 dark:text-gray-300 font-medium"
+                className="text-[var(--foreground)] font-medium"
               >
                 Nome do Webhook*
               </Label>
@@ -118,18 +118,17 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
                 placeholder="Ex: Webhook de notificações"
                 {...register("name", { required: true })}
                 disabled={loading}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 
-                         text-gray-900 dark:text-gray-100 
-                         placeholder:text-gray-500 dark:placeholder:text-gray-400
-                         focus:ring-blue-500 focus:border-blue-500 
-                         dark:focus:ring-blue-600 dark:focus:border-blue-600"
+                className="bg-[var(--card)] border-[var(--border)] 
+                         text-[var(--foreground)] 
+                         placeholder:text-[var(--muted-foreground)]
+                         focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)]"
               />
             </div>
 
             <div className="space-y-3">
               <Label 
                 htmlFor="endpoint" 
-                className="text-gray-700 dark:text-gray-300 font-medium"
+                className="text-[var(--foreground)] font-medium"
               >
                 Endpoint*
               </Label>
@@ -144,33 +143,32 @@ export function WebhookModal({ isOpen, onClose, mode, initialData, onSuccess }: 
                   }
                 })}
                 disabled={loading}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 
-                         text-gray-900 dark:text-gray-100 
-                         placeholder:text-gray-500 dark:placeholder:text-gray-400
-                         focus:ring-blue-500 focus:border-blue-500 
-                         dark:focus:ring-blue-600 dark:focus:border-blue-600"
+                className="bg-[var(--card)] border-[var(--border)] 
+                         text-[var(--foreground)] 
+                         placeholder:text-[var(--muted-foreground)]
+                         focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)]"
               />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-[var(--muted-foreground)]">
                 URL que receberá as notificações do webhook
               </p>
             </div>
 
-            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-end space-x-3 pt-4 border-t border-[var(--border)]">
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={onClose} 
                 disabled={loading}
-                className="border-gray-300 dark:border-gray-600 
-                         text-gray-700 dark:text-gray-300 
-                         hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="border-[var(--border)] 
+                         text-[var(--foreground)] 
+                         hover:bg-[var(--muted)]"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 
+                className="bg-[var(--accent-primary)] hover:opacity-90 
                          text-white flex items-center gap-2"
               >
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}

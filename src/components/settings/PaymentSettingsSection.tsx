@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { TenantsService } from "@/services/tenants.service"
@@ -73,7 +73,7 @@ export function PaymentSettingsSection() {
     <Card className="p-4 sm:p-6 space-y-6">
       <div className="space-y-2">
         <h2 className="text-lg sm:text-xl font-semibold">Configurações de Pagamento</h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-[var(--muted-foreground)]">
           Defina o IBAN padrão para recebimento
         </p>
       </div>
@@ -89,7 +89,7 @@ export function PaymentSettingsSection() {
             disabled={loading}
             className="w-full"
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[var(--muted-foreground)]">
             Entidade Bancária so contem números
           </p>
         </div>
@@ -120,7 +120,7 @@ export function PaymentSettingsSection() {
           <Label htmlFor="client_reference_count">Quantidade dos valores da referência</Label>
           
           {/* Mostra valor atual ou "Selecione" */}
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="text-sm text-[var(--muted-foreground)] mb-2">
             {client_reference_count ? `Valor atual: ${client_reference_count}` : "Nenhum valor selecionado"}
           </p>
 
@@ -129,7 +129,7 @@ export function PaymentSettingsSection() {
             value={client_reference_count}
             onChange={handleChange}
             disabled={loading}
-            className="w-full border rounded-md p-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
+            className="w-full border rounded-md p-2 bg-[var(--card)] border-[var(--border)]"
           >
             <option value="">Selecione</option>
             <option value="9">9</option>
@@ -140,7 +140,7 @@ export function PaymentSettingsSection() {
 
       <div className="flex justify-end pt-4">
         <Button
-          className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 cursor-pointer w-full sm:w-auto"
+          className="bg-[var(--accent-primary)] hover:opacity-90 flex items-center gap-2 cursor-pointer w-full sm:w-auto"
           onClick={handleUpdate}
           disabled={loading}
         >

@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { PaymentMethodsService } from '@/services/payment-methods.service';
 import type { PaymentMethodApi } from '@/types/global';
 import { getErrorMessage } from '@/utils/api-error';

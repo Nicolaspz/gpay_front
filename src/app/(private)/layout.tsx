@@ -4,6 +4,7 @@ import { useState } from "react"
 import Sidebar from "@/components/layouts/admin/Sidebar"
 import Header from "@/components/layouts/admin/Header"
 import { ProtectedLayout } from "@/components/providers/protected-layout"
+import { CommandPalette } from "@/components/command-palette"
 
 export default function PrivateLayout({
   children,
@@ -14,7 +15,8 @@ export default function PrivateLayout({
 
   return (
     <ProtectedLayout>
-      <div className="flex h-screen overflow-hidden bg-[var(--sidebar)]">
+      <CommandPalette />
+      <div className="flex h-screen overflow-hidden bg-[var(--background)]">
         {/* Sidebar Desktop */}
         <div className="hidden lg:flex">
           <Sidebar />
@@ -25,7 +27,7 @@ export default function PrivateLayout({
           <div className="fixed inset-0 z-50 flex lg:hidden">
             {/* Overlay */}
             <div
-              className="absolute inset-0 bg-black/50"
+              className="absolute inset-0 bg-black/40"
               onClick={() => setSidebarOpen(false)}
             />
 
@@ -36,10 +38,9 @@ export default function PrivateLayout({
           </div>
         )}
 
-
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          <Header toggleSidebar={() => setSidebarOpen(true)}/>
+          <Header toggleSidebar={() => setSidebarOpen(true)} />
           <main className="flex-1 overflow-y-auto p-6">{children}</main>
         </div>
       </div>

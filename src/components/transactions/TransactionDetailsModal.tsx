@@ -11,7 +11,7 @@ type Props = {
 export function TransactionDetailsModal({ transaction: tx, onClose }: Props) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[#1F2937] rounded-xl p-6 w-full max-w-2xl shadow-2xl">
+      <div className="bg-[var(--card)] rounded-xl p-6 w-full max-w-2xl shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold">Detalhes da Transação</h3>
           <button onClick={onClose} className="text-2xl">
@@ -21,11 +21,11 @@ export function TransactionDetailsModal({ transaction: tx, onClose }: Props) {
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <p className="text-xs text-gray-500 uppercase">Cliente</p>
+              <p className="text-xs text-[var(--muted-foreground)] uppercase">Cliente</p>
               <p className="font-bold">{tx.customer_name}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase">Email</p>
+              <p className="text-xs text-[var(--muted-foreground)] uppercase">Email</p>
               <p>{tx.customer_email || "N/A"}</p>
             </div>
             {(() => {
@@ -47,13 +47,13 @@ export function TransactionDetailsModal({ transaction: tx, onClose }: Props) {
                     <>
                       {entity && (
                         <div>
-                          <p className="text-xs text-gray-500 uppercase">Entidade</p>
+                          <p className="text-xs text-[var(--muted-foreground)] uppercase">Entidade</p>
                           <p className="font-bold font-mono">{entity}</p>
                         </div>
                       )}
                       {reference && (
                         <div>
-                          <p className="text-xs text-gray-500 uppercase">Referência</p>
+                          <p className="text-xs text-[var(--muted-foreground)] uppercase">Referência</p>
                           <p className="font-bold font-mono tracking-wider">{reference}</p>
                         </div>
                       )}
@@ -66,17 +66,17 @@ export function TransactionDetailsModal({ transaction: tx, onClose }: Props) {
           </div>
           <div className="space-y-4">
             <div>
-              <p className="text-xs text-gray-500 uppercase">Valor</p>
-              <p className="text-xl font-bold text-green-600">
+              <p className="text-xs text-[var(--muted-foreground)] uppercase">Valor</p>
+              <p className="text-xl font-bold text-[var(--success)]">
                 {formatCurrency(tx.amount)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase">Status</p>
+              <p className="text-xs text-[var(--muted-foreground)] uppercase">Status</p>
               <p className="font-bold">{tx.status.toUpperCase()}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase">Método</p>
+              <p className="text-xs text-[var(--muted-foreground)] uppercase">Método</p>
               <p className="font-bold capitalize">{tx.payment_method}</p>
             </div>
             {tx.status === "failed" &&
@@ -95,10 +95,10 @@ export function TransactionDetailsModal({ transaction: tx, onClose }: Props) {
                     "Falha na transação (motivo não especificado na metadata)"
                   return (
                     <div className="col-span-2 pt-2 border-t border-red-100 dark:border-red-900/30">
-                      <p className="text-xs text-red-500 uppercase font-bold flex items-center gap-1">
+                      <p className="text-xs text-[var(--danger)] uppercase font-bold flex items-center gap-1">
                         Motivo da Falha
                       </p>
-                      <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+                      <p className="text-sm text-[var(--danger)] font-medium">
                         {errorMessage}
                       </p>
                     </div>
@@ -112,7 +112,7 @@ export function TransactionDetailsModal({ transaction: tx, onClose }: Props) {
         <div className="mt-8 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700"
+            className="px-4 py-2 rounded-md font-medium bg-[var(--accent-primary)] text-white hover:opacity-90"
           >
             Fechar
           </button>
