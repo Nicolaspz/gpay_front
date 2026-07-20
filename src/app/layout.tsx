@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
@@ -23,73 +23,120 @@ const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
 })
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0D1330" },
+  ],
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://gpayment.ao"),
   title: {
-    default: "Gpayment - Gateway de Pagamento em Angola",
-    template: "%s | Gpayment - Soluções de Pagamento Seguro"
+    default: "Gpayment — Gateway de Pagamento em Angola | Multicaixa Express, Referências & Stripe",
+    template: "%s | Gpayment — Gateway de Pagamento Angola",
   },
-  description: "Solução completa de pagamentos em Angola com Multicaixa Express, Referências Multicaixa, Transferências Bancárias e pagamentos internacionais. Processamento seguro e eficiente.",
+  description:
+    "Gpayment é o gateway de pagamento completo para empresas em Angola. Aceite pagamentos via Multicaixa Express, Referências Multicaixa, PayPay e cartões internacionais (Visa/Mastercard) via Stripe. Integração rápida, taxas competitivas e segurança bancária.",
   keywords: [
-    "pagamento", "pagamentos", "pagamento Angola", "pagamentos Angola", "gateway pagamento", "gateway de pagamento",
-    "Gpayment", "Gpayment Angola", "Gpayments", "G-payment",
-    "Multicaixa Express", "Multicaixa", "Referência Multicaixa", "Multicaixa Referência", "pagamento por referência",
-    "pagamento seguro", "pagamentos seguros", "pagamento online seguro", "transação segura",
-    "transferência bancária", "pagamento digital", "pagamento eletrônico", "e-payment", "payment gateway",
-    "solução pagamento", "plataforma pagamento", "sistema pagamento", "processamento pagamento", "checkout online",
-    "multibanco", "pagamento multibanco",
-    "online payment", "payment processing", "Angola payments", "Angola payment gateway"
+    // Core
+    "gateway de pagamento angola",
+    "pagamento online angola",
+    "processamento de pagamentos angola",
+    "sistema de pagamento digital angola",
+    // Multicaixa
+    "multicaixa express",
+    "pagamento multicaixa express",
+    "referência multicaixa",
+    "pagamento por referência multicaixa",
+    // Métodos
+    "paypay angola",
+    "pagamento stripe angola",
+    "cartão internacional angola",
+    "transferência bancária angola",
+    "pagamento digital angola",
+    "pagamento eletrónico angola",
+    // Business
+    "gateway pagamento africa",
+    "fintech angola",
+    "checkout online angola",
+    "receber pagamentos online",
+    "integração pagamento api",
+    "api pagamento angola",
+    // Brand
+    "gpayment",
+    "g-payment",
+    "gpay",
+    "gpaygo",
+    "gpay go",
+    "gpay angola",
+    // Long tail
+    "como receber pagamento online em angola",
+    "melhor gateway de pagamento angola",
+    "pagamento seguro para loja online angola",
+    "gateway pagamento multicaixa express",
+    "sistema de cobrança online angola",
+    "plataforma de pagamentos para empresas angola",
   ],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  openGraph: {
-    type: "website",
-    locale: "pt_AO",
-    url: "https://gpayment.ao/",
-    title: "Gpayment - Gateway de Pagamento em Angola",
-    description: "Soluções completas de pagamento digital para empresas em Angola",
-    siteName: "Gpayment",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Gpayment - Soluções de Pagamento",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Gpayment - Gateway de Pagamento em Angola",
-    description: "Soluções completas de pagamento digital para empresas em Angola",
-    images: ["/twitter-image.jpg"],
-    creator: "@gpayment",
-  },
-  alternates: {
-    canonical: "https://gpayment.ao/",
-    languages: {
-      'pt-AO': 'https://gpayment.ao/',
-      'pt-PT': 'https://gpayment.ao/pt-pt/',
-    },
-  },
-  category: "Fintech, Pagamentos, Tecnologia",
-  authors: [{ name: "Gpayment" }],
+  authors: [{ name: "Gpayment", url: "https://gpayment.ao" }],
+  creator: "Gpayment",
   publisher: "Gpayment",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-};
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "pt_AO",
+    url: "https://gpayment.ao",
+    siteName: "Gpayment",
+    title: "Gpayment — Gateway de Pagamento em Angola",
+    description:
+      "Aceite pagamentos online em Angola com Multicaixa Express, Referências Multicaixa, PayPay e cartões internacionais via Stripe. Integração rápida e segura.",
+    images: [
+      {
+        url: "https://gpayment.ao/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Gpayment — Gateway de Pagamento em Angola",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gpayment — Gateway de Pagamento em Angola",
+    description:
+      "Aceite pagamentos online em Angola com Multicaixa Express, Referências Multicaixa e cartões internacionais via Stripe.",
+    images: ["https://gpayment.ao/og-image.png"],
+    creator: "@gpayment",
+    site: "@gpayment",
+  },
+  alternates: {
+    canonical: "https://gpayment.ao",
+    languages: {
+      "pt-AO": "https://gpayment.ao",
+    },
+  },
+  verification: {},
+  category: "Fintech",
+  referrer: "origin-when-cross-origin",
+}
 
 export default function RootLayout({
   children,
@@ -97,22 +144,28 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-AO" suppressHydrationWarning>
+    <html lang="pt-AO" dir="ltr" suppressHydrationWarning>
       <head>
-        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-        <link rel="icon" href="/gpay.ico" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon1.ico" type="image/x-icon" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
+        <meta name="msapplication-TileColor" content="#3b82f6" />
+        <meta name="theme-color" content="#ffffff" />
       </head>
-      <Script id="google-tag-manager" strategy="afterInteractive">
-        {`
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-TZLRXBBK');
-        `}
-      </Script>
+      <Script
+        id="google-tag-manager"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-TZLRXBBK');
+          `,
+        }}
+      />
       <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} font-sans antialiased`}>
         <noscript>
           <iframe
@@ -125,7 +178,6 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-
         >
           <ReactQueryProvider>
             <AuthProvider>{children}</AuthProvider>
