@@ -1,14 +1,18 @@
 {
-  "name": "Gpayment",
+  "name": "Gpayment — Gateway de Pagamento em Angola",
   "short_name": "Gpayment",
-  "description": "Gateway de Pagamento em Angola",
+  "description": "Gateway de pagamento completo para empresas em Angola. Aceite Multicaixa Express, Referências Multicaixa, PayPay e cartões internacionais via Stripe.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "theme_color": "#5C54F5",
+  "orientation": "any",
+  "categories": ["finance", "business"],
+  "lang": "pt-AO",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "/gpay.ico",
+      "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
