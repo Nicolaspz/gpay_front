@@ -93,27 +93,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_AO",
-    url: "https://gpayment.ao",
-    siteName: "Gpayment",
-    title: "Gpayment — Gateway de Pagamento em Angola",
-    description:
-      "Aceite pagamentos online em Angola com Multicaixa Express, Referências Multicaixa, PayPay e cartões internacionais via Stripe. Integração rápida e segura.",
+    url: "https://gpayment.ao/",
+    title: "G-PayGo - Gateway de Pagamento em Angola",
+    description: "Soluções completas de pagamento digital para empresas em Angola",
+    siteName: "G-PayGo",
     images: [
       {
         url: "https://gpayment.ao/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Gpayment — Gateway de Pagamento em Angola",
-        type: "image/png",
+        alt: "G-PayGo - Soluções de Pagamento",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gpayment — Gateway de Pagamento em Angola",
-    description:
-      "Aceite pagamentos online em Angola com Multicaixa Express, Referências Multicaixa e cartões internacionais via Stripe.",
-    images: ["https://gpayment.ao/og-image.png"],
+    title: "G-PayGo - Gateway de Pagamento em Angola",
+    description: "Soluções completas de pagamento digital para empresas em Angola",
+    images: ["/twitter-image.jpg"],
     creator: "@gpayment",
     site: "@gpayment",
   },

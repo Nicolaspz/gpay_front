@@ -9,7 +9,6 @@ import Link from "next/link";
 
 const navItems = [
   { name: "Início", href: "#" },
-  { name: "Sobre", href: "#sobre" },
   { name: "Serviço", href: "#servico" },
   { name: "Preço", href: "#preco" },
   { name: "blog", href: "/blog" },
