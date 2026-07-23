@@ -14,45 +14,35 @@ export function LoginForm() {
 
   return (
     <section className="min-h-screen flex flex-col bg-[var(--background)]">
-      <header className="w-full max-w-[1425px] mx-auto flex items-center justify-between">
-        <div className="w-full max-w-[425px] p-8">
-          {/* <button
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors mb-4"
-            >
-              <ArrowLeft size={16} />
-              Voltar
-            </button> */}
-          <div className="flex justify-start">
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/assets/images/gpa.png"
-                alt="Logo"
-                width={100}
-                height={100}
-                className="w-full"
-              />
-            </Link>
-          </div>
+      {/* Header */}
+      <header className="w-full max-w-[1425px] mx-auto flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 lg:px-8 lg:py-8">
+        <div className="flex justify-start">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/assets/images/gpa.png"
+              alt="Logo"
+              width={100}
+              height={100}
+              className="w-20 sm:w-24 md:w-28 lg:w-full"
+            />
+          </Link>
         </div>
 
-        {/* mudar de tema dark e light */}
-        <div className="p-8">
-          <div className="flex justify-end bg-accent rounded-full p-2">
-            {/* icon para mudar de tema */}
-            <ThemeSwitcher />
-          </div>
+        <div className="bg-accent rounded-full p-1.5 sm:p-2">
+          <ThemeSwitcher />
         </div>
       </header>
 
-      <main className="flex flex-1 max-w-[1425px] mx-auto w-full">
+      {/* Main */}
+      <main className="flex flex-1 flex-col lg:flex-row max-w-[1425px] mx-auto w-full">
         {/* Formulário */}
-        <div className="w-1/3 flex items-center pr-8 py-8">
-          <div className="w-full max-w-[425px]">
-            <div className="text-start mb-8">
-              <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+        <div className="w-full lg:w-1/3 flex items-center px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-8 lg:pr-8 lg:py-8">
+          <div className="w-full max-w-full sm:max-w-[425px] mx-auto lg:mx-0">
+            <div className="text-start mb-6 sm:mb-8">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[var(--foreground)] mb-2">
                 Bem-vindo ao Gpayment
               </h1>
-              <p className="text-[var(--muted-foreground)]">
+              <p className="text-sm sm:text-base text-[var(--muted-foreground)]">
                 Gerencie seus pagamentos de forma fácil
               </p>
             </div>
@@ -71,9 +61,8 @@ export function LoginForm() {
                 onValueChange={form.setActiveTab}
                 className="w-full"
               >
-                <TabsList className="grid w-full grid-cols-2 bg-[var(--muted)] p-1 rounded-lg mb-6">
+                <TabsList className="grid w-full grid-cols-2 bg-[var(--muted)] p-1 rounded-lg mb-4 sm:mb-6">
                   <TabsTrigger value="login">Entrar</TabsTrigger>
-
                   <TabsTrigger value="register">Registrar</TabsTrigger>
                 </TabsList>
 
@@ -128,24 +117,12 @@ export function LoginForm() {
                 </TabsContent>
               </Tabs>
             )}
-
-            {/* <div className="mt-6 text-center text-sm text-gray-600">
-            <p>
-              Voltar para{" "}
-              <Link
-                href="/"
-                className="text-[#5b68eb] hover:underline font-medium"
-              >
-                homepage
-              </Link>
-            </p>
-          </div> */}
           </div>
         </div>
 
         {/* Imagem */}
-        <div className="hidden lg:block w-2/3 p-10">
-          <div className="relative w-full h-full rounded-3xl overflow-hidden">
+        <div className="hidden lg:flex w-2/3 p-8 lg:p-10">
+          <div className="relative w-full h-full min-h-[500px] rounded-3xl overflow-hidden">
             <Image
               src="/img-left.png"
               alt="Gpayment"
@@ -167,24 +144,23 @@ export function LoginForm() {
         </div>
       </main>
 
-      <footer className="w-full max-w-[1425px] mx-auto p-8 flex items-center justify-between">
-        <div>
-          <nav className="flex justify-center gap-4 mb-4">
-            <Link
-              href="/privacy"
-              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
-              Política de Privacidade
-            </Link>
-            <Link
-              href="/terms"
-              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
-              Termos de Serviço
-            </Link>
-          </nav>
-        </div>
-        <div className="flex justify-center text-[var(--muted-foreground)] text-sm">
+      {/* Footer */}
+      <footer className="w-full max-w-[1425px] mx-auto px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
+        <nav className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4">
+          <Link
+            href="/privacy"
+            className="text-xs sm:text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+          >
+            Política de Privacidade
+          </Link>
+          <Link
+            href="/terms"
+            className="text-xs sm:text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+          >
+            Termos de Serviço
+          </Link>
+        </nav>
+        <div className="text-[var(--muted-foreground)] text-xs sm:text-sm">
           &copy; {new Date().getFullYear()} Gpayment. Todos os direitos
           reservados.
         </div>
